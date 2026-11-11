@@ -47,8 +47,8 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Email"
-              pattern="[A-Za-z]+[0-9]+@akgec\.ac\.in"
-              title="Enter your AKGEC email in the format name12345@akgec.ac.in."
+              pattern="[A-Za-z][A-Za-z0-9._-]*[0-9]+\.?@akgec\.ac\.in"
+              title="Use your AKGEC email with your name and student number, for example name12345.@akgec.ac.in"
               required
             />
             <span className="email-hint">
@@ -107,12 +107,12 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Email"
-              pattern="[A-Za-z]+[0-9]+@akgec\.ac\.in"
-              title="Enter your AKGEC email in the format name12345@akgec.ac.in."
+              pattern="[A-Za-z][A-Za-z0-9._-]*[0-9]+\.?@akgec\.ac\.in"
+              title="Use your AKGEC email with your name and student number, for example name12345.@akgec.ac.in"
               required
             />
             <span className="email-hint">
-              Use your AKGEC email: name12345@akgec.ac.in
+              Use your AKGEC email: name12345.@akgec.ac.in
             </span>
 
             <input
