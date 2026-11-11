@@ -52,9 +52,26 @@ const StudentDashboard = () => {
         </button>
       </header>
 
-      <div className="dashboard-container">
-        <h1>Student Dashboard</h1>
-      </div>
+      <section className="dashboard-hero" aria-labelledby="student-hero-title">
+        <p className="hero-eyebrow">Student Portal</p>
+        <h1 className="hero-title" id="student-hero-title">
+          Your Journey. <em>Your Skills.</em>{" "}
+          <br />
+          {" "}Your Opportunity.
+        </h1>
+        <p className="hero-description">
+          Track your progress, showcase your skills and take the next step
+          towards joining your dream society.
+        </p>
+        <div className="hero-actions">
+          <a className="hero-button" href="/student/dashboard">
+            Continue Your Journey
+          </a>
+          <a className="hero-button" href="/student/profile">
+            View My Profile
+          </a>
+        </div>
+      </section>
 
     </main>
   );
