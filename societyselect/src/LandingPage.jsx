@@ -54,6 +54,14 @@ function LandingPage() {
           </a>
         </header>
         <section className="hero-section" id="home">
+          <div className="hero-circle-wrapper" aria-hidden="true">
+            <div className="hero-circle-dome"></div>
+            <div className="hero-circle-rotator">
+              <div className="hero-circle-ring ring-main"></div>
+              <div className="hero-circle-ring ring-dashed"></div>
+              <div className="hero-circle-ring ring-accent"></div>
+            </div>
+          </div>
           <div className="hero-content">
             <h1>
               Beyond Marks.
@@ -62,20 +70,9 @@ function LandingPage() {
               <br />
               Discover Real Potential.
             </h1>
-            <p>
-              Your skills deserve more than a scorecard.
-              Discover opportunities, demonstrate your abilities,
-              and grow with the societies that inspire you.
-            </p>
             <a href="/register" className="primary-button">
               Begin Your Journey
             </a>
-          </div>
-          <div className="hero-image-wrap">
-            <img
-              src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1000&auto=format&fit=crop&q=85"
-              alt="Students collaborating on a project"
-            />
           </div>
         </section>
 

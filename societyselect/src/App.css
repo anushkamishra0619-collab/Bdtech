@@ -129,16 +129,130 @@ a {
 }
 
 .hero-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 35px;
-  padding: 75px 7% 55px;
-  background: #fafafa;
+  justify-content: center;
+  text-align: center;
+  padding: 100px 7% 90px;
+  background-color: #ebf4f8;
+  background-image: url('/campus-city-bg.jpeg');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  position: relative;
+  min-height: 520px;
+  overflow: hidden;
+}
+
+/* HERO ROTATING CIRCLE (MATCHING REFERENCE IMAGE) */
+.hero-circle-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(480px, 58vw, 720px);
+  height: clamp(480px, 58vw, 720px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-circle-dome {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.88) 55%,
+    rgba(238, 247, 252, 0.7) 80%,
+    rgba(220, 238, 247, 0.25) 96%,
+    transparent 100%
+  );
+  box-shadow: 0 0 60px rgba(255, 255, 255, 0.8);
+}
+
+.hero-circle-rotator {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: heroCircleRotate 32s linear infinite;
+  transform-origin: center center;
+}
+
+@keyframes heroCircleRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-circle-ring {
+  position: absolute;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.hero-circle-ring.ring-main {
+  inset: 0;
+  border: 1.5px solid rgba(107, 169, 188, 0.45);
+}
+
+.hero-circle-ring.ring-dashed {
+  inset: -8px;
+  border: 2px dashed rgba(107, 169, 188, 0.55);
+}
+
+.hero-circle-ring.ring-accent {
+  inset: 14px;
+  border: 1.5px solid transparent;
+  border-top-color: #6ba9bc;
+  border-bottom-color: #75afc1;
+  opacity: 0.6;
+}
+
+.orbit-node {
+  position: absolute;
+  border-radius: 50%;
+  background: #6ba9bc;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(107, 169, 188, 0.7);
+}
+
+.orbit-node.node-1 {
+  width: 10px;
+  height: 10px;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.orbit-node.node-2 {
+  width: 8px;
+  height: 8px;
+  top: 78%;
+  right: 7%;
+}
+
+.orbit-node.node-3 {
+  width: 7px;
+  height: 7px;
+  top: 65%;
+  left: 4%;
 }
 
 .hero-content {
-  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 0;
+  position: relative;
+  z-index: 2;
 }
 
 .hero-content h1,
@@ -155,8 +269,9 @@ a {
 .hero-content h1 {
   font-size: clamp(36px, 4.2vw, 56px);
   line-height: 1.17;
-  margin: 0 0 22px;
+  margin: 0 auto 22px;
   color: #253c42;
+  text-align: center;
 }
 
 .hero-content h1 em,
@@ -168,19 +283,21 @@ a {
 }
 
 .hero-content > p {
-  font-size: 12px;
-  color: #74888d;
+  font-size: 13px;
+  color: #5d747a;
   line-height: 1.9;
-  max-width: 390px;
-  margin-bottom: 25px;
+  max-width: 520px;
+  margin: 0 auto 28px;
+  text-align: center;
 }
 
 .primary-button,
 .cta-light-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 18px;
-  padding: 14px 23px;
+  padding: 14px 28px;
   background: #75afc1;
   color: white;
   font-size: 17px;
@@ -193,6 +310,7 @@ a {
 .hero-note {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 9px;
   font-size: 10px;
   color: #899a9e;
@@ -207,16 +325,8 @@ a {
 }
 
 .hero-image-wrap {
-  position: relative;
-  height: 360px;
+  display: none;
 }
-
-.hero-image-wrap img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 
 .intro-section {
   padding: 65px 6% 75px;
@@ -480,6 +590,12 @@ a {
 }
 
 /* RESPONSIVE */
+@media (prefers-reduced-motion: reduce) {
+  .hero-circle-rotator {
+    animation-duration: 120s;
+  }
+}
+
 @media (max-width: 850px) {
   .landing-wrapper {
     padding: 25px 15px;
@@ -498,11 +614,14 @@ a {
   }
 
   .hero-section {
-    gap: 20px;
+    padding: 85px 6% 75px;
+    min-height: 460px;
   }
 
-  .hero-image-wrap {
-    height: 290px;
+  .hero-circle-wrapper {
+    width: clamp(380px, 64vw, 520px);
+    height: clamp(380px, 64vw, 520px);
+    top: 50%;
   }
 
   .feature-section {
@@ -555,17 +674,29 @@ a {
   }
 
   .hero-section {
-    grid-template-columns: 1fr;
-    padding: 45px 7% 55px;
+    padding: 60px 6% 65px;
+    min-height: 400px;
+    background-position: center bottom;
+  }
+
+  .hero-circle-wrapper {
+    width: 320px;
+    height: 320px;
+    top: 50%;
+  }
+
+  .hero-circle-ring.ring-dashed {
+    inset: -5px;
+    border-width: 1.5px;
   }
 
   .hero-content h1 {
-    font-size: 40px;
+    font-size: 34px;
   }
 
-  .hero-image-wrap {
-    height: 290px;
-    margin-top: 15px;
+  .hero-content > p {
+    font-size: 12px;
+    margin-bottom: 22px;
   }
 
   .floating-card {
