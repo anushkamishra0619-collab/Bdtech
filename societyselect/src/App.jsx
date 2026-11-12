@@ -1,7 +1,5 @@
-
 import { useEffect, useState } from "react";
 import "./App.css";
-
 import LandingPage from "./LandingPage.jsx";
 import Welcome from "./Components/welcome.jsx";
 import ForgotPassword from "./Components/ForgotPassword.jsx";
