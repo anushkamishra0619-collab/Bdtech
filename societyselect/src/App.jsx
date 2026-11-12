@@ -15,6 +15,15 @@ function App() {
     if (path === "/login" || hash === "#login") return "login";
 
     if (path === "/forgot" || hash === "#forgot") return "forgot";
+    if (hash === "#forgot" || path === "/forgot") return "forgot";
+    if (hash === "#login" || path === "/login") return "login";
+    if (
+      hash === "#register" ||
+      hash === "#signup" ||
+      path === "/register"
+    ) {
+      return "register";
+    }
 
     if (
       hash === "#register" ||
