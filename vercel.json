@@ -1,0 +1,11 @@
+{
+  "installCommand": "npm --prefix societyselect ci",
+  "buildCommand": "npm --prefix societyselect run build",
+  "outputDirectory": "societyselect/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

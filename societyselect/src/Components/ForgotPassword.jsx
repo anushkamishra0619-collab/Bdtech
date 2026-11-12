@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import {FaCheck, FaLock } from "react-icons/fa";
+import { FaArrowLeft, FaCheck, FaLock } from "react-icons/fa";
 import "./ForgotPassword.css";
 
 const ForgotPassword = () => {
@@ -104,7 +104,7 @@ const ForgotPassword = () => {
                 TRY ANOTHER EMAIL
               </button>
 
-              <a href="#login" className="back-login">
+              <a href="/login" className="back-login">
                 <FaArrowLeft aria-hidden="true" /> Back to Sign In
               </a>
 
@@ -129,7 +129,7 @@ const ForgotPassword = () => {
               your technical potential starts here.
             </p>
 
-            <a href="#login" className="welcome-signin-btn">
+            <a href="/login" className="welcome-signin-btn">
               SIGN IN
             </a>
 
