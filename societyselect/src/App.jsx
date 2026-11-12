@@ -12,13 +12,9 @@ function App() {
     const path = window.location.pathname;
     const hash = window.location.hash;
 
-    if (path === "/login" || hash === "#login") {
-      return "login";
-    }
+    if (path === "/login" || hash === "#login") return "login";
 
-    if (path === "/forgot" || hash === "#forgot") {
-      return "forgot";
-    }
+    if (path === "/forgot" || hash === "#forgot") return "forgot";
 
     if (
       hash === "#register" ||
@@ -28,9 +24,7 @@ function App() {
       return "register";
     }
 
-    if (path === "/mentor" || hash === "#mentor") {
-      return "mentor";
-    }
+    if (path === "/mentor" || hash === "#mentor") return "mentor";
 
     return "landing";
   };
@@ -38,9 +32,7 @@ function App() {
   const [route, setRoute] = useState(getRoute);
 
   useEffect(() => {
-    const handleLocationChange = () => {
-      setRoute(getRoute());
-    };
+    const handleLocationChange = () => setRoute(getRoute());
 
     window.addEventListener("hashchange", handleLocationChange);
     window.addEventListener("popstate", handleLocationChange);
