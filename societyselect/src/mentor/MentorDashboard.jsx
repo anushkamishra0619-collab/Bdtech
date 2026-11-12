@@ -1,308 +1,340 @@
-import {
-  Users,
-  ClipboardCheck,
-  FolderKanban,
-  CalendarCheck,
-  ArrowUpRight,
-  Clock3,
-  ArrowRight,
-  MessageCircle,
-} from "lucide-react";
+import {Users,ClipboardCheck,FolderKanban,CalendarDays,ArrowUpRight,Clock,CheckCircle2,CircleAlert,BookOpen,ChevronRight,} from "lucide-react";
+
+import MentorSidebar from "../Components/MentorSidebar";
 import "./MentorDashboard.css";
 
 const stats = [
-  { title: "Assigned Students", value: "32", detail: "Across 4 societies", icon: Users },
-  { title: "Pending Reviews", value: "08", detail: "Awaiting evaluation", icon: ClipboardCheck },
-  { title: "Active Projects", value: "12", detail: "Currently in progress", icon: FolderKanban },
-  { title: "Attendance Rate", value: "94%", detail: "This month", icon: CalendarCheck },
+  {
+    title: "Assigned Students",
+    value: "03",
+    icon: Users,
+  },
+  {
+    title: "Pending Reviews",
+    value: "02",
+    icon: ClipboardCheck,
+  },
+  {
+    title: "Active Projects",
+    value: "01",
+    icon: FolderKanban,
+  },
 ];
 
 const students = [
-  { name: "Aarav Sharma", society: "Coding Club", progress: 85, status: "Excellent" },
-  { name: "Priya Verma", society: "AI & ML Society", progress: 72, status: "Good" },
-  { name: "Rohan Gupta", society: "Web Development", progress: 58, status: "In Progress" },
-  { name: "Ananya Singh", society: "Design Society", progress: 91, status: "Excellent" },
+  {
+    name: "Gargi Yadav",
+    initials: "GY",
+    society: "A Society",
+    progress: 85,
+    status: "On Track",
+  },
+  {
+    name: "priya Tiwari",
+    initials: "PV",
+    society: "A Society",
+    progress: 65,
+    status: "On Track",
+  },
+  {
+    name: "Aastha",
+    initials: "AS",
+    society: "A Society",
+    progress: 42,
+    status: "Needs Attention",
+  },
+];
+
+const schedule = [
+  {
+    time: "10:00 AM",
+    title: "Project Review",
+    student: "Gargi Yadav",
+    category: "Project Discussion",
+  },
+  {
+    time: "12:30 PM",
+    title: "Mentoring Session",
+    student: "Priya Tiwari",
+    category: "Career Guidance",
+  },
+  {
+    time: "03:00 PM",
+    title: "Progress Check-in",
+    student: "Aastha",
+    category: "Weekly Review",
+  },
 ];
 
 const reviews = [
-  { name: "Aarav Sharma", project: "Portfolio Website", type: "Project Review", date: "Today, 10:30 AM", status: "Pending" },
-  { name: "Priya Verma", project: "AI Chatbot", type: "Task Submission", date: "Yesterday", status: "Pending" },
-  { name: "Rohan Gupta", project: "E-commerce Application", type: "Project Review", date: "Yesterday", status: "In Review" },
+  {
+    title: "Portfolio Website",
+    student: "Gargi Yadav",
+    time: "2 hours ago",
+  },
+  {
+    title: "Database Management Project",
+    student: "Priya Tiwari",
+    time: "Yesterday",
+  },
+  {
+    title: "Mini Project Documentation",
+    student: "Aastha",
+    time: "Yesterday",
+  },
 ];
 
-const sessions = [
-  { time: "10:00 AM", title: "Student Progress Review", student: "Aarav Sharma" },
-  { time: "12:30 PM", title: "Project Discussion", student: "Priya Verma" },
-  { time: "03:00 PM", title: "Technical Guidance", student: "Rohan Gupta" },
+const quickActions = [
+  {
+    title: "Manage Students",
+    description: "View and manage assigned students",
+    icon: Users,
+    link: "/mentor/students",
+  },
+  {
+    title: "Review Submissions",
+    description: "Evaluate pending student work",
+    icon: ClipboardCheck,
+    link: "/mentor/tasks",
+  },
+  {
+    title: "Track Projects",
+    description: "Monitor ongoing projects",
+    icon: FolderKanban,
+    link: "/mentor/projects",
+  },
+  {
+    title: "View Attendance",
+    description: "Check student attendance records",
+    icon: CalendarDays,
+    link: "/mentor/attendance",
+  },
 ];
 
 function MentorDashboard() {
+  const mentorName = "Aastha Sharma";
   return (
-    <div className="mentor-page">
-      <div className="mentor-container">
-
-        {/* WELCOME */}
-        <section className="mentor-welcome">
-          <div>
-            <span className="mentor-eyebrow">YOUR MENTORING SPACE</span>
-            <h1>
-              Guide their journey.
-              <br />
-              <em>Inspire their growth.</em>
-            </h1>
-            <p>
-              Every student has potential waiting to be discovered.
-              Help them turn their ideas, skills and ambitions into
-              meaningful achievements.
+    <div className="mentor-dashboard">
+      <MentorSidebar />
+      <main className="mentor-main">
+        <header className="mentor-header">
+          <div className="mentor-header-text">
+            <h1>Mentor Dashboard</h1>
+            <p className="mentor-subtitle">
+              Welcome back, {mentorName}. Here's an overview of your students
+              and activities.
             </p>
-            <Link to="/mentor/students" className="mentor-primary-btn">
-              Explore Students <ArrowRight size={16} />
-            </Link>
           </div>
-
-          <div className="mentor-hero-image">
-            <img
-              src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1000&auto=format&fit=crop&q=85"
-              alt="Students collaborating"
-            />
-            <div className="mentor-floating-note">
-              <span>✳</span>
+          <div className="mentor-header-right">
+           <div className="mentor-header-user">
+              <div className="mentor-header-avatar">AM</div>
               <div>
-                <strong>Growth begins with guidance.</strong>
-                <small>Make every interaction count.</small>
+                <h3>{mentorName}</h3>
               </div>
             </div>
           </div>
-        </section>
-        <section className="mentor-stats-section">
-          <div className="mentor-section-heading">
-            <span className="mentor-eyebrow">YOUR OVERVIEW</span>
-            <h2>A little progress, every day.</h2>
+        </header>
+        <section className="mentor-welcome-banner">
+          <div className="mentor-welcome-text">
+            <span className="mentor-eyebrow">YOUR IMPACT MATTERS</span>
+            <h2>Guide. Inspire. Empower.</h2>
+            <p>
+              Every student has potential. Your guidance helps transform
+              that potential into meaningful achievements.
+            </p>
+            <a href="/mentor/students" className="mentor-primary-btn">
+              Explore Students
+            </a>
           </div>
-
-          <div className="mentor-stats-grid">
-            {stats.map((stat) => {
-              const Icon = stat.icon;
-
-              return (
-                <article className="mentor-stat-card" key={stat.title}>
+        </section>
+        <section className="mentor-stats-grid">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <article className="mentor-stat-card" key={stat.title}>
+                <div className="mentor-stat-top">
                   <div className="mentor-stat-icon">
-                    <Icon size={22} />
+                    <Icon size={21} />
                   </div>
-                  <p>{stat.title}</p>
-                  <h3>{stat.value}</h3>
-                  <span>{stat.detail}</span>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-        <section className="mentor-students-section">
-          <div className="mentor-section-heading">
-            <span className="mentor-eyebrow">STUDENT DEVELOPMENT</span>
-            <h2>Every achievement matters.</h2>
-            <p>Follow the progress of students assigned to you.</p>
-          </div>
-
-          <div className="mentor-student-grid">
-            {students.map((student, index) => (
-              <article className="mentor-student-card" key={student.name}>
-                <div className="mentor-student-top">
-                  <div className="mentor-avatar">
-                    {student.name.split(" ").map((part) => part[0]).join("")}
-                  </div>
-                  <span className="mentor-student-number">
-                    0{index + 1}
-                  </span>
                 </div>
-
-                <h3>{student.name}</h3>
-                <p>{student.society}</p>
-
-                <div className="mentor-progress-info">
-                  <span>Overall progress</span>
-                  <strong>{student.progress}%</strong>
-                </div>
-
-                <div className="mentor-progress-track">
-                  <div
-                    className="mentor-progress-fill"
-                    style={{ width: `${student.progress}%` }}
-                  />
-                </div>
-
-                <span className="mentor-performance">
-                  {student.status}
-                </span>
-
-                <Link to="/mentor/students" className="mentor-card-link">
-                  View Profile <ArrowRight size={15} />
-                </Link>
+                <h3>{stat.title}</h3>
+                <h2>{stat.value}</h2>
               </article>
-            ))}
-          </div>
+            );
+          })}
         </section>
-        <section className="mentor-feature-section">
-          <div className="mentor-feature-image">
-            <img
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&auto=format&fit=crop&q=85"
-              alt="Students working together"
-            />
-          </div>
+        <section className="mentor-middle-grid">
 
-          <div className="mentor-feature-content">
-            <span className="mentor-eyebrow mentor-light-eyebrow">
-              YOUR DAILY RESPONSIBILITIES
-            </span>
-            <h2>Small steps. Meaningful growth.</h2>
+          <div className="mentor-panel">
+            <div className="mentor-panel-heading">
+              <div>
+                <span className="mentor-section-label">
+                  STUDENT OVERVIEW
+                </span>
+                <h2>Student Progress</h2>
+              </div>
+              <a href="/mentor/students" className="mentor-view-all">
+                View all <ChevronRight size={16} />
+              </a>
+            </div>
+            <div className="mentor-student-list">
+              {students.map((student) => (
+                <div className="mentor-student-row" key={student.name}>
+                  <div className="mentor-student-avatar">
+                    {student.initials}
+                  </div>
 
-            <div className="mentor-feature-list">
-              <div>
-                <span>→</span>
-                <p><strong>Guide students</strong> through their learning and probation journey.</p>
-              </div>
-              <div>
-                <span>→</span>
-                <p><strong>Review projects</strong> and provide constructive feedback.</p>
-              </div>
-              <div>
-                <span>→</span>
-                <p><strong>Assign tasks</strong> that challenge and develop practical skills.</p>
-              </div>
-              <div>
-                <span>→</span>
-                <p><strong>Track performance</strong> and encourage consistent improvement.</p>
-              </div>
+                  <div className="mentor-student-details">
+                    <h3>{student.name}</h3>
+                    <p>{student.society}</p>
+
+                    <div className="mentor-progress-track">
+                      <div
+                        className="mentor-progress-fill"
+                        style={{ width: `${student.progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="mentor-student-result">
+                    <strong>{student.progress}%</strong>
+                    <span
+                      className={
+                        student.status === "On Track"
+                          ? "mentor-status on-track"
+                          : "mentor-status needs-attention"
+                      }
+                    >
+                      {student.status === "On Track" ? (
+                        <CheckCircle2 size={13} />
+                      ) : (
+                        <CircleAlert size={13} />
+                      )}
+                      {student.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </section>
-        <section className="mentor-work-section">
-          <div className="mentor-section-heading">
-            <span className="mentor-eyebrow">YOUR WORKSPACE</span>
-            <h2>Stay connected. Stay organized.</h2>
-          </div>
-
-          <div className="mentor-work-grid">
-
-            <div className="mentor-work-card">
-              <div className="mentor-work-heading">
-                <div>
-                  <h3>Pending Reviews</h3>
-                  <p>Submissions awaiting your feedback</p>
-                </div>
-                <ClipboardCheck size={22} />
+          <div className="mentor-panel mentor-schedule-panel">
+            <div className="mentor-panel-heading">
+              <div>
+                <span className="mentor-section-label">
+                  YOUR CALENDAR
+                </span>
+                <h2>Today's Schedule</h2>
               </div>
 
+              <CalendarDays
+                size={22}
+                className="mentor-heading-icon"
+              />
+            </div>
+
+            <div className="mentor-schedule-list">
+              {schedule.map((item) => (
+                <div className="mentor-schedule-item" key={item.time}>
+                  <div className="mentor-schedule-time">
+                    <Clock size={14} />
+                    <span>{item.time}</span>
+                  </div>
+
+                  <div className="mentor-schedule-details">
+                    <h3>{item.title}</h3>
+                    <p>{item.student}</p>
+                    <span>{item.category}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <a href="/mentor/attendance" className="mentor-schedule-link">
+              View full schedule <ArrowUpRight size={16} />
+            </a>
+          </div>
+        </section>
+
+        <section className="mentor-bottom-grid">
+          <div className="mentor-panel mentor-reviews-panel">
+            <div className="mentor-panel-heading">
+              <div>
+                <span className="mentor-section-label">
+                  ACTION REQUIRED
+                </span>
+                <h2>Pending Reviews</h2>
+              </div>
+
+              <span className="mentor-review-badge">03 NEW</span>
+            </div>
+            <div className="mentor-review-list">
               {reviews.map((review) => (
-                <div className="mentor-review-item" key={review.name}>
+                <div className="mentor-review-item" key={review.title}>
                   <div className="mentor-review-icon">
-                    <FolderKanban size={19} />
+                    <BookOpen size={20} />
                   </div>
-
                   <div className="mentor-review-details">
-                    <strong>{review.project}</strong>
-                    <span>{review.name} · {review.type}</span>
-                    <small>{review.date}</small>
+                    <h3>{review.title}</h3>
+                    <p>{review.student}</p>
+                    <span>{review.time}</span>
                   </div>
-
-                  <span className="mentor-review-status">
-                    {review.status}
-                  </span>
+                  <a
+                    href="/mentor/tasks"
+                    className="mentor-review-action"
+                    aria-label={`Review ${review.title}`}
+                  >
+                    <ArrowUpRight size={18} />
+                  </a>
                 </div>
               ))}
-
-              <Link to="/mentor/projects" className="mentor-bottom-link">
-                Review All Submissions <ArrowRight size={15} />
-              </Link>
             </div>
-
-            <div className="mentor-work-card">
-              <div className="mentor-work-heading">
-                <div>
-                  <h3>Today's Schedule</h3>
-                  <p>Your upcoming mentoring sessions</p>
-                </div>
-                <Clock3 size={22} />
+            <a href="/mentor/tasks" className="mentor-all-reviews">
+              View all submissions <ChevronRight size={16} />
+            </a>
+          </div>
+          <div className="mentor-panel mentor-quick-panel">
+            <div className="mentor-panel-heading">
+              <div>
+                <span className="mentor-section-label">
+                  GET THINGS DONE
+                </span>
+                <h2>Quick Actions</h2>
               </div>
+            </div>
+            <div className="mentor-quick-list">
+              {quickActions.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <a
+                    href={action.link}
+                    className="mentor-quick-action"
+                    key={action.title}
+                  >
+                    <div className="mentor-quick-icon">
+                      <Icon size={20} />
+                    </div>
 
-              {sessions.map((session) => (
-                <div className="mentor-session-item" key={session.time}>
-                  <span className="mentor-session-time">
-                    {session.time}
-                  </span>
-                  <div>
-                    <strong>{session.title}</strong>
-                    <p>{session.student}</p>
-                  </div>
-                </div>
-              ))}
+                    <div className="mentor-quick-details">
+                      <h3>{action.title}</h3>
+                      <p>{action.description}</p>
+                    </div>
 
-              <Link to="/mentor/students" className="mentor-bottom-link">
-                View Schedule <ArrowRight size={15} />
-              </Link>
+                    <ChevronRight
+                      size={18}
+                      className="mentor-quick-arrow"
+                    />
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>
-
-        {/* QUICK ACTIONS */}
-        <section className="mentor-quick-section">
-          <div className="mentor-section-heading">
-            <span className="mentor-eyebrow">TAKE ACTION</span>
-            <h2>What would you like to do today?</h2>
-          </div>
-
-          <div className="mentor-action-grid">
-            <Link to="/mentor/tasks" className="mentor-action-card">
-              <ClipboardCheck size={24} />
-              <h3>Assign a Task</h3>
-              <p>Create practical tasks for your students.</p>
-              <ArrowUpRight size={18} />
-            </Link>
-
-            <Link to="/mentor/projects" className="mentor-action-card">
-              <FolderKanban size={24} />
-              <h3>Review Projects</h3>
-              <p>Evaluate submissions and share feedback.</p>
-              <ArrowUpRight size={18} />
-            </Link>
-
-            <Link to="/mentor/attendance" className="mentor-action-card">
-              <CalendarCheck size={24} />
-              <h3>Mark Attendance</h3>
-              <p>Maintain student attendance records.</p>
-              <ArrowUpRight size={18} />
-            </Link>
-
-            <Link to="/mentor/feedback" className="mentor-action-card">
-              <MessageCircle size={24} />
-              <h3>Give Feedback</h3>
-              <p>Help students identify their strengths.</p>
-              <ArrowUpRight size={18} />
-            </Link>
-          </div>
-        </section>
-        <section className="mentor-closing-section">
-          <span className="mentor-eyebrow mentor-light-eyebrow">
-            THE IMPACT OF MENTORSHIP
-          </span>
-          <h2>
-            Great mentors don't just teach.
-            <br />
-            They help others <em>believe.</em>
-          </h2>
-          <p>
-            Every suggestion, every review and every opportunity
-            to learn can make a difference.
-          </p>
-        </section>
-
         <footer className="mentor-footer">
-          <strong>Society<span>Select</span> AI</strong>
-          <p>Guiding potential. Inspiring possibilities.</p>
-          <small>© 2026 SocietySelect. All rights reserved.</small>
+          <p>© 2026 SocietySelect. All rights reserved.</p>
+          <p>Empowering student growth, one step at a time.</p>
         </footer>
 
-      </div>
+      </main>
     </div>
   );
 }
