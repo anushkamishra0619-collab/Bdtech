@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import LandingPage from "./LandingPage";
+import LandingPage from "./LandingPage.jsx";
 import Welcome from "./Components/welcome.jsx";
 import ForgotPassword from "./Components/ForgotPassword.jsx";
 
@@ -9,8 +9,15 @@ function App() {
     const path = window.location.pathname;
     const hash = window.location.hash;
 
-    if (path === "/login" || hash === "#login") return "login";
-    if (path === "/forgot" || hash === "#forgot") return "forgot";
+    if (hash === "#forgot" || path === "/forgot") return "forgot";
+    if (hash === "#login" || path === "/login") return "login";
+    if (
+      hash === "#register" ||
+      hash === "#signup" ||
+      path === "/register"
+    ) {
+      return "register";
+    }
 
     return "landing";
   };
@@ -30,6 +37,7 @@ function App() {
   }, []);
 
   if (route === "login") return <Welcome />;
+  if (route === "register") return <Welcome initialMode="signup" />;
   if (route === "forgot") return <ForgotPassword />;
 
   return <LandingPage />;

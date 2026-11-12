@@ -1,10 +1,10 @@
 
 import { useState } from "react";
-import { FaGoogle, FaLinkedinIn, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaGoogle, FaLinkedinIn, FaTimes } from "react-icons/fa";
 import "./welcome.css";
 
-export default function LoginPage() {
-  const [isSignup, setIsSignup] = useState(false);
+export default function LoginPage({ initialMode = "login" }) {
+  const [isSignup, setIsSignup] = useState(initialMode === "signup");
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [loginRole, setLoginRole] = useState("Student");
   const [signupRole, setSignupRole] = useState("Student");
@@ -28,6 +28,11 @@ export default function LoginPage() {
 
   return (
     <div className={`auth-page ${isSignup ? "signup-active" : ""}`}>
+      <a href="/" className="auth-home-link">
+        <FaArrowLeft aria-hidden="true" />
+        Back to Home
+      </a>
+
       <div className={`auth-container ${isSignup ? "active" : ""}`}>
 
         {/* LOGIN FORM */}
