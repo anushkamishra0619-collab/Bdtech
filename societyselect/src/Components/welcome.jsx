@@ -17,12 +17,23 @@ export default function LoginPage({ initialMode = "login" }) {
       return;
     }
 
+    if (loginRole === "Mentor") {
+      window.location.assign("/mentor");
+      return;
+    }
+
     alert(`Login submitted as ${loginRole}!`);
   };
 
   const handleProfileSubmit = (e) => {
     e.preventDefault();
     setShowProfileForm(false);
+
+    if (signupRole === "Mentor") {
+      window.location.assign("/mentor");
+      return;
+    }
+
     alert(`Account creation submitted as ${signupRole}!`);
   };
 
