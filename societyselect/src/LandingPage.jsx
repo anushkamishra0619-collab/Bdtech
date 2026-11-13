@@ -1,4 +1,5 @@
 import DirectionHover from "./Components/DirectionHover";
+
 const steps = [
   {
     number: "01",
@@ -54,6 +55,7 @@ function LandingPage() {
             Get Started
           </a>
         </header>
+
         <section className="hero-section" id="home">
           <div className="hero-circle-wrapper" aria-hidden="true">
             <div className="hero-circle-dome"></div>
@@ -64,7 +66,6 @@ function LandingPage() {
             </div>
           </div>
           <div className="hero-content">
-
             <h1 className="animate-hero-title hero-heading">
               <DirectionHover title="Beyond Marks." />
               <br />
@@ -92,7 +93,7 @@ function LandingPage() {
             societies together to make recruitment more meaningful,
             transparent, and focused on real-world abilities.
           </p>
-          <br></br>
+          <br />
           <div className="steps-grid">
             {steps.map((step) => (
               <article className="step-card" key={step.number}>
@@ -111,33 +112,34 @@ function LandingPage() {
               alt="Student working on a development project"
             />
           </div>
-          <BorderBeam size={180} duration={9} thickness={2}>
+
+          <div className="feature-beam-wrapper">
             <div className="feature-card">
               <div className="feature-content">
-            <span className="eyebrow light-eyebrow">
-              WHAT MAKES US DIFFERENT
-            </span>
-            <h2>
-              A better way to
-              <br />
-              discover potential.
-            </h2>
-            <div className="feature-list">
-              {features.map((feature, index) => (
-                <div className="feature-item" key={feature.title}>
-                  <span className="feature-arrow">→</span>
-                  <div>
-                    <h3>{feature.title}</h3>
-                    <p>{feature.description}</p>
-                  </div>
+                <span className="eyebrow light-eyebrow">
+                  WHAT MAKES US DIFFERENT
+                </span>
+                <h2>
+                  A better way to
+                  <br />
+                  discover potential.
+                </h2>
+                <div className="feature-list">
+                  {features.map((feature) => (
+                    <div className="feature-item" key={feature.title}>
+                      <span className="feature-arrow">→</span>
+                      <div>
+                        <h3>{feature.title}</h3>
+                        <p>{feature.description}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
-            </div>
-          </BorderBeam>
-          
         </section>
+
         <section className="quote-section">
           <span className="eyebrow">OUR PHILOSOPHY</span>
           <h2>
@@ -173,6 +175,7 @@ function LandingPage() {
             />
           </div>
         </section>
+
         <section className="final-cta">
           <span className="eyebrow light-eyebrow">
             YOUR NEXT CHAPTER STARTS NOW
@@ -189,6 +192,7 @@ function LandingPage() {
             Get Started Today
           </a>
         </section>
+
         <footer className="landing-footer">
           <a href="/" className="brand">
             Society<span>Select</span>
@@ -208,4 +212,5 @@ function LandingPage() {
     </div>
   );
 }
+
 export default LandingPage;
