@@ -213,35 +213,6 @@ a {
   opacity: 0.6;
 }
 
-.orbit-node {
-  position: absolute;
-  border-radius: 50%;
-  background: #6ba9bc;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 10px rgba(107, 169, 188, 0.7);
-}
-
-.orbit-node.node-1 {
-  width: 10px;
-  height: 10px;
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.orbit-node.node-2 {
-  width: 8px;
-  height: 8px;
-  top: 78%;
-  right: 7%;
-}
-
-.orbit-node.node-3 {
-  width: 7px;
-  height: 7px;
-  top: 65%;
-  left: 4%;
-}
 
 .hero-content {
   display: flex;
@@ -768,5 +739,19 @@ a {
   .footer-links {
     gap: 15px;
   }
+}
+
+.hero-heading {
+  font-size: clamp(36px, 5vw, 70px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+}
+
+.direction-hover-inner > span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
