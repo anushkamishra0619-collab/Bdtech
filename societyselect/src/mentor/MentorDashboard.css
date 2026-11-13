@@ -1,0 +1,763 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Roboto:wght@300;400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.mentor-dashboard {
+  min-height: 100vh;
+  background: #f5f9fb;
+  font-family: 'Roboto', sans-serif;
+  color: #345563;
+}
+
+/* Main Content */
+
+.mentor-main {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+  min-height: 100vh;
+  padding: 32px 38px;
+}
+
+/* Header */
+
+.mentor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.mentor-breadcrumb {
+  color: #91aab5;
+  font-size: 12px;
+  margin: 0 0 10px;
+}
+
+.mentor-breadcrumb span {
+  padding: 0 6px;
+  color: #b7cbd3;
+}
+
+.mentor-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: #294b59;
+  margin: 0 0 8px;
+}
+
+.mentor-subtitle {
+  font-size: 13px;
+  color: #829ba6;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.mentor-header-right {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.mentor-notification-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #e3edf1;
+  border-radius: 12px;
+  background: #fff;
+  color: #557c8b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 7px;
+  height: 7px;
+  background: #e68c8c;
+  border: 1px solid white;
+  border-radius: 50%;
+}
+
+.mentor-header-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mentor-header-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #b7d6e4;
+  color: #315c6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.mentor-header-user h3 {
+  font-size: 12px;
+  margin: 0 0 4px;
+  color: #345563;
+}
+
+.mentor-header-user p {
+  font-size: 10px;
+  margin: 0;
+  color: #91aab5;
+}
+
+/* Welcome Banner */
+
+.mentor-welcome-banner {
+  background: #b7d6e4;
+  border-radius: 20px;
+  min-height: 225px;
+  padding: 35px 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 27px;
+}
+
+.mentor-welcome-text {
+  max-width: 570px;
+  position: relative;
+  z-index: 2;
+}
+
+.mentor-eyebrow {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  font-weight: 700;
+  color: #527d8c;
+}
+
+.mentor-welcome-text h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: #294b59;
+  margin: 13px 0 10px;
+}
+
+.mentor-welcome-text p {
+  max-width: 460px;
+  color: #527582;
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 0 0 22px;
+}
+
+.mentor-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: #ffffff;
+  color: #315c6b;
+  text-decoration: none;
+  padding: 11px 17px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+.mentor-primary-btn:hover {
+  background: #315c6b;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.mentor-welcome-illustration {
+  width: 230px;
+  height: 170px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.mentor-illustration-circle {
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.42);
+  color: #527d8c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mentor-floating-card {
+  position: absolute;
+  bottom: 3px;
+  right: -4px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #527d8c;
+  box-shadow: 0 8px 25px rgba(64, 103, 119, 0.1);
+}
+
+.mentor-floating-card strong {
+  display: block;
+  font-size: 10px;
+  color: #345563;
+}
+
+.mentor-floating-card span {
+  display: block;
+  font-size: 9px;
+  color: #91aab5;
+  margin-top: 4px;
+}
+
+/* Statistics */
+
+.mentor-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 17px;
+  margin-bottom: 27px;
+}
+
+.mentor-stat-card {
+  background: #fff;
+  border: 1px solid #e9f0f3;
+  border-radius: 15px;
+  padding: 19px;
+  transition: 0.25s ease;
+}
+
+.mentor-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(70, 109, 125, 0.07);
+}
+
+.mentor-stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 17px;
+}
+
+.mentor-stat-icon {
+  width: 41px;
+  height: 41px;
+  background: #edf5f8;
+  color: #5d8c9d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.mentor-stat-arrow {
+  color: #9bb5bf;
+}
+
+.mentor-stat-card h3 {
+  font-size: 11px;
+  color: #819aa5;
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+
+.mentor-stat-card h2 {
+  font-size: 27px;
+  color: #294b59;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.mentor-stat-card p {
+  font-size: 10px;
+  color: #a1b3bb;
+  margin: 0;
+}
+
+/* Panels */
+
+.mentor-middle-grid,
+.mentor-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.mentor-panel {
+  background: #fff;
+  border: 1px solid #e9f0f3;
+  border-radius: 16px;
+  padding: 23px;
+  min-width: 0;
+}
+
+.mentor-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.mentor-section-label {
+  font-size: 9px;
+  letter-spacing: 1.8px;
+  color: #8baab6;
+  font-weight: 700;
+}
+
+.mentor-panel-heading h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 21px;
+  color: #345563;
+  margin: 7px 0 0;
+}
+
+.mentor-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #6794a3;
+  font-size: 11px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.mentor-view-all:hover,
+.mentor-schedule-link:hover,
+.mentor-all-reviews:hover {
+  color: #315c6b;
+}
+
+/* Student Progress */
+
+.mentor-student-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mentor-student-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid #eff3f5;
+}
+
+.mentor-student-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.mentor-student-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #e5f0f4;
+  color: #527d8c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mentor-student-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.mentor-student-details h3 {
+  font-size: 12px;
+  color: #345563;
+  margin: 0 0 5px;
+}
+
+.mentor-student-details p {
+  font-size: 10px;
+  color: #91aab5;
+  margin: 0 0 9px;
+}
+
+.mentor-progress-track {
+  height: 5px;
+  width: 100%;
+  border-radius: 10px;
+  background: #edf3f5;
+  overflow: hidden;
+}
+
+.mentor-progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  background: #73aabd;
+}
+
+.mentor-student-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  min-width: 95px;
+}
+
+.mentor-student-result strong {
+  font-size: 13px;
+  color: #345563;
+}
+
+.mentor-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.mentor-status.on-track {
+  color: #6b9d89;
+}
+
+.mentor-status.needs-attention {
+  color: #c28e72;
+}
+
+/* Schedule */
+
+.mentor-heading-icon {
+  color: #73aabd;
+}
+
+.mentor-schedule-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mentor-schedule-item {
+  display: flex;
+  gap: 13px;
+  padding: 14px 0;
+  border-bottom: 1px solid #eff3f5;
+}
+
+.mentor-schedule-item:first-child {
+  padding-top: 0;
+}
+
+.mentor-schedule-time {
+  min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #6b96a5;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.mentor-schedule-details h3 {
+  font-size: 12px;
+  color: #345563;
+  margin: 0 0 5px;
+}
+
+.mentor-schedule-details p {
+  font-size: 10px;
+  color: #829ba6;
+  margin: 0 0 5px;
+}
+
+.mentor-schedule-details span {
+  font-size: 9px;
+  color: #a0b3bb;
+}
+
+.mentor-schedule-link,
+.mentor-all-reviews {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #6794a3;
+  text-decoration: none;
+  font-size: 11px;
+  margin-top: 17px;
+}
+
+/* Pending Reviews */
+
+.mentor-review-badge {
+  background: #edf5f8;
+  color: #6794a3;
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+}
+
+.mentor-review-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid #eff3f5;
+}
+
+.mentor-review-item:first-child {
+  padding-top: 0;
+}
+
+.mentor-review-icon {
+  width: 39px;
+  height: 39px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  background: #edf5f8;
+  color: #6794a3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mentor-review-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.mentor-review-details h3 {
+  font-size: 11px;
+  color: #345563;
+  margin: 0 0 5px;
+}
+
+.mentor-review-details p {
+  font-size: 10px;
+  color: #819aa5;
+  margin: 0 0 5px;
+}
+
+.mentor-review-details span {
+  font-size: 9px;
+  color: #a3b5bd;
+}
+
+.mentor-review-action {
+  width: 31px;
+  height: 31px;
+  border-radius: 9px;
+  background: #f1f7f9;
+  color: #6794a3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.mentor-review-action:hover {
+  background: #b7d6e4;
+  color: #315c6b;
+}
+
+/* Quick Actions */
+
+.mentor-quick-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mentor-quick-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  text-decoration: none;
+  border-bottom: 1px solid #eff3f5;
+}
+
+.mentor-quick-action:first-child {
+  padding-top: 0;
+}
+
+.mentor-quick-action:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.mentor-quick-icon {
+  width: 39px;
+  height: 39px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  background: #edf5f8;
+  color: #6794a3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.mentor-quick-action:hover .mentor-quick-icon {
+  background: #b7d6e4;
+  color: #315c6b;
+}
+
+.mentor-quick-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.mentor-quick-details h3 {
+  color: #345563;
+  font-size: 11px;
+  margin: 0 0 5px;
+}
+
+.mentor-quick-details p {
+  color: #9aadb6;
+  font-size: 9px;
+  margin: 0;
+}
+
+.mentor-quick-arrow {
+  color: #a1b8c1;
+}
+
+/* Footer */
+
+.mentor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 20px 0 5px;
+  border-top: 1px solid #e8eff2;
+  color: #9aadb6;
+  font-size: 10px;
+}
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+  .mentor-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mentor-middle-grid,
+  .mentor-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .mentor-main {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+    padding: 24px 18px;
+  }
+
+  .mentor-header {
+    align-items: flex-start;
+  }
+
+  .mentor-header-user {
+    display: none;
+  }
+
+  .mentor-welcome-banner {
+    padding: 28px;
+  }
+
+  .mentor-welcome-illustration {
+    width: 150px;
+  }
+}
+
+@media (max-width: 600px) {
+  .mentor-main {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+    padding: 18px 12px;
+  }
+
+  .mentor-header h1 {
+    font-size: 24px;
+  }
+
+  .mentor-subtitle {
+    font-size: 11px;
+  }
+
+  .mentor-welcome-banner {
+    padding: 24px 20px;
+  }
+
+  .mentor-welcome-text h2 {
+    font-size: 25px;
+  }
+
+  .mentor-welcome-text p {
+    font-size: 11px;
+  }
+
+  .mentor-welcome-illustration {
+    display: none;
+  }
+
+  .mentor-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .mentor-stat-card {
+    padding: 14px;
+  }
+
+  .mentor-stat-card h2 {
+    font-size: 23px;
+  }
+
+  .mentor-panel {
+    padding: 17px;
+  }
+
+  .mentor-panel-heading h2 {
+    font-size: 18px;
+  }
+
+  .mentor-student-row {
+    gap: 8px;
+  }
+
+  .mentor-student-result {
+    min-width: 75px;
+  }
+
+  .mentor-status {
+    font-size: 8px;
+  }
+
+  .mentor-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

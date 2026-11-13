@@ -1,7 +1,6 @@
 
 /* =================================
    GLOBAL RESET - SOCIETYSELECT AI
-================================= */
 
 * {
   margin: 0;
@@ -26,6 +25,25 @@ body {
   font-family: "Inter", "Segoe UI", sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+:root {
+  font-family: "Poppins", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  color: #fff;
+  background: #212226;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
 }
 
 #root {
@@ -53,3 +71,5 @@ img {
   max-width: 100%;
   display: block;
 }
+}
+
