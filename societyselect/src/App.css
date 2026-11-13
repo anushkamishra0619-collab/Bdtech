@@ -213,35 +213,6 @@ a {
   opacity: 0.6;
 }
 
-.orbit-node {
-  position: absolute;
-  border-radius: 50%;
-  background: #6ba9bc;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 10px rgba(107, 169, 188, 0.7);
-}
-
-.orbit-node.node-1 {
-  width: 10px;
-  height: 10px;
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.orbit-node.node-2 {
-  width: 8px;
-  height: 8px;
-  top: 78%;
-  right: 7%;
-}
-
-.orbit-node.node-3 {
-  width: 7px;
-  height: 7px;
-  top: 65%;
-  left: 4%;
-}
 
 .hero-content {
   display: flex;
@@ -770,3 +741,72 @@ a {
   }
 }
 
+.hero-heading {
+  font-size: clamp(36px, 5vw, 70px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+}
+
+.direction-hover-inner > span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+
+
+/* Animated border beam around the feature card */
+.feature-beam-wrapper {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: 2px;
+}
+
+.feature-beam-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: -150%;
+  z-index: -2;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 285deg,
+    #eafaff 320deg,
+    #ffffff 335deg,
+    #6ba9bc 350deg,
+    transparent 360deg
+  );
+  animation: featureBeamRotate 5s linear infinite;
+}
+
+.feature-beam-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  z-index: -1;
+  border-radius: 26px;
+  background: #73aabd;
+}
+
+.feature-card {
+  position: relative;
+  border-radius: 26px;
+  background: #73aabd;
+  padding: 26px;
+}
+
+@keyframes featureBeamRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-beam-wrapper::before {
+    animation: none;
+  }
+}

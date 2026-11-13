@@ -1,15 +1,12 @@
-
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 
-// Main pages
 import LandingPage from "./LandingPage.jsx";
 import Welcome from "./Components/welcome.jsx";
 import ForgotPassword from "./Components/ForgotPassword.jsx";
 import MentorDashboard from "./mentor/MentorDashboard";
 
-// Student pages
 import AIRecommendations from "./pages/student/AIRecommendations";
 import ApplicationTracking from "./pages/student/ApplicationTracking";
 import AttendanceCalendar from "./pages/student/AttendanceCalendar";
@@ -31,13 +28,18 @@ import StudentSettings from "./pages/student/StudentSettings";
 
 function LegacyPages() {
   const getRoute = () => {
-    const hash = window.location.hash;
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
 
-    if (hash === "#login") return "login";
-    if (hash === "#forgot") return "forgot";
-    if (hash === "#mentor") return "mentor";
-
-    if (hash === "#register" || hash === "#signup") {
+    if (path === "/login" || hash === "#login") return "login";
+    if (path === "/forgot" || hash === "#forgot") return "forgot";
+    if (path === "/mentor" || hash === "#mentor") return "mentor";
+    if (
+      path === "/register" ||
+      path === "/signup" ||
+      hash === "#register" ||
+      hash === "#signup"
+    ) {
       return "register";
     }
 
@@ -52,16 +54,16 @@ function LegacyPages() {
     };
 
     window.addEventListener("hashchange", handleLocationChange);
+    window.addEventListener("popstate", handleLocationChange);
 
     return () => {
       window.removeEventListener("hashchange", handleLocationChange);
+      window.removeEventListener("popstate", handleLocationChange);
     };
   }, []);
 
   if (route === "login") return <Welcome />;
-  if (route === "register") {
-    return <Welcome initialMode="signup" />;
-  }
+  if (route === "register") return <Welcome initialMode="signup" />;
   if (route === "forgot") return <ForgotPassword />;
   if (route === "mentor") return <MentorDashboard />;
 
@@ -74,10 +76,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LegacyPages />} />
         <Route path="/login" element={<Welcome />} />
-        <Route
-          path="/register"
-          element={<Welcome initialMode="signup" />}
-        />
+        <Route path="/register" element={<Welcome initialMode="signup" />} />
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/mentor" element={<MentorDashboard />} />
 

@@ -1,37 +1,39 @@
+import DirectionHover from "./Components/DirectionHover";
+
 const steps = [
   {
     number: "01",
     title: "Discover Opportunities",
-    description:"Explore college societies, discover recruitment drives, and find communities that match your interests and skills.",
+    description: "Explore college societies, discover recruitment drives, and find communities that match your interests and skills.",
   },
   {
     number: "02",
     title: "Show Your Potential",
-    description:"Apply, attempt skill-based assessments, showcase your projects, and demonstrate what you can actually build.",
+    description: "Apply, attempt skill-based assessments, showcase your projects, and demonstrate what you can actually build.",
   },
   {
     number: "03",
     title: "Grow & Get Selected",
-    description:"Complete practical challenges, receive mentor feedback, track your progress, and earn your place.",
+    description: "Complete practical challenges, receive mentor feedback, track your progress, and earn your place.",
   },
 ];
 
 const features = [
   {
     title: "Skill-Based Recruitment",
-    description:"Go beyond academic scores with practical assessments that highlight technical knowledge, creativity, and problem-solving.",
+    description: "Go beyond academic scores with practical assessments that highlight technical knowledge, creativity, and problem-solving.",
   },
   {
     title: "AI-Powered Insights",
-    description:"Understand your strengths and areas for improvement through AI-assisted analysis backed by real performance evidence.",
+    description: "Understand your strengths and areas for improvement through AI-assisted analysis backed by real performance evidence.",
   },
   {
     title: "Continuous Growth",
-    description:"Track projects, deadlines, GitHub contributions, and mentor feedback throughout your recruitment journey.",
+    description: "Track projects, deadlines, GitHub contributions, and mentor feedback throughout your recruitment journey.",
   },
   {
     title: "Transparent Selection",
-    description:"Understand how your performance is evaluated through structured criteria and transparent scoring.",
+    description: "Understand how your performance is evaluated through structured criteria and transparent scoring.",
   },
 ];
 
@@ -53,6 +55,7 @@ function LandingPage() {
             Get Started
           </a>
         </header>
+
         <section className="hero-section" id="home">
           <div className="hero-circle-wrapper" aria-hidden="true">
             <div className="hero-circle-dome"></div>
@@ -63,13 +66,14 @@ function LandingPage() {
             </div>
           </div>
           <div className="hero-content">
-            <h1>
-              Beyond Marks.
+            <h1 className="animate-hero-title hero-heading">
+              <DirectionHover title="Beyond Marks." />
               <br />
-              Beyond Interviews.
+              <DirectionHover title="Beyond Interviews." />
               <br />
-              Discover Real Potential.
+              <DirectionHover title="Discover Real Potential." />
             </h1>
+
             <a href="/register" className="primary-button">
               Begin Your Journey
             </a>
@@ -78,18 +82,18 @@ function LandingPage() {
 
         <section className="intro-section" id="how-it-works">
           <span className="eyebrow">YOUR JOURNEY STARTS HERE</span>
-          <h2>
-            <br/>
-            Your talent is more than
+          <h2 className="hero-heading">
             <br />
-            what's written on paper.
+            <DirectionHover title="Your talent is more than" />
+            <br />
+            <DirectionHover title="what's written on paper." />
           </h2>
           <p className="intro-description">
             SocietySelect brings students, mentors, and college
             societies together to make recruitment more meaningful,
             transparent, and focused on real-world abilities.
           </p>
-          <br></br>
+          <br />
           <div className="steps-grid">
             {steps.map((step) => (
               <article className="step-card" key={step.number}>
@@ -109,36 +113,41 @@ function LandingPage() {
             />
           </div>
 
-          <div className="feature-content">
-            <span className="eyebrow light-eyebrow">
-              WHAT MAKES US DIFFERENT
-            </span>
-            <h2>
-              A better way to
-              <br />
-              discover potential.
-            </h2>
-            <div className="feature-list">
-              {features.map((feature, index) => (
-                <div className="feature-item" key={feature.title}>
-                  <span className="feature-arrow">→</span>
-                  <div>
-                    <h3>{feature.title}</h3>
-                    <p>{feature.description}</p>
-                  </div>
+          <div className="feature-beam-wrapper">
+            <div className="feature-card">
+              <div className="feature-content">
+                <span className="eyebrow light-eyebrow">
+                  WHAT MAKES US DIFFERENT
+                </span>
+                <h2>
+                  A better way to
+                  <br />
+                  discover potential.
+                </h2>
+                <div className="feature-list">
+                  {features.map((feature) => (
+                    <div className="feature-item" key={feature.title}>
+                      <span className="feature-arrow">→</span>
+                      <div>
+                        <h3>{feature.title}</h3>
+                        <p>{feature.description}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>
+
         <section className="quote-section">
           <span className="eyebrow">OUR PHILOSOPHY</span>
           <h2>
-            <br/>
+            <br />
             Great potential cannot always
             <br />
             be measured by marks alone.
-          </h2> 
+          </h2>
         </section>
 
         <section className="about-section" id="about">
@@ -166,6 +175,7 @@ function LandingPage() {
             />
           </div>
         </section>
+
         <section className="final-cta">
           <span className="eyebrow light-eyebrow">
             YOUR NEXT CHAPTER STARTS NOW
@@ -182,6 +192,7 @@ function LandingPage() {
             Get Started Today
           </a>
         </section>
+
         <footer className="landing-footer">
           <a href="/" className="brand">
             Society<span>Select</span>
@@ -201,4 +212,5 @@ function LandingPage() {
     </div>
   );
 }
+
 export default LandingPage;
