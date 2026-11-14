@@ -405,7 +405,7 @@ export default function LoginPage({ initialMode = "login" }) {
       return;
     }
 
-    const redirectUri = window.location.origin + window.location.pathname;
+    const redirectUri = new URL("/login", window.location.origin).toString();
     const nonce = Math.random().toString(36).substring(2) + Date.now();
 
     // prompt=select_account forces Google to open the account chooser page every time
