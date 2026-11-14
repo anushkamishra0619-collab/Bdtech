@@ -1,18 +1,18 @@
+
 import { useEffect, useState } from "react";
 import "./App.css";
 
 import LandingPage from "./LandingPage.jsx";
 import Welcome from "./Components/welcome.jsx";
 import ForgotPassword from "./Components/ForgotPassword.jsx";
-import CreateProject from "./Components/createproject.jsx";
+
 import MentorDashboard from "./mentor/MentorDashboard";
-import StudentDashboard from "./pages/student/StudentDashboard.jsx";
+import AssignedStudents from "./mentor/AssignedStudents";
 
 function App() {
   const getRoute = () => {
     const path = window.location.pathname;
     const hash = window.location.hash;
-
     if (path === "/login" || hash === "#login") return "login";
     if (path === "/forgot" || hash === "#forgot") return "forgot";
     if (path === "/mentor" || hash === "#mentor") return "mentor";
@@ -33,7 +33,9 @@ function App() {
   const [route, setRoute] = useState(getRoute);
 
   useEffect(() => {
-    const handleLocationChange = () => setRoute(getRoute());
+    const handleLocationChange = () => {
+      setRoute(getRoute());
+    };
 
     window.addEventListener("hashchange", handleLocationChange);
     window.addEventListener("popstate", handleLocationChange);
@@ -45,7 +47,11 @@ function App() {
   }, []);
 
   if (route === "login") return <Welcome />;
-  if (route === "register") return <Welcome initialMode="signup" />;
+
+  if (route === "register") {
+    return <Welcome initialMode="signup" />;
+  }
+
   if (route === "forgot") return <ForgotPassword />;
   if (route === "createproject") return <CreateProject />;
   if (route === "mentor") return <MentorDashboard />;
