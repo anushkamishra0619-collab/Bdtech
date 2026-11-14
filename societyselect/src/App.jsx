@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import AIRecommendations from "./pages/student/AIRecommendations";
 import ApplicationTracking from "./pages/student/ApplicationTracking";
@@ -10,6 +10,7 @@ import GitHubAnalytics from "./pages/student/GitHubAnalytics";
 import InterviewDetails from "./pages/student/InterviewDetails";
 import LandingPage from "./LandingPage.jsx";
 import LeaveRequest from "./pages/student/LeaveRequest";
+import AssignedStudents from "./mentor/AssignedStudents";
 import MentorDashboard from "./mentor/MentorDashboard";
 import MyAttendance from "./pages/student/MyAttendance";
 import MyPerformance from "./pages/student/MyPerformance";
@@ -18,13 +19,14 @@ import Notifications from "./pages/student/Notifications";
 import OnlineExamination from "./pages/student/OnlineExamination";
 import ProbationDashboard from "./pages/student/ProbationDashboard";
 import ProjectSubmission from "./pages/student/ProjectSubmission";
+import CreateProject from "./Components/createproject.jsx";
 import SocietyApplication from "./pages/student/SocietyApplication";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentProfile from "./pages/student/StudentProfile";
 import StudentSettings from "./pages/student/StudentSettings";
 import Welcome from "./Components/welcome.jsx";
 
-function LegacyRoutes({ redirectHome = false }) {
+function LegacyRoutes() {
   const getRoute = () => {
     const path = window.location.pathname;
     const hash = window.location.hash;
@@ -32,10 +34,14 @@ function LegacyRoutes({ redirectHome = false }) {
     if (path === "/login" || hash === "#login") return "login";
     if (path === "/forgot" || hash === "#forgot") return "forgot";
     if (path === "/mentor" || hash === "#mentor") return "mentor";
+    if (path === "/createproject" || hash === "#createproject") {
+      return "createproject";
+    }
     if (
+      path === "/register" ||
+      path === "/signup" ||
       hash === "#register" ||
-      hash === "#signup" ||
-      path === "/register"
+      hash === "#signup"
     ) {
       return "register";
     }
@@ -58,10 +64,8 @@ function LegacyRoutes({ redirectHome = false }) {
   if (route === "login") return <Welcome />;
   if (route === "register") return <Welcome initialMode="signup" />;
   if (route === "forgot") return <ForgotPassword />;
+  if (route === "createproject") return <CreateProject />;
   if (route === "mentor") return <MentorDashboard />;
-  if (redirectHome && window.location.pathname === "/") {
-    return <Navigate to="/student/dashboard" replace />;
-  }
   return <LandingPage />;
 }
 
@@ -69,7 +73,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LegacyRoutes redirectHome />} />
+        <Route path="/" element={<LegacyRoutes />} />
+        <Route path="/login" element={<LegacyRoutes />} />
+        <Route path="/signup" element={<LegacyRoutes />} />
+        <Route path="/register" element={<LegacyRoutes />} />
+        <Route path="/forgot" element={<LegacyRoutes />} />
+        <Route path="/mentor" element={<LegacyRoutes />} />
+        <Route path="/mentor/students" element={<AssignedStudents />} />
+        <Route path="/createproject" element={<LegacyRoutes />} />
+        <Route path="/student" element={<StudentDashboard />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/student/profile" element={<StudentProfile />} />
         <Route path="/student/application" element={<SocietyApplication />} />
