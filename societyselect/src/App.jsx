@@ -4,6 +4,7 @@ import "./App.css";
 import LandingPage from "./LandingPage.jsx";
 import Welcome from "./Components/welcome.jsx";
 import ForgotPassword from "./Components/ForgotPassword.jsx";
+import CreateProject from "./Components/createproject.jsx";
 import MentorDashboard from "./mentor/MentorDashboard";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
     if (path === "/login" || hash === "#login") return "login";
     if (path === "/forgot" || hash === "#forgot") return "forgot";
     if (path === "/mentor" || hash === "#mentor") return "mentor";
+    if (path === "/createproject" || hash === "#createproject") return "createproject";
 
     if (
       path === "/register" ||
@@ -43,6 +45,7 @@ function App() {
   if (route === "login") return <Welcome />;
   if (route === "register") return <Welcome initialMode="signup" />;
   if (route === "forgot") return <ForgotPassword />;
+  if (route === "createproject") return <CreateProject />;
   if (route === "mentor") return <MentorDashboard />;
 
   return <LandingPage />;

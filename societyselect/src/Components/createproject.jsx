@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   FiSearch,
   FiPlus,
@@ -8,8 +8,15 @@ import {
   FiClock,
   FiX,
   FiSave,
+  FiCamera,
+  FiVideoOff,
+  FiMic,
+  FiMicOff,
+  FiPhoneOff,
+  FiHome,
+  FiGrid,
 } from "react-icons/fi";
-import "./InterviewManagement.css";
+import "./createproject.css";
 
 const CRITERIA = [
   { key: "communication", label: "Communication" },
@@ -76,6 +83,101 @@ const InterviewManagement = () => {
   // Schedule modal state
   const [showModal, setShowModal] = useState(false);
   const [schedule, setSchedule] = useState({ id: "", date: "", time: "", mode: "Online" });
+
+  const [cameraStream, setCameraStream] = useState(null);
+  const [cameraLoading, setCameraLoading] = useState(false);
+  const [cameraError, setCameraError] = useState("");
+  const [isMuted, setIsMuted] = useState(false);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [callCandidateId, setCallCandidateId] = useState("");
+  const localVideoRef = useRef(null);
+  const cameraRequestRef = useRef(0);
+
+  useEffect(() => () => {
+    cameraRequestRef.current += 1;
+  }, []);
+
+  useEffect(() => {
+    if (!cameraStream) return undefined;
+    if (localVideoRef.current) localVideoRef.current.srcObject = cameraStream;
+
+    return () => {
+      cameraStream.getTracks().forEach((track) => track.stop());
+    };
+  }, [cameraStream]);
+
+  const startCall = async () => {
+    if (!callCandidateId) {
+      setCameraError("Select a candidate before starting the interview call.");
+      return;
+    }
+
+    const requestId = cameraRequestRef.current + 1;
+    cameraRequestRef.current = requestId;
+    setCameraLoading(true);
+    setCameraError("");
+
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error("Camera and microphone access is not available in this browser.");
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      if (requestId !== cameraRequestRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+
+      setCameraStream(stream);
+      setIsMuted(false);
+      setIsCameraOn(true);
+    } catch (error) {
+      if (requestId === cameraRequestRef.current) {
+        setCameraError(
+          error instanceof Error
+            ? error.message
+            : "Unable to access the camera and microphone."
+        );
+      }
+    } finally {
+      if (requestId === cameraRequestRef.current) setCameraLoading(false);
+    }
+  };
+
+  const stopCall = () => {
+    cameraRequestRef.current += 1;
+    cameraStream?.getTracks().forEach((track) => track.stop());
+    setCameraStream(null);
+    setCameraError("");
+    setIsMuted(false);
+    setIsCameraOn(true);
+  };
+
+  const scrollToSection = (sectionId) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const toggleMicrophone = () => {
+    const audioTrack = cameraStream?.getAudioTracks()[0];
+    if (!audioTrack) {
+      setCameraError("The microphone track is unavailable. End the preview and try again.");
+      return;
+    }
+
+    audioTrack.enabled = isMuted;
+    setIsMuted(!isMuted);
+  };
+
+  const toggleCamera = () => {
+    const videoTrack = cameraStream?.getVideoTracks()[0];
+    if (!videoTrack) {
+      setCameraError("The camera track is unavailable. End the preview and try again.");
+      return;
+    }
+
+    videoTrack.enabled = !isCameraOn;
+    setIsCameraOn(!isCameraOn);
+  };
 
   const stats = useMemo(
     () => ({
@@ -147,6 +249,71 @@ const InterviewManagement = () => {
 
   return (
     <div className="im-page">
+      <div className="im-app-shell">
+        <aside className="im-sidebar">
+          <div className="im-sidebar-brand">
+            <span className="im-sidebar-mark"><FiGrid /></span>
+            <div>
+              <h2>SocietySelect</h2>
+              <span>INTERVIEW PORTAL</span>
+            </div>
+          </div>
+
+          <div className="im-sidebar-workspace">
+            <span>WORKSPACE</span>
+            <strong>Recruitment Team</strong>
+            <small>Interview management</small>
+          </div>
+
+          <div className="im-sidebar-section">
+            <p className="im-sidebar-label">MAIN MENU</p>
+            <nav className="im-sidebar-nav" aria-label="Page navigation">
+              <a className="im-sidebar-link" href="/">
+                <FiHome />
+                <span>Home</span>
+              </a>
+              <a className="im-sidebar-link" href="/mentor">
+                <FiGrid />
+                <span>Mentor Dashboard</span>
+              </a>
+              <button
+                type="button"
+                className="im-sidebar-link active"
+                onClick={() => scrollToSection("candidate-list")}
+              >
+                <FiUsers />
+                <span>Candidates</span>
+              </button>
+              <button
+                type="button"
+                className="im-sidebar-link"
+                onClick={() => scrollToSection("interview-call")}
+              >
+                <FiCamera />
+                <span>Interview call</span>
+              </button>
+              <button
+                type="button"
+                className="im-sidebar-link"
+                onClick={() => openSchedule()}
+              >
+                <FiCalendar />
+                <span>Schedule interview</span>
+              </button>
+            </nav>
+          </div>
+
+          <div className="im-sidebar-departments">
+            <p className="im-sidebar-label">DEPARTMENTS</p>
+            <span><i className="im-department-dot cse" />CSE</span>
+            <span><i className="im-department-dot it" />IT</span>
+            <span><i className="im-department-dot ece" />ECE</span>
+          </div>
+
+        </aside>
+
+        <main className="im-main-content">
+
       {/* Header */}
       <header className="im-head">
         <div>
@@ -173,7 +340,7 @@ const InterviewManagement = () => {
 
       <div className="im-grid">
         {/* Candidate list */}
-        <section className="im-card">
+        <section className="im-card" id="candidate-list">
           <div className="im-toolbar">
             <label className="im-search">
               <FiSearch />
@@ -238,6 +405,113 @@ const InterviewManagement = () => {
 
         {/* Evaluation panel */}
         <aside className="im-eval">
+          <label className="im-call-candidate" htmlFor="im-call-candidate">
+            Interview candidate
+            <select
+              id="im-call-candidate"
+              value={callCandidateId}
+              onChange={(e) => setCallCandidateId(e.target.value)}
+              disabled={Boolean(cameraStream)}
+            >
+              <option value="">Select a candidate</option>
+              {candidates.map((candidate) => (
+                <option key={candidate.id} value={candidate.id}>
+                  {candidate.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <section className="im-call-panel" id="interview-call" aria-labelledby="im-call-title">
+            <header className="im-call-header">
+              <div>
+                <h2 id="im-call-title">Interview call</h2>
+                <p>Candidate interview room</p>
+              </div>
+              <span className={`im-call-status ${cameraStream ? "preview" : ""}`}>
+                <span aria-hidden="true" />
+                {cameraStream ? "Local preview" : "Ready to join"}
+              </span>
+            </header>
+
+            <div className="im-call-tiles">
+              <div className="im-call-tile">
+                {cameraStream ? (
+                  <>
+                    <video
+                      ref={localVideoRef}
+                      className="im-call-video"
+                      autoPlay
+                      muted
+                      playsInline
+                      aria-label="Your camera preview"
+                    />
+                    {!isCameraOn && (
+                      <div className="im-call-camera-off">
+                        <FiVideoOff />
+                        <span>Camera off</span>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="im-call-placeholder">
+                    <FiCamera />
+                    <span>Your video</span>
+                  </div>
+                )}
+                <span className="im-call-name">You</span>
+                {isMuted && cameraStream && <FiMicOff className="im-call-mute-indicator" aria-label="Microphone muted" />}
+              </div>
+
+              <div className="im-call-tile im-call-remote">
+                <div className="im-call-placeholder">
+                  <FiUsers />
+                  {callCandidateId && <span>Waiting for candidate</span>}
+                </div>
+                <span className="im-call-name">
+                  {candidates.find((candidate) => String(candidate.id) === callCandidateId)?.name
+                    || "Candidate"}
+                </span>
+              </div>
+            </div>
+
+            {cameraError && <p className="im-camera-error" role="alert">{cameraError}</p>}
+
+            <div className="im-call-controls">
+              {cameraStream ? (
+                <>
+                  <button type="button" onClick={toggleMicrophone} aria-pressed={isMuted}>
+                    {isMuted ? <FiMicOff /> : <FiMic />}
+                    {isMuted ? "Unmute" : "Mute"}
+                  </button>
+                  <button type="button" onClick={toggleCamera} aria-pressed={!isCameraOn}>
+                    {isCameraOn ? <FiCamera /> : <FiVideoOff />}
+                    {isCameraOn ? "Camera off" : "Camera on"}
+                  </button>
+                  <button type="button" className="im-call-end" onClick={stopCall}>
+                    <FiPhoneOff />
+                    End
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="im-call-start"
+                  onClick={startCall}
+                  disabled={cameraLoading || !callCandidateId}
+                >
+                  <FiCamera />
+                  {cameraLoading ? "Requesting access..." : "Start video call"}
+                </button>
+              )}
+            </div>
+
+            {!cameraStream && (
+              <p className="im-call-hint">Allow camera and microphone access when your browser asks.</p>
+            )}
+            <p className="im-call-hint">Remote candidate connection is not configured yet.</p>
+          </section>
+
           {!selected ? (
             <div className="im-empty">
               <FiUsers size={28} />
@@ -307,6 +581,8 @@ const InterviewManagement = () => {
             </div>
           )}
         </aside>
+      </div>
+        </main>
       </div>
 
       {/* Schedule modal */}

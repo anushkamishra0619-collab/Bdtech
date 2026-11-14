@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 * {
@@ -52,7 +51,7 @@
 .auth-container {
   width: 900px;
   max-width: 100%;
-  height: 520px;
+  height: 580px;
   position: relative;
   overflow: hidden;
   background: #f1f1f1;
@@ -523,4 +522,134 @@
   .profile-modal {
     padding: 30px 20px;
   }
+}
+
+/* EMAIL VERIFY ROW & BADGE */
+.email-verify-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.email-verify-row input {
+  flex: 1;
+}
+
+.verify-email-btn {
+  height: 42px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 12px;
+  background: #44d3e9;
+  color: #fff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 3px 3px 7px #d2d2d2, -3px -3px 7px #ffffff;
+  transition: 0.25s;
+}
+
+.verify-email-btn:hover:not(:disabled) {
+  background: #20bdc8;
+  transform: translateY(-2px);
+}
+
+.verify-email-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #dff8ec;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ERROR & INFO BANNERS */
+.auth-error-banner {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 11px;
+  text-align: center;
+}
+
+.auth-info-banner {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* OTP MODAL ACTIONS */
+.otp-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.otp-actions .auth-button {
+  margin-top: 0;
+}
+
+.resend-otp-btn {
+  background: none;
+  border: none;
+  color: #078e98;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* PASSWORD EYE TOGGLE WRAPPER */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 42px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.password-toggle-btn:hover {
+  color: #078e98;
 }
