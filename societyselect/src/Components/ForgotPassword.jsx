@@ -8,8 +8,9 @@ import {
 } from "react-icons/fa";
 import "./ForgotPassword.css";
 
-const API_BASE =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/auth";
+const API_BASE = import.meta.env.PROD
+  ? "/api/auth"
+  : import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/auth";
 
 const ForgotPassword = () => {
   // Steps: 1 = Request OTP, 2 = Verify OTP, 3 = New Password, 4 = Success
