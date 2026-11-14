@@ -6,6 +6,7 @@ import Welcome from "./Components/welcome.jsx";
 import ForgotPassword from "./Components/ForgotPassword.jsx";
 import CreateProject from "./Components/createproject.jsx";
 import MentorDashboard from "./mentor/MentorDashboard";
+import StudentDashboard from "./pages/student/StudentDashboard.jsx";
 
 function App() {
   const getRoute = () => {
@@ -15,6 +16,7 @@ function App() {
     if (path === "/login" || hash === "#login") return "login";
     if (path === "/forgot" || hash === "#forgot") return "forgot";
     if (path === "/mentor" || hash === "#mentor") return "mentor";
+    if (path === "/student" || path === "/student/dashboard") return "student";
     if (path === "/createproject" || hash === "#createproject") return "createproject";
 
     if (
@@ -47,6 +49,7 @@ function App() {
   if (route === "forgot") return <ForgotPassword />;
   if (route === "createproject") return <CreateProject />;
   if (route === "mentor") return <MentorDashboard />;
+  if (route === "student") return <StudentDashboard />;
 
   return <LandingPage />;
 }

@@ -65,6 +65,21 @@ export default function LoginPage({ initialMode = "login" }) {
     return data?.message || fallback;
   };
 
+  const saveAuthSession = (data) => {
+    if (data?.accessToken) {
+      localStorage.setItem("accessToken", data.accessToken);
+    }
+    if (data?.user) {
+      localStorage.setItem("user", JSON.stringify(data.user));
+    }
+  };
+
+  const redirectStudentToDashboard = (role) => {
+    if (String(role || "").toUpperCase() !== "STUDENT") return false;
+    window.location.assign("/student/dashboard");
+    return true;
+  };
+
   // Clear all form fields on mount & listen for Google popup callback
   useEffect(() => {
     setLoginData({ email: "", password: "" });
@@ -244,9 +259,7 @@ export default function LoginPage({ initialMode = "login" }) {
           return;
         }
 
-        if (data.accessToken) {
-          localStorage.setItem("accessToken", data.accessToken);
-        }
+        saveAuthSession(data);
         setShowProfileForm(false);
         setPendingGoogleToken("");
         setInfoMsg("");
@@ -258,6 +271,7 @@ export default function LoginPage({ initialMode = "login" }) {
           domain: "",
           studentNumber: "",
         });
+        if (redirectStudentToDashboard(data.user?.role || modalRole)) return;
         alert(`Welcome ${data.user?.fullName || ""}! Logged in via Google.`);
         return;
       }
@@ -282,6 +296,9 @@ export default function LoginPage({ initialMode = "login" }) {
       if (!res.ok) {
         throw new Error(extractError(data, "Registration failed"));
       }
+
+      saveAuthSession(data);
+      if (redirectStudentToDashboard(data.user?.role || signupRole)) return;
 
       setShowProfileForm(false);
       alert("Account created successfully! Please sign in.");
@@ -327,12 +344,10 @@ export default function LoginPage({ initialMode = "login" }) {
         throw new Error(extractError(data, "Login failed"));
       }
 
-      if (data.accessToken) {
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
+      saveAuthSession(data);
 
       setLoginData({ email: "", password: "" });
+      if (redirectStudentToDashboard(data.user?.role || loginRole)) return;
       alert(`Welcome back, ${data.user.fullName} (${data.user.role})!`);
     } catch (err) {
       setErrorMsg(err.message);
@@ -370,10 +385,8 @@ export default function LoginPage({ initialMode = "login" }) {
         return;
       }
 
-      if (data.accessToken) {
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
+      saveAuthSession(data);
+      if (redirectStudentToDashboard(data.user?.role || selectedRole)) return;
       alert(`Logged in with Google as ${data.user.fullName}!`);
     } catch (err) {
       setErrorMsg(err.message);
