@@ -1,6 +1,17 @@
 import { useState } from "react";
 import "../../styles/profile.css";
 
+const studentProfile = {
+  name: "Ashutosh",
+  studentId: "SS2026-001",
+  universityRollNumber: "2301640100001",
+  branch: "Computer Science and Engineering",
+  academicYear: "2nd Year",
+  college: "Ajay Kumar Garg Engineering College",
+  societyRole: "Probationer & Member",
+  applicationStatus: "In Review",
+};
+
 const StudentProfile = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -54,6 +65,50 @@ const StudentProfile = () => {
           <span />
         </button>
       </header>
+
+      <section className="profile-hero" aria-labelledby="profile-hero-name">
+        <div className="profile-hero-heading">
+          <div className="profile-hero-identity">
+            <span className="profile-hero-avatar" aria-hidden="true">A</span>
+            <div className="profile-hero-copy">
+              <p className="profile-hero-eyebrow">Student Profile</p>
+              <h1 id="profile-hero-name">{studentProfile.name}</h1>
+              <div className="profile-hero-badges">
+                <span className="profile-hero-badge">{studentProfile.societyRole}</span>
+                <span className="profile-hero-badge profile-hero-status">
+                  Application · {studentProfile.applicationStatus}
+                </span>
+              </div>
+            </div>
+          </div>
+          <button className="profile-edit-button" type="button">
+            Edit Profile
+          </button>
+        </div>
+
+        <div className="profile-hero-details">
+          <div className="profile-detail">
+            <span className="profile-detail-label">Student ID</span>
+            <span className="profile-detail-value">{studentProfile.studentId}</span>
+          </div>
+          <div className="profile-detail">
+            <span className="profile-detail-label">University Roll No.</span>
+            <span className="profile-detail-value">{studentProfile.universityRollNumber}</span>
+          </div>
+          <div className="profile-detail">
+            <span className="profile-detail-label">Branch</span>
+            <span className="profile-detail-value">{studentProfile.branch}</span>
+          </div>
+          <div className="profile-detail">
+            <span className="profile-detail-label">Academic Year</span>
+            <span className="profile-detail-value">{studentProfile.academicYear}</span>
+          </div>
+          <div className="profile-detail profile-detail-college">
+            <span className="profile-detail-label">College</span>
+            <span className="profile-detail-value">{studentProfile.college}</span>
+          </div>
+        </div>
+      </section>
     </main>
   );
 };
