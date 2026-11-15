@@ -13,10 +13,12 @@ function App() {
   const getRoute = () => {
     const path = window.location.pathname;
     const hash = window.location.hash;
+
     if (path === "/login" || hash === "#login") return "login";
     if (path === "/forgot" || hash === "#forgot") return "forgot";
     if (path === "/mentor" || hash === "#mentor") return "mentor";
-    if (path === "/student" || path === "/student/dashboard") return "student";
+    if (path === "/mentor/students" || hash === "#mentor/students") return "assignedstudents";
+    if (path === "/student" || path === "/student/dashboard" || hash === "#student") return "student";
     if (path === "/createproject" || hash === "#createproject") return "createproject";
 
     if (
@@ -55,6 +57,7 @@ function App() {
   if (route === "forgot") return <ForgotPassword />;
   if (route === "createproject") return <CreateProject />;
   if (route === "mentor") return <MentorDashboard />;
+  if (route === "assignedstudents") return <AssignedStudents />;
   if (route === "student") return <StudentDashboard />;
 
   return <LandingPage />;

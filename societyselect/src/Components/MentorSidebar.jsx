@@ -27,9 +27,9 @@ const menuItems = [
     href: "/mentor/attendance",
   },
   {
-    label: "Feedback",
+    label: "Interviews",
     icon: MessageSquare,
-    href: "/mentor/feedback",
+    href: "/mentor/interviews",
   },
 ];
 
