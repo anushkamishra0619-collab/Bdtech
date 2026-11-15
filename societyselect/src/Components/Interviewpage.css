@@ -175,6 +175,18 @@
   border-radius: 3px;
 }
 
+.im-department-dot.cse-aiml {
+  background: #5661db;
+}
+
+.im-department-dot.cse-ds {
+  background: #26a984;
+}
+
+.im-department-dot.csit {
+  background: #edae38;
+}
+
 .im-department-dot.cse {
   background: #5661db;
 }
@@ -291,161 +303,6 @@
 .im-stat span {
   font-size: 0.7rem;
   color: #000;
-}
-
-.im-workflow {
-  margin-bottom: 24px;
-}
-
-.im-workflow-heading,
-.im-workflow-step-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.im-workflow-heading h2 {
-  margin: 0;
-  font-family: "Playfair Display", serif;
-  font-size: 1.35rem;
-  font-weight: 400;
-}
-
-.im-workflow-heading p,
-.im-workflow-copy p {
-  margin: 5px 0 0;
-  color: #526873;
-  font-size: 0.72rem;
-  line-height: 1.5;
-}
-
-.im-workflow-candidate {
-  padding: 7px 10px;
-  border-radius: 999px;
-  background: #edf5f8;
-  color: #315c6b;
-  font-size: 0.68rem;
-  font-weight: 600;
-}
-
-.im-workflow-notice,
-.im-workflow-feedback {
-  margin: 16px 0 0;
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: #f1f7fa;
-  color: #345563;
-  font-size: 0.68rem;
-  line-height: 1.5;
-}
-
-.im-workflow-feedback {
-  background: #e6f4f8;
-}
-
-.im-workflow-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 18px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.im-workflow-step {
-  display: flex;
-  min-width: 0;
-  gap: 11px;
-  padding: 13px;
-  border: 1px solid #e5edf1;
-  border-radius: 12px;
-  background: #fff;
-}
-
-.im-workflow-step.complete {
-  border-color: #b7d6e4;
-  background: #f7fbfc;
-}
-
-.im-workflow-step.current {
-  border-color: #75afc1;
-  box-shadow: 0 0 0 2px rgba(117, 175, 193, 0.15);
-}
-
-.im-workflow-number {
-  display: grid;
-  width: 26px;
-  height: 26px;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 50%;
-  background: #edf5f8;
-  color: #315c6b;
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-.im-workflow-step.complete .im-workflow-number {
-  background: #75afc1;
-  color: #fff;
-}
-
-.im-workflow-copy {
-  min-width: 0;
-}
-
-.im-workflow-step-heading {
-  align-items: center;
-}
-
-.im-workflow-step-heading h3 {
-  margin: 0;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.im-workflow-step-heading > span {
-  flex: 0 0 auto;
-  color: #718994;
-  font-size: 0.58rem;
-  font-weight: 600;
-}
-
-.im-workflow-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 10px;
-}
-
-.im-workflow-action {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 9px;
-  padding: 7px 9px;
-  border: 1px solid #b7d6e4;
-  border-radius: 7px;
-  background: #f7fbfc;
-  color: #294f5e;
-  font-family: inherit;
-  font-size: 0.62rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.im-workflow-actions .im-workflow-action {
-  margin-top: 0;
-}
-
-.im-workflow-action:hover:not(:disabled) {
-  background: #e7f2f6;
-}
-
-.im-workflow-action:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
 }
 
 /* ---------- Main grid ---------- */
@@ -657,8 +514,7 @@
   opacity: 0.7;
 }
 
-.im-eval-body,
-.im-empty {
+.im-eval-body {
   position: relative;
   z-index: 1;
 }
@@ -717,6 +573,51 @@
 
 .im-meeting-link:hover {
   background: #6ba9bc;
+}
+
+.im-call-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.im-call-actions p {
+  width: 100%;
+  margin: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.im-call-actions button {
+  padding: 7px 9px;
+  border: 1px solid #b7d6e4;
+  border-radius: 7px;
+  background: #f7fbfc;
+  color: #294f5e;
+  font-family: inherit;
+  font-size: 0.62rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.im-call-actions button:hover:not(:disabled) {
+  background: #e7f2f6;
+}
+
+.im-call-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.im-call-feedback {
+  margin: 0 0 12px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: #e6f4f8;
+  color: #345563;
+  font-size: 0.65rem;
+  line-height: 1.5;
 }
 
 .im-call-header {
@@ -889,16 +790,6 @@
   font-size: 0.65rem;
   text-align: center;
   overflow-wrap: anywhere;
-}
-
-.im-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 50px 10px;
-  text-align: center;
-  font-size: 0.75rem;
 }
 
 .im-eval-head {
@@ -1203,11 +1094,4 @@
     gap: 10px;
   }
 
-  .im-workflow-heading {
-    flex-direction: column;
-  }
-
-  .im-workflow-list {
-    grid-template-columns: 1fr;
-  }
 }

@@ -16,6 +16,7 @@ import {
   FiHome,
   FiGrid,
 } from "react-icons/fi";
+import MotivationBanner from "./ui/MotivationBanner.jsx";
 import "./Interviewpage.css";
 
 const CRITERIA = [
@@ -372,78 +373,6 @@ const Interviewpage = () => {
 
   const workflowCandidate =
     candidates.find((candidate) => String(candidate.id) === callCandidateId) || selected;
-  const isCompletedSample = workflowCandidate?.status === "Completed";
-  const workflowStages = [
-    {
-      title: "Candidate shortlisted",
-      description: "Student cleared the examination and is eligible for an interview.",
-      complete: Boolean(workflowCandidate),
-    },
-    {
-      title: "Mentor schedules interview",
-      description: workflowCandidate?.interviewer
-        ? `${workflowCandidate.date} · ${workflowCandidate.mode} · ${workflowCandidate.interviewer}`
-        : isCompletedSample
-        ? "Previously scheduled interview (sample record)."
-        : "Select a candidate, date, time, mode and interviewer.",
-      complete: Boolean(workflowCandidate?.interviewer || isCompletedSample),
-    },
-    {
-      title: "Meeting link generated",
-      description: workflowCandidate?.mode === "Offline"
-        ? "In-person interview; no video room is needed."
-        : workflowCandidate?.meetingLink
-        ? "Unique Jitsi room is ready."
-        : isCompletedSample
-        ? "Previously conducted interview (sample record)."
-        : "A unique Jitsi room is created when an online interview is scheduled.",
-      complete: workflowCandidate?.mode === "Offline"
-        || Boolean(workflowCandidate?.meetingLink)
-        || isCompletedSample,
-    },
-    {
-      title: "Notifications sent",
-      description: workflowCandidate?.notificationsSent
-        ? "Details marked as sent to the student and mentor."
-        : isCompletedSample
-        ? "Notification stage is represented by this completed sample record."
-        : "Copy the details and send them to both participants outside this app.",
-      complete: Boolean(workflowCandidate?.notificationsSent || isCompletedSample),
-    },
-    {
-      title: "Participants join interview",
-      description: workflowCandidate?.participantsJoined
-        ? "Both participants marked as joined."
-        : isCompletedSample
-        ? "Participant stage is represented by this completed sample record."
-        : "Join the room and confirm both participants have entered.",
-      complete: Boolean(workflowCandidate?.participantsJoined || isCompletedSample),
-    },
-    {
-      title: "Interview conducted",
-      description: workflowCandidate?.interviewConducted
-        ? "Interview notes recorded."
-        : isCompletedSample
-        ? "Interview stage is represented by this completed sample record."
-        : "Conduct the interview and record notes.",
-      complete: Boolean(workflowCandidate?.interviewConducted || isCompletedSample),
-    },
-    {
-      title: "Mentor evaluates student",
-      description: workflowCandidate?.evaluation
-        ? "Evaluation scores saved."
-        : "Score technical knowledge, communication and other criteria.",
-      complete: Boolean(workflowCandidate?.evaluation),
-    },
-    {
-      title: "Interview result published",
-      description: workflowCandidate?.resultPublished
-        ? `Published result: ${workflowCandidate.evaluation?.decision}.`
-        : "Publish the mentor's decision when evaluation is complete.",
-      complete: Boolean(workflowCandidate?.resultPublished),
-    },
-  ];
-  const currentStageIndex = workflowStages.findIndex((stage) => !stage.complete);
 
   return (
     <div className="im-page">
@@ -474,6 +403,10 @@ const Interviewpage = () => {
                 <FiGrid />
                 <span>Mentor Dashboard</span>
               </a>
+              <a className="im-sidebar-link" href="/student">
+                <FiUsers />
+                <span>Student Dashboard</span>
+              </a>
               <button
                 type="button"
                 className="im-sidebar-link active"
@@ -485,24 +418,19 @@ const Interviewpage = () => {
               <button
                 type="button"
                 className="im-sidebar-link"
-                onClick={() => scrollToSection("interview-call")}
+                onClick={() => scrollToSection("student-scores")}
               >
-                <FiCamera />
-                <span>Interview call</span>
-              </button>
-              <button
-                type="button"
-                className="im-sidebar-link"
-                onClick={() => openSchedule()}
-              >
-                <FiCalendar />
-                <span>Schedule interview</span>
+                <FiCheckCircle />
+                <span>Student Scores</span>
               </button>
             </nav>
           </div>
 
           <div className="im-sidebar-departments">
-            <p className="im-sidebar-label">DEPARTMENTS</p>
+            <p className="im-sidebar-label">BRANCHES</p>
+            <span><i className="im-department-dot cse-aiml" />CSE-AIML</span>
+            <span><i className="im-department-dot cse-ds" />CSE-DS</span>
+            <span><i className="im-department-dot csit" />CSIT</span>
             <span><i className="im-department-dot cse" />CSE</span>
             <span><i className="im-department-dot it" />IT</span>
             <span><i className="im-department-dot ece" />ECE</span>
@@ -523,6 +451,8 @@ const Interviewpage = () => {
         </button>
       </header>
 
+      <MotivationBanner />
+
       {/* Stat cards */}
       <section className="im-stats">
         {statCards.map((s) => (
@@ -534,89 +464,6 @@ const Interviewpage = () => {
             </div>
           </div>
         ))}
-      </section>
-
-      <section className="im-card im-workflow" aria-labelledby="im-workflow-title">
-        <div className="im-workflow-heading">
-          <div>
-            <h2 id="im-workflow-title">Interview workflow</h2>
-            <p>Select a candidate to track progress through all eight stages.</p>
-          </div>
-          <span className="im-workflow-candidate">
-            {workflowCandidate ? workflowCandidate.name : "No candidate selected"}
-          </span>
-        </div>
-        <p className="im-workflow-notice" role="note">
-          Demo mode: progress is stored in this page only. Notifications must be shared manually;
-          backend delivery and persistence are not connected.
-        </p>
-        {workflowNotice && <p className="im-workflow-feedback" role="status">{workflowNotice}</p>}
-        <ol className="im-workflow-list">
-          {workflowStages.map((stage, index) => {
-            const state = stage.complete
-              ? "complete"
-              : index === currentStageIndex
-              ? "current"
-              : "upcoming";
-            return (
-              <li className={`im-workflow-step ${state}`} key={stage.title}>
-                <span className="im-workflow-number">{index + 1}</span>
-                <div className="im-workflow-copy">
-                  <div className="im-workflow-step-heading">
-                    <h3>{stage.title}</h3>
-                    <span>{stage.complete ? "Complete" : state === "current" ? "In progress" : "Upcoming"}</span>
-                  </div>
-                  <p>{stage.description}</p>
-
-                  {index === 2 && workflowCandidate?.meetingLink && (
-                    <a
-                      className="im-workflow-action"
-                      href={workflowCandidate.meetingLink}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Open Jitsi room
-                    </a>
-                  )}
-
-                  {index === 3 && workflowCandidate?.interviewer && !stage.complete && (
-                    <div className="im-workflow-actions">
-                      <button type="button" className="im-workflow-action" onClick={copyInterviewDetails}>
-                        Copy interview details
-                      </button>
-                      <button type="button" className="im-workflow-action" onClick={markNotificationsSent}>
-                        Mark notifications sent
-                      </button>
-                    </div>
-                  )}
-
-                  {index === 4 && workflowCandidate?.interviewer && !stage.complete && (
-                    <div className="im-workflow-actions">
-                      {workflowCandidate.meetingLink && (
-                        <a
-                          className="im-workflow-action"
-                          href={workflowCandidate.meetingLink}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Join Jitsi room
-                        </a>
-                      )}
-                      <button
-                        type="button"
-                        className="im-workflow-action"
-                        onClick={markParticipantsJoined}
-                        disabled={!workflowCandidate.notificationsSent}
-                      >
-                        Confirm both participants joined
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ol>
       </section>
 
       <div className="im-grid">
@@ -685,7 +532,7 @@ const Interviewpage = () => {
         </section>
 
         {/* Evaluation panel */}
-        <aside className="im-eval">
+        <aside className="im-eval" id="student-scores">
           <label className="im-call-candidate" htmlFor="im-call-candidate">
             Interview candidate
             <select
@@ -732,6 +579,30 @@ const Interviewpage = () => {
                 Join SocietySelect AI interview
               </a>
             )}
+
+            {workflowCandidate?.interviewer && (
+              <div className="im-call-actions">
+                <p>Interview details for {workflowCandidate.name}</p>
+                <button type="button" onClick={copyInterviewDetails}>
+                  Copy interview details
+                </button>
+                <button
+                  type="button"
+                  onClick={markNotificationsSent}
+                  disabled={Boolean(workflowCandidate.notificationsSent)}
+                >
+                  {workflowCandidate.notificationsSent ? "Details marked sent" : "Mark notifications sent"}
+                </button>
+                <button
+                  type="button"
+                  onClick={markParticipantsJoined}
+                  disabled={!workflowCandidate.notificationsSent || Boolean(workflowCandidate.participantsJoined)}
+                >
+                  {workflowCandidate.participantsJoined ? "Participants joined" : "Confirm both participants joined"}
+                </button>
+              </div>
+            )}
+            {workflowNotice && <p className="im-call-feedback" role="status">{workflowNotice}</p>}
 
             <div className="im-call-tiles">
               <div className="im-call-tile">
@@ -811,12 +682,7 @@ const Interviewpage = () => {
             <p className="im-call-hint">The Jitsi room hosts the live call. This panel is only a local camera preview.</p>
           </section>
 
-          {!selected ? (
-            <div className="im-empty">
-              <FiUsers size={28} />
-              <p>Select a candidate to start the evaluation</p>
-            </div>
-          ) : (
+          {selected && (
             <div className="im-eval-body">
               <div className="im-eval-head">
                 <div>
