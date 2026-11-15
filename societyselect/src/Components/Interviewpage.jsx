@@ -16,7 +16,7 @@ import {
   FiHome,
   FiGrid,
 } from "react-icons/fi";
-import "./createproject.css";
+import "./Interviewpage.css";
 
 const CRITERIA = [
   { key: "communication", label: "Communication" },
@@ -32,8 +32,17 @@ const EMPTY_SCORES = {
   problemSolving: 5,
 };
 
-const DECISIONS = ["Shortlist", "Hold", "Reject"];
+const DECISIONS = ["Shortlisted", "Rejected", "On Hold", "Further Evaluation Required"];
 const FILTERS = ["All", "Scheduled", "Completed", "Not Scheduled"];
+
+const createMeetingLink = (candidateName) => {
+  const roomId =
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const candidateSlug = candidateName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  return `https://meet.jit.si/SocietySelect-${candidateSlug}-${roomId}`;
+};
 
 // Sample data. Replace with an API call once FastAPI is ready.
 const initialCandidates = [
@@ -69,7 +78,7 @@ const initials = (name) =>
     .map((n) => n[0])
     .join("");
 
-const InterviewManagement = () => {
+const Interviewpage = () => {
   const [candidates, setCandidates] = useState(initialCandidates);
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
@@ -82,7 +91,15 @@ const InterviewManagement = () => {
 
   // Schedule modal state
   const [showModal, setShowModal] = useState(false);
-  const [schedule, setSchedule] = useState({ id: "", date: "", time: "", mode: "Online" });
+  const [schedule, setSchedule] = useState({
+    id: "",
+    date: "",
+    time: "",
+    mode: "Online",
+    interviewer: "",
+  });
+  const [interviewNotes, setInterviewNotes] = useState("");
+  const [workflowNotice, setWorkflowNotice] = useState("");
 
   const [cameraStream, setCameraStream] = useState(null);
   const [cameraLoading, setCameraLoading] = useState(false);
@@ -213,39 +230,220 @@ const InterviewManagement = () => {
     setSelectedId(c.id);
     setScores(c.evaluation?.scores || EMPTY_SCORES);
     setFeedback(c.evaluation?.feedback || "");
-    setDecision(c.evaluation?.decision || "");
+    const savedDecision = c.evaluation?.decision || "";
+    setDecision(
+      { Shortlist: "Shortlisted", Hold: "On Hold", Reject: "Rejected" }[savedDecision]
+        || savedDecision
+    );
+    setInterviewNotes(c.interviewNotes || c.evaluation?.feedback || "");
+    setCallCandidateId(String(c.id));
   };
 
   const openSchedule = (id = "") => {
-    setSchedule({ id: String(id), date: "", time: "", mode: "Online" });
+    setSchedule({ id: String(id), date: "", time: "", mode: "Online", interviewer: "" });
     setShowModal(true);
   };
 
   const saveEvaluation = () => {
-    if (!selected) return;
+    if (
+      !selected
+      || (!selected.interviewConducted && selected.status !== "Completed")
+      || !decision
+    ) return;
     // TODO: send to FastAPI here, e.g. POST /api/interviews/:id/evaluation
     setCandidates((list) =>
       list.map((c) =>
         c.id === selected.id
-          ? { ...c, status: "Completed", evaluation: { scores, feedback, decision, total } }
+          ? {
+              ...c,
+              status: "Completed",
+              evaluation: { scores, feedback, decision, total },
+              resultPublished: false,
+            }
           : c
       )
     );
+    setWorkflowNotice("Evaluation saved. Publish the result to complete the workflow.");
+  };
+
+  const markNotificationsSent = () => {
+    if (!workflowCandidate) return;
+    setCandidates((list) =>
+      list.map((candidate) =>
+        candidate.id === workflowCandidate.id
+          ? { ...candidate, notificationsSent: true }
+          : candidate
+      )
+    );
+    setWorkflowNotice("Notification marked sent. Send the copied details to both participants outside this app.");
+  };
+
+  const markParticipantsJoined = () => {
+    if (!workflowCandidate) return;
+    setCandidates((list) =>
+      list.map((candidate) =>
+        candidate.id === workflowCandidate.id
+          ? { ...candidate, participantsJoined: true }
+          : candidate
+      )
+    );
+    setWorkflowNotice("Both participants marked as joined.");
+  };
+
+  const markInterviewConducted = () => {
+    if (!selected || !interviewNotes.trim() || !selected.participantsJoined) return;
+    setCandidates((list) =>
+      list.map((candidate) =>
+        candidate.id === selected.id
+          ? { ...candidate, interviewConducted: true, interviewNotes: interviewNotes.trim() }
+          : candidate
+      )
+    );
+    setWorkflowNotice("Interview notes saved and interview marked as conducted.");
+  };
+
+  const publishResult = () => {
+    if (!selected?.evaluation) return;
+    setCandidates((list) =>
+      list.map((candidate) =>
+        candidate.id === selected.id ? { ...candidate, resultPublished: true } : candidate
+      )
+    );
+    setWorkflowNotice(`Result published: ${selected.evaluation.decision}.`);
+  };
+
+  const copyInterviewDetails = async () => {
+    if (!workflowCandidate) return;
+    const details = [
+      `SocietySelect interview: ${workflowCandidate.name}`,
+      `Date and time: ${workflowCandidate.date}`,
+      `Mode: ${workflowCandidate.mode}`,
+      `Interviewer: ${workflowCandidate.interviewer || "Not specified"}`,
+      workflowCandidate.meetingLink ? `Meeting link: ${workflowCandidate.meetingLink}` : "",
+    ].filter(Boolean).join("\n");
+
+    try {
+      await navigator.clipboard.writeText(details);
+      setWorkflowNotice("Interview details copied. Send them to the student and mentor.");
+    } catch (error) {
+      setWorkflowNotice(
+        error instanceof Error
+          ? `Could not copy interview details: ${error.message}`
+          : "Could not copy interview details. Copy the meeting link shown below."
+      );
+    }
   };
 
   const saveSchedule = (e) => {
     e.preventDefault();
     const id = Number(schedule.id);
-    // TODO: send to FastAPI here, e.g. POST /api/interviews
+    const candidate = candidates.find((item) => item.id === id);
+    if (!candidate) return;
+    const meetingLink = schedule.mode === "Online" ? createMeetingLink(candidate.name) : "";
     setCandidates((list) =>
       list.map((c) =>
         c.id === id
-          ? { ...c, status: "Scheduled", date: `${schedule.date}, ${schedule.time}`, mode: schedule.mode }
+          ? {
+              ...c,
+              status: "Scheduled",
+              date: `${schedule.date}, ${schedule.time}`,
+              mode: schedule.mode,
+              interviewer: schedule.interviewer.trim(),
+              meetingLink,
+              notificationsSent: false,
+              participantsJoined: false,
+              interviewConducted: false,
+              interviewNotes: "",
+              evaluation: undefined,
+              resultPublished: false,
+            }
           : c
       )
     );
+    setCallCandidateId(String(id));
+    setSelectedId(id);
+    setScores(EMPTY_SCORES);
+    setFeedback("");
+    setDecision("");
+    setInterviewNotes("");
+    setWorkflowNotice("Interview scheduled. Share the details with the student and mentor.");
     setShowModal(false);
   };
+
+  const workflowCandidate =
+    candidates.find((candidate) => String(candidate.id) === callCandidateId) || selected;
+  const isCompletedSample = workflowCandidate?.status === "Completed";
+  const workflowStages = [
+    {
+      title: "Candidate shortlisted",
+      description: "Student cleared the examination and is eligible for an interview.",
+      complete: Boolean(workflowCandidate),
+    },
+    {
+      title: "Mentor schedules interview",
+      description: workflowCandidate?.interviewer
+        ? `${workflowCandidate.date} · ${workflowCandidate.mode} · ${workflowCandidate.interviewer}`
+        : isCompletedSample
+        ? "Previously scheduled interview (sample record)."
+        : "Select a candidate, date, time, mode and interviewer.",
+      complete: Boolean(workflowCandidate?.interviewer || isCompletedSample),
+    },
+    {
+      title: "Meeting link generated",
+      description: workflowCandidate?.mode === "Offline"
+        ? "In-person interview; no video room is needed."
+        : workflowCandidate?.meetingLink
+        ? "Unique Jitsi room is ready."
+        : isCompletedSample
+        ? "Previously conducted interview (sample record)."
+        : "A unique Jitsi room is created when an online interview is scheduled.",
+      complete: workflowCandidate?.mode === "Offline"
+        || Boolean(workflowCandidate?.meetingLink)
+        || isCompletedSample,
+    },
+    {
+      title: "Notifications sent",
+      description: workflowCandidate?.notificationsSent
+        ? "Details marked as sent to the student and mentor."
+        : isCompletedSample
+        ? "Notification stage is represented by this completed sample record."
+        : "Copy the details and send them to both participants outside this app.",
+      complete: Boolean(workflowCandidate?.notificationsSent || isCompletedSample),
+    },
+    {
+      title: "Participants join interview",
+      description: workflowCandidate?.participantsJoined
+        ? "Both participants marked as joined."
+        : isCompletedSample
+        ? "Participant stage is represented by this completed sample record."
+        : "Join the room and confirm both participants have entered.",
+      complete: Boolean(workflowCandidate?.participantsJoined || isCompletedSample),
+    },
+    {
+      title: "Interview conducted",
+      description: workflowCandidate?.interviewConducted
+        ? "Interview notes recorded."
+        : isCompletedSample
+        ? "Interview stage is represented by this completed sample record."
+        : "Conduct the interview and record notes.",
+      complete: Boolean(workflowCandidate?.interviewConducted || isCompletedSample),
+    },
+    {
+      title: "Mentor evaluates student",
+      description: workflowCandidate?.evaluation
+        ? "Evaluation scores saved."
+        : "Score technical knowledge, communication and other criteria.",
+      complete: Boolean(workflowCandidate?.evaluation),
+    },
+    {
+      title: "Interview result published",
+      description: workflowCandidate?.resultPublished
+        ? `Published result: ${workflowCandidate.evaluation?.decision}.`
+        : "Publish the mentor's decision when evaluation is complete.",
+      complete: Boolean(workflowCandidate?.resultPublished),
+    },
+  ];
+  const currentStageIndex = workflowStages.findIndex((stage) => !stage.complete);
 
   return (
     <div className="im-page">
@@ -338,6 +536,89 @@ const InterviewManagement = () => {
         ))}
       </section>
 
+      <section className="im-card im-workflow" aria-labelledby="im-workflow-title">
+        <div className="im-workflow-heading">
+          <div>
+            <h2 id="im-workflow-title">Interview workflow</h2>
+            <p>Select a candidate to track progress through all eight stages.</p>
+          </div>
+          <span className="im-workflow-candidate">
+            {workflowCandidate ? workflowCandidate.name : "No candidate selected"}
+          </span>
+        </div>
+        <p className="im-workflow-notice" role="note">
+          Demo mode: progress is stored in this page only. Notifications must be shared manually;
+          backend delivery and persistence are not connected.
+        </p>
+        {workflowNotice && <p className="im-workflow-feedback" role="status">{workflowNotice}</p>}
+        <ol className="im-workflow-list">
+          {workflowStages.map((stage, index) => {
+            const state = stage.complete
+              ? "complete"
+              : index === currentStageIndex
+              ? "current"
+              : "upcoming";
+            return (
+              <li className={`im-workflow-step ${state}`} key={stage.title}>
+                <span className="im-workflow-number">{index + 1}</span>
+                <div className="im-workflow-copy">
+                  <div className="im-workflow-step-heading">
+                    <h3>{stage.title}</h3>
+                    <span>{stage.complete ? "Complete" : state === "current" ? "In progress" : "Upcoming"}</span>
+                  </div>
+                  <p>{stage.description}</p>
+
+                  {index === 2 && workflowCandidate?.meetingLink && (
+                    <a
+                      className="im-workflow-action"
+                      href={workflowCandidate.meetingLink}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open Jitsi room
+                    </a>
+                  )}
+
+                  {index === 3 && workflowCandidate?.interviewer && !stage.complete && (
+                    <div className="im-workflow-actions">
+                      <button type="button" className="im-workflow-action" onClick={copyInterviewDetails}>
+                        Copy interview details
+                      </button>
+                      <button type="button" className="im-workflow-action" onClick={markNotificationsSent}>
+                        Mark notifications sent
+                      </button>
+                    </div>
+                  )}
+
+                  {index === 4 && workflowCandidate?.interviewer && !stage.complete && (
+                    <div className="im-workflow-actions">
+                      {workflowCandidate.meetingLink && (
+                        <a
+                          className="im-workflow-action"
+                          href={workflowCandidate.meetingLink}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Join Jitsi room
+                        </a>
+                      )}
+                      <button
+                        type="button"
+                        className="im-workflow-action"
+                        onClick={markParticipantsJoined}
+                        disabled={!workflowCandidate.notificationsSent}
+                      >
+                        Confirm both participants joined
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+
       <div className="im-grid">
         {/* Candidate list */}
         <section className="im-card" id="candidate-list">
@@ -410,7 +691,14 @@ const InterviewManagement = () => {
             <select
               id="im-call-candidate"
               value={callCandidateId}
-              onChange={(e) => setCallCandidateId(e.target.value)}
+              onChange={(e) => {
+                const candidate = candidates.find((item) => String(item.id) === e.target.value);
+                if (candidate) openEvaluation(candidate);
+                else {
+                  setCallCandidateId("");
+                  setSelectedId(null);
+                }
+              }}
               disabled={Boolean(cameraStream)}
             >
               <option value="">Select a candidate</option>
@@ -433,6 +721,17 @@ const InterviewManagement = () => {
                 {cameraStream ? "Local preview" : "Ready to join"}
               </span>
             </header>
+
+            {workflowCandidate?.meetingLink && (
+              <a
+                className="im-meeting-link"
+                href={workflowCandidate.meetingLink}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Join SocietySelect AI interview
+              </a>
+            )}
 
             <div className="im-call-tiles">
               <div className="im-call-tile">
@@ -509,7 +808,7 @@ const InterviewManagement = () => {
             {!cameraStream && (
               <p className="im-call-hint">Allow camera and microphone access when your browser asks.</p>
             )}
-            <p className="im-call-hint">Remote candidate connection is not configured yet.</p>
+            <p className="im-call-hint">The Jitsi room hosts the live call. This panel is only a local camera preview.</p>
           </section>
 
           {!selected ? (
@@ -531,6 +830,27 @@ const InterviewManagement = () => {
                   <small>/100</small>
                 </div>
               </div>
+
+              <label className="im-notes-label" htmlFor="im-interview-notes">
+                Interview notes
+                <textarea
+                  id="im-interview-notes"
+                  placeholder="Record questions, answers and interview notes..."
+                  value={interviewNotes}
+                  onChange={(e) => setInterviewNotes(e.target.value)}
+                  disabled={Boolean(selected.interviewConducted || selected.status === "Completed")}
+                />
+              </label>
+              {!selected.interviewConducted && selected.status !== "Completed" && (
+                <button
+                  type="button"
+                  className="im-save"
+                  onClick={markInterviewConducted}
+                  disabled={!selected.participantsJoined || !interviewNotes.trim()}
+                >
+                  Mark interview conducted
+                </button>
+              )}
 
               {CRITERIA.map((c) => (
                 <div className="im-crit" key={c.key}>
@@ -573,11 +893,26 @@ const InterviewManagement = () => {
                 type="button"
                 className="im-save"
                 onClick={saveEvaluation}
-                disabled={!decision}
+                disabled={
+                  !decision
+                  || (!selected.interviewConducted && selected.status !== "Completed")
+                }
               >
                 <FiSave /> Save evaluation
               </button>
-              <p className="im-note">Final selection is decided by the society admin.</p>
+              {selected.evaluation && (
+                <button
+                  type="button"
+                  className="im-save im-publish"
+                  onClick={publishResult}
+                  disabled={Boolean(selected.resultPublished)}
+                >
+                  {selected.resultPublished ? "Result published" : "Publish interview result"}
+                </button>
+              )}
+              <p className="im-note">
+                Results are recorded in this demo page; student delivery requires backend integration.
+              </p>
             </div>
           )}
         </aside>
@@ -645,6 +980,16 @@ const InterviewManagement = () => {
               </select>
             </div>
 
+            <div className="im-field">
+              <input
+                type="text"
+                required
+                placeholder="Interviewer name"
+                value={schedule.interviewer}
+                onChange={(e) => setSchedule({ ...schedule, interviewer: e.target.value })}
+              />
+            </div>
+
             <button type="submit" className="im-primary im-full">
               Confirm schedule
             </button>
@@ -655,4 +1000,4 @@ const InterviewManagement = () => {
   );
 };
 
-export default InterviewManagement;
+export default Interviewpage;
