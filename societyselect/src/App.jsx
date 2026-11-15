@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import "./App.css";
 
@@ -7,14 +8,15 @@ import ForgotPassword from "./Components/ForgotPassword.jsx";
 import Interviewpage from "./Components/Interviewpage.jsx";
 import MentorDashboard from "./mentor/MentorDashboard";
 import StudentDashboard from "./pages/student/StudentDashboard.jsx";
+import AssignedStudents from "./mentor/AssignedStudents";
 
 function App() {
   const getRoute = () => {
     const path = window.location.pathname;
     const hash = window.location.hash;
-
     if (path === "/login" || hash === "#login") return "login";
     if (path === "/forgot" || hash === "#forgot") return "forgot";
+    if (path === "/mentor/students" || hash === "#mentor/students") return "assigned-students";
     if (path === "/mentor" || hash === "#mentor") return "mentor";
     if (path === "/student" || path === "/student/dashboard") return "student";
     if (path === "/interviewpage" || hash === "#interviewpage") return "interviewpage";
@@ -33,7 +35,9 @@ function App() {
   const [route, setRoute] = useState(getRoute);
 
   useEffect(() => {
-    const handleLocationChange = () => setRoute(getRoute());
+    const handleLocationChange = () => {
+      setRoute(getRoute());
+    };
 
     window.addEventListener("hashchange", handleLocationChange);
     window.addEventListener("popstate", handleLocationChange);
@@ -45,9 +49,14 @@ function App() {
   }, []);
 
   if (route === "login") return <Welcome />;
-  if (route === "register") return <Welcome initialMode="signup" />;
+
+  if (route === "register") {
+    return <Welcome initialMode="signup" />;
+  }
+
   if (route === "forgot") return <ForgotPassword />;
   if (route === "interviewpage") return <Interviewpage />;
+  if (route === "assigned-students") return <AssignedStudents />;
   if (route === "mentor") return <MentorDashboard />;
   if (route === "student") return <StudentDashboard />;
 

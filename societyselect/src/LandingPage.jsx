@@ -112,32 +112,30 @@ function LandingPage() {
               alt="Student working on a development project"
             />
           </div>
-
-          <div className="feature-beam-wrapper">
-            <div className="feature-card">
-              <div className="feature-content">
-                <span className="eyebrow light-eyebrow">
-                  WHAT MAKES US DIFFERENT
-                </span>
-                <h2>
-                  A better way to
-                  <br />
-                  discover potential.
-                </h2>
-                <div className="feature-list">
-                  {features.map((feature) => (
-                    <div className="feature-item" key={feature.title}>
-                      <span className="feature-arrow">→</span>
-                      <div>
-                        <h3>{feature.title}</h3>
-                        <p>{feature.description}</p>
-                      </div>
+          <div className="feature-card">
+            <div className="feature-content">
+              <span className="eyebrow light-eyebrow">
+                WHAT MAKES US DIFFERENT
+              </span>
+              <h2>
+                A better way to
+                <br />
+                discover potential.
+              </h2>
+              <div className="feature-list">
+                {features.map((feature, index) => (
+                  <div className="feature-item" key={feature.title}>
+                    <span className="feature-arrow">→</span>
+                    <div>
+                      <h3>{feature.title}</h3>
+                      <p>{feature.description}</p>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
+
         </section>
 
         <section className="quote-section">
