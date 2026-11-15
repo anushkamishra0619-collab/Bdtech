@@ -6,7 +6,7 @@ import {
   Reveal,
   ShinyText,
   SpotlightCard,
-} from "../../components/ui/DashboardEffects";
+} from "../../Components/ui/DashboardEffects.jsx";
 import "./StudentDashboard.css";
 
 const dashboardData = {

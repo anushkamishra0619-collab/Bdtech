@@ -175,6 +175,18 @@
   border-radius: 3px;
 }
 
+.im-department-dot.cse-aiml {
+  background: #5661db;
+}
+
+.im-department-dot.cse-ds {
+  background: #26a984;
+}
+
+.im-department-dot.csit {
+  background: #edae38;
+}
+
 .im-department-dot.cse {
   background: #5661db;
 }
@@ -502,8 +514,7 @@
   opacity: 0.7;
 }
 
-.im-eval-body,
-.im-empty {
+.im-eval-body {
   position: relative;
   z-index: 1;
 }
@@ -544,6 +555,69 @@
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.im-meeting-link {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 14px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #75afc1;
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.im-meeting-link:hover {
+  background: #6ba9bc;
+}
+
+.im-call-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.im-call-actions p {
+  width: 100%;
+  margin: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.im-call-actions button {
+  padding: 7px 9px;
+  border: 1px solid #b7d6e4;
+  border-radius: 7px;
+  background: #f7fbfc;
+  color: #294f5e;
+  font-family: inherit;
+  font-size: 0.62rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.im-call-actions button:hover:not(:disabled) {
+  background: #e7f2f6;
+}
+
+.im-call-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.im-call-feedback {
+  margin: 0 0 12px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: #e6f4f8;
+  color: #345563;
+  font-size: 0.65rem;
+  line-height: 1.5;
 }
 
 .im-call-header {
@@ -718,16 +792,6 @@
   overflow-wrap: anywhere;
 }
 
-.im-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 50px 10px;
-  text-align: center;
-  font-size: 0.75rem;
-}
-
 .im-eval-head {
   display: flex;
   justify-content: space-between;
@@ -790,6 +854,20 @@
   color: #000;
   font-family: inherit;
   font-size: 0.7rem;
+}
+
+.im-notes-label {
+  display: block;
+  margin-top: 18px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.im-notes-label textarea {
+  display: block;
+  min-height: 100px;
+  margin-top: 7px;
+  border: 1px solid #e5e5e5;
 }
 
 .im-eval textarea::placeholder {
@@ -1015,4 +1093,5 @@
     flex-direction: row;
     gap: 10px;
   }
+
 }

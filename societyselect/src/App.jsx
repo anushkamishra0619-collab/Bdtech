@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-
 import LandingPage from "./LandingPage.jsx";
 import Welcome from "./Components/welcome.jsx";
 import ForgotPassword from "./Components/ForgotPassword.jsx";
-import CreateProject from "./Components/createproject.jsx";
-
+import Interviewpage from "./Components/Interviewpage.jsx";
 import MentorDashboard from "./mentor/MentorDashboard";
+import StudentDashboard from "./pages/student/StudentDashboard.jsx";
 import AssignedStudents from "./mentor/AssignedStudents";
 import StudentDetails from "./mentor/StudentDetails";
 import StudentDashboard from "./pages/student/StudentDashboard.jsx";
@@ -89,7 +88,8 @@ function App() {
   }
 
   if (route === "forgot") return <ForgotPassword />;
-  if (route === "createproject") return <CreateProject />;
+  if (route === "interviewpage") return <Interviewpage />;
+  if (route === "assigned-students") return <AssignedStudents />;
   if (route === "mentor") return <MentorDashboard />;
   if (route === "assignedstudents") return <AssignedStudents />;
   if (route === "studentdetails") return <StudentDetails />;
