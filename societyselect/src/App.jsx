@@ -1,30 +1,64 @@
-
 import { useEffect, useState } from "react";
 import "./App.css";
 
 import LandingPage from "./LandingPage.jsx";
 import Welcome from "./Components/welcome.jsx";
 import ForgotPassword from "./Components/ForgotPassword.jsx";
+import CreateProject from "./Components/createproject.jsx";
 
 import MentorDashboard from "./mentor/MentorDashboard";
 import AssignedStudents from "./mentor/AssignedStudents";
+import StudentDetails from "./mentor/StudentDetails";
+import StudentDashboard from "./pages/student/StudentDashboard.jsx";
 
 function App() {
   const getRoute = () => {
-    const path = window.location.pathname;
-    const hash = window.location.hash;
+    const rawPath = window.location.pathname.replace(/\/+$/, "") || "/";
+    const rawHash = (window.location.hash || "").replace(/^#\/?/, "").replace(/\/+$/, "");
 
-    if (path === "/login" || hash === "#login") return "login";
-    if (path === "/forgot" || hash === "#forgot") return "forgot";
-    if (path === "/mentor" || hash === "#mentor") return "mentor";
-    if (path === "/mentor/students" || hash === "#mentor/students") return "assignedstudents";
-    if (path === "/student" || path === "/student/dashboard" || hash === "#student") return "student";
-    if (path === "/createproject" || hash === "#createproject") return "createproject";
+    const path = rawPath.toLowerCase();
+    const hash = rawHash.toLowerCase();
+
+    if (path === "/login" || hash === "login") return "login";
+    if (path === "/forgot" || hash === "forgot") return "forgot";
+
+    // Student Details route: /mentor/students/:id or #mentor/students/:id
+    if (
+      /^\/mentor\/students\/\d+/i.test(path) ||
+      /^mentor\/students\/\d+/i.test(hash) ||
+      (path.startsWith("/mentor/students/") && path.length > "/mentor/students/".length) ||
+      (hash.startsWith("mentor/students/") && hash.length > "mentor/students/".length)
+    ) {
+      return "studentdetails";
+    }
+
+    // Assigned Students list route: /mentor/students or #mentor/students
+    if (
+      path === "/mentor/students" ||
+      hash === "mentor/students"
+    ) {
+      return "assignedstudents";
+    }
+
+    if (path === "/mentor" || hash === "mentor") return "mentor";
+
+    if (
+      path === "/student" ||
+      path === "/student/dashboard" ||
+      hash === "student" ||
+      hash === "student/dashboard"
+    ) {
+      return "student";
+    }
+
+    if (path === "/createproject" || hash === "createproject") {
+      return "createproject";
+    }
 
     if (
       path === "/register" ||
-      hash === "#register" ||
-      hash === "#signup"
+      hash === "register" ||
+      hash === "signup"
     ) {
       return "register";
     }
@@ -58,6 +92,7 @@ function App() {
   if (route === "createproject") return <CreateProject />;
   if (route === "mentor") return <MentorDashboard />;
   if (route === "assignedstudents") return <AssignedStudents />;
+  if (route === "studentdetails") return <StudentDetails />;
   if (route === "student") return <StudentDashboard />;
 
   return <LandingPage />;
