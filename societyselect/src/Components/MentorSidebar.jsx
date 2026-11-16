@@ -17,12 +17,12 @@ const menuItems = [
   {
     label: "Task Reviews",
     icon: ClipboardCheck,
-    href: "/mentor/tasks",
+    href: "/mentor/projects",
   },
   {
     label: "Projects",
     icon: FolderKanban,
-    href: "/mentor/projects",
+    href: "/mentor",
   },
   {
     label: "Attendance",

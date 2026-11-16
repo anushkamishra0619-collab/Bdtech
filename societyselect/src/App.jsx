@@ -8,7 +8,7 @@ import MentorDashboard from "./mentor/MentorDashboard";
 import StudentDashboard from "./pages/student/StudentDashboard.jsx";
 import AssignedStudents from "./mentor/AssignedStudents";
 import StudentDetails from "./mentor/StudentDetails";
-import StudentDashboard from "./pages/student/StudentDashboard.jsx";
+import ProjectReview from "./mentor/ProjectReview";
 
 function App() {
   const getRoute = () => {
@@ -53,7 +53,9 @@ function App() {
     if (path === "/createproject" || hash === "createproject") {
       return "createproject";
     }
-
+    if (path === "/mentor/projects") {
+      return "projectReview";
+    }
     if (
       path === "/register" ||
       hash === "register" ||
@@ -94,7 +96,7 @@ function App() {
   if (route === "assignedstudents") return <AssignedStudents />;
   if (route === "studentdetails") return <StudentDetails />;
   if (route === "student") return <StudentDashboard />;
-
+  if (route === "projectReview") return <ProjectReview />;
   return <LandingPage />;
 }
 
