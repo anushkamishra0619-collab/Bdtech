@@ -22,6 +22,19 @@ export const personalInformationData = {
   state: "Uttar Pradesh",
 };
 
+export const academicInformationData = {
+  universityName: "Dr. A.P.J. Abdul Kalam Technical University",
+  universityRollNumber: "2301640100001",
+  studentId: "SS2026-001",
+  course: "B.Tech",
+  branch: "Computer Science and Engineering",
+  academicYear: "2nd Year",
+  currentSemester: "3rd Semester",
+  admissionYear: "2023",
+  currentCgpa: "8.4",
+  academicPerformance: "86% overall evaluation — Good standing",
+};
+
 export const profileCompletionData = {
   percentage: 85,
   completedSections: [

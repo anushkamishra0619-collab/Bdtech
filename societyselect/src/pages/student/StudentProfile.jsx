@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  academicInformationData,
   personalInformationData,
   profileCompletionData,
   studentData,
@@ -16,6 +17,27 @@ const personalInformationFields = [
   { key: "address", label: "Address", type: "textarea", isWide: true },
   { key: "city", label: "City", type: "text" },
   { key: "state", label: "State", type: "text" },
+];
+
+const academicInformationFields = [
+  { key: "universityName", label: "University Name", type: "text" },
+  { key: "universityRollNumber", label: "University Roll Number", type: "text" },
+  { key: "studentId", label: "Student ID", type: "text" },
+  { key: "course", label: "Course", type: "text" },
+  { key: "branch", label: "Branch", type: "text" },
+  { key: "academicYear", label: "Academic Year", type: "text" },
+  { key: "currentSemester", label: "Current Semester", type: "text" },
+  { key: "admissionYear", label: "Admission Year", type: "number" },
+  {
+    key: "currentCgpa",
+    label: "Current CGPA",
+    type: "number",
+    min: "0",
+    max: "10",
+    step: "0.01",
+    suffix: " / 10",
+  },
+  { key: "academicPerformance", label: "Academic Performance", type: "text" },
 ];
 
 const validatePersonalInformation = (information) => {
@@ -51,6 +73,14 @@ const StudentProfile = () => {
   );
   const [isEditingInformation, setIsEditingInformation] = useState(false);
   const [informationErrors, setInformationErrors] = useState({});
+  const [academicInformation, setAcademicInformation] = useState(
+    academicInformationData,
+  );
+  const [academicInformationDraft, setAcademicInformationDraft] = useState(
+    academicInformationData,
+  );
+  const [isEditingAcademicInformation, setIsEditingAcademicInformation] =
+    useState(false);
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -91,6 +121,30 @@ const StudentProfile = () => {
     setInformationDraft({ ...personalInformation });
     setInformationErrors({});
     setIsEditingInformation(false);
+  };
+
+  const startEditingAcademicInformation = () => {
+    setAcademicInformationDraft({ ...academicInformation });
+    setIsEditingAcademicInformation(true);
+  };
+
+  const handleAcademicInformationChange = (event) => {
+    const { name, value } = event.target;
+    setAcademicInformationDraft((currentDraft) => ({
+      ...currentDraft,
+      [name]: value,
+    }));
+  };
+
+  const saveAcademicInformation = (event) => {
+    event.preventDefault();
+    setAcademicInformation({ ...academicInformationDraft });
+    setIsEditingAcademicInformation(false);
+  };
+
+  const cancelAcademicInformationEdit = () => {
+    setAcademicInformationDraft({ ...academicInformation });
+    setIsEditingAcademicInformation(false);
   };
 
   const formatDateOfBirth = (dateOfBirth) => {
@@ -368,6 +422,89 @@ const StudentProfile = () => {
                       role="alert"
                     >
                       {informationErrors[field.key]}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </form>
+      </section>
+
+      <section
+        className="profile-information"
+        aria-labelledby="academic-information-title"
+      >
+        <form
+          onSubmit={saveAcademicInformation}
+          noValidate
+        >
+          <div className="profile-information-heading">
+            <div>
+              <p className="profile-information-eyebrow">
+                Academic information
+              </p>
+              <h2 id="academic-information-title">Your academic identity</h2>
+            </div>
+            {isEditingAcademicInformation ? (
+              <div className="profile-information-actions">
+                <button className="profile-information-action" type="submit">
+                  Save Changes
+                </button>
+                <button
+                  className="profile-information-action is-secondary"
+                  type="button"
+                  onClick={cancelAcademicInformationEdit}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                className="profile-information-action"
+                type="button"
+                onClick={startEditingAcademicInformation}
+              >
+                Edit Information
+              </button>
+            )}
+          </div>
+
+          <div className="profile-information-grid">
+            {academicInformationFields.map((field) => {
+              const value = isEditingAcademicInformation
+                ? academicInformationDraft[field.key]
+                : academicInformation[field.key];
+              const fieldId = `academic-information-${field.key}`;
+
+              return (
+                <div className="profile-information-field" key={field.key}>
+                  {isEditingAcademicInformation ? (
+                    <label
+                      className="profile-information-label"
+                      htmlFor={fieldId}
+                    >
+                      {field.label}
+                    </label>
+                  ) : (
+                    <p className="profile-information-label">{field.label}</p>
+                  )}
+                  {isEditingAcademicInformation ? (
+                    <input
+                      className="profile-information-control"
+                      id={fieldId}
+                      name={field.key}
+                      type={field.type}
+                      value={value}
+                      onChange={handleAcademicInformationChange}
+                      min={field.min}
+                      max={field.max}
+                      step={field.step}
+                    />
+                  ) : (
+                    <p className="profile-information-value">
+                      {value}
+                      {field.suffix || ""}
                     </p>
                   )}
                 </div>
