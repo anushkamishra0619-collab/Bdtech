@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { studentData } from "../../data/studentProfileData";
+import {
+  profileCompletionData,
+  studentData,
+} from "../../data/studentProfileData";
 import "../../styles/profile.css";
 
 const StudentProfile = () => {
@@ -99,6 +102,55 @@ const StudentProfile = () => {
             <span className="profile-detail-label">College</span>
             <span className="profile-detail-value">{studentData.college}</span>
           </div>
+        </div>
+      </section>
+
+      <section
+        className="profile-completion"
+        aria-labelledby="profile-completion-title"
+      >
+        <div className="profile-completion-summary">
+          <p className="profile-completion-eyebrow">Profile completion</p>
+          <div className="profile-completion-heading">
+            <h2 id="profile-completion-title">Almost there</h2>
+            <p className="profile-completion-percentage">
+              <span>{profileCompletionData.percentage}</span>%
+              <span className="profile-completion-caption">complete</span>
+            </p>
+          </div>
+          <div
+            className="profile-completion-track"
+            role="progressbar"
+            aria-label="Profile completion"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={profileCompletionData.percentage}
+            style={{
+              "--profile-completion": `${profileCompletionData.percentage}%`,
+            }}
+          >
+            <span className="profile-completion-fill" />
+          </div>
+          <div className="profile-completed-sections">
+            <h3>Completed sections</h3>
+            <ul>
+              {profileCompletionData.completedSections.map((section) => (
+                <li key={section}>{section}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="profile-completion-next">
+          <h3>Still missing</h3>
+          <ul className="profile-missing-list">
+            {profileCompletionData.missingInformation.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <a className="profile-completion-action" href="/student/settings">
+            Complete Profile <span aria-hidden="true">→</span>
+          </a>
         </div>
       </section>
     </main>

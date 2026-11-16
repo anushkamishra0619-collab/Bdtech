@@ -9,3 +9,17 @@ export const studentData = {
   societyRole: "Probationer & Member",
   applicationStatus: "In Review",
 };
+
+export const profileCompletionData = {
+  percentage: 85,
+  completedSections: [
+    "Personal information",
+    "Academic details",
+    "Skills & domains",
+    "Projects & contributions",
+  ],
+  missingInformation: [
+    "Add a profile photograph",
+    "Add a LinkedIn link",
+  ],
+};
