@@ -10,9 +10,8 @@ import {
 } from "react-icons/fa";
 import "./welcome.css";
 
-const API_BASE = import.meta.env.PROD
-  ? "/api/auth"
-  : import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/auth";
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/auth";
 const GOOGLE_CLIENT_ID = "524622286901-nn6dac26l3k4th6p4a2t3kl3jq5vblov.apps.googleusercontent.com";
 
 export default function LoginPage({ initialMode = "login" }) {
