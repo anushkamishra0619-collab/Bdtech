@@ -513,6 +513,22 @@
   outline-offset: 4px;
 }
 
+.profile-information-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.profile-information-action.is-secondary {
+  border-color: #d9e5eb;
+  color: #647481;
+}
+
+.profile-information-action.is-secondary:hover {
+  background: #f3f7f8;
+  color: #35485a;
+}
+
 .profile-information-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -562,6 +578,16 @@
   border-color: #5b91a8;
   outline: 2px solid rgb(91 145 168 / 20%);
   outline-offset: 1px;
+}
+
+.profile-information-control.is-invalid {
+  border-color: #b94a48;
+}
+
+.profile-information-error {
+  color: #a53d3b;
+  font-size: 11px;
+  line-height: 1.4;
 }
 
 textarea.profile-information-control {

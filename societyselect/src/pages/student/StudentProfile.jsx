@@ -18,6 +18,29 @@ const personalInformationFields = [
   { key: "state", label: "State", type: "text" },
 ];
 
+const validatePersonalInformation = (information) => {
+  const errors = {};
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneDigits = information.phoneNumber.replace(/\D/g, "");
+  const phonePattern = /^\+?[\d\s().-]+$/;
+
+  if (!emailPattern.test(information.personalEmail)) {
+    errors.personalEmail = "Enter a valid personal email address.";
+  }
+  if (!emailPattern.test(information.collegeEmail)) {
+    errors.collegeEmail = "Enter a valid college email address.";
+  }
+  if (
+    !phonePattern.test(information.phoneNumber) ||
+    phoneDigits.length < 7 ||
+    phoneDigits.length > 15
+  ) {
+    errors.phoneNumber = "Enter a valid phone number with 7 to 15 digits.";
+  }
+
+  return errors;
+};
+
 const StudentProfile = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [personalInformation, setPersonalInformation] = useState(
@@ -27,11 +50,13 @@ const StudentProfile = () => {
     personalInformationData,
   );
   const [isEditingInformation, setIsEditingInformation] = useState(false);
+  const [informationErrors, setInformationErrors] = useState({});
 
   const closeMenu = () => setIsMenuOpen(false);
 
   const startEditingInformation = () => {
     setInformationDraft({ ...personalInformation });
+    setInformationErrors({});
     setIsEditingInformation(true);
   };
 
@@ -41,11 +66,30 @@ const StudentProfile = () => {
       ...currentDraft,
       [name]: value,
     }));
+    setInformationErrors((currentErrors) => {
+      if (!currentErrors[name]) return currentErrors;
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[name];
+      return nextErrors;
+    });
   };
 
   const savePersonalInformation = (event) => {
     event.preventDefault();
+    const errors = validatePersonalInformation(informationDraft);
+    if (Object.keys(errors).length > 0) {
+      setInformationErrors(errors);
+      return;
+    }
+
     setPersonalInformation({ ...informationDraft });
+    setInformationErrors({});
+    setIsEditingInformation(false);
+  };
+
+  const cancelPersonalInformationEdit = () => {
+    setInformationDraft({ ...personalInformation });
+    setInformationErrors({});
     setIsEditingInformation(false);
   };
 
@@ -207,21 +251,37 @@ const StudentProfile = () => {
         className="profile-information"
         aria-labelledby="profile-information-title"
       >
-        <form onSubmit={savePersonalInformation}>
+        <form onSubmit={savePersonalInformation} noValidate>
           <div className="profile-information-heading">
             <div>
               <p className="profile-information-eyebrow">Personal information</p>
               <h2 id="profile-information-title">Your details</h2>
             </div>
-            <button
-              className="profile-information-action"
-              type={isEditingInformation ? "submit" : "button"}
-              onClick={
-                isEditingInformation ? undefined : startEditingInformation
-              }
-            >
-              {isEditingInformation ? "Save Information" : "Edit Information"}
-            </button>
+            {isEditingInformation ? (
+              <div className="profile-information-actions">
+                <button
+                  className="profile-information-action"
+                  type="submit"
+                >
+                  Save Changes
+                </button>
+                <button
+                  className="profile-information-action is-secondary"
+                  type="button"
+                  onClick={cancelPersonalInformationEdit}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                className="profile-information-action"
+                type="button"
+                onClick={startEditingInformation}
+              >
+                Edit Information
+              </button>
+            )}
           </div>
 
           <div className="profile-information-grid">
@@ -238,12 +298,16 @@ const StudentProfile = () => {
                   }`}
                   key={field.key}
                 >
-                  <label
-                    className="profile-information-label"
-                    htmlFor={fieldId}
-                  >
-                    {field.label}
-                  </label>
+                  {isEditingInformation ? (
+                    <label
+                      className="profile-information-label"
+                      htmlFor={fieldId}
+                    >
+                      {field.label}
+                    </label>
+                  ) : (
+                    <p className="profile-information-label">{field.label}</p>
+                  )}
                   {isEditingInformation ? (
                     field.type === "textarea" ? (
                       <textarea
@@ -252,6 +316,12 @@ const StudentProfile = () => {
                         name={field.key}
                         value={value}
                         onChange={handleInformationChange}
+                        aria-invalid={Boolean(informationErrors[field.key])}
+                        aria-describedby={
+                          informationErrors[field.key]
+                            ? `${fieldId}-error`
+                            : undefined
+                        }
                       />
                     ) : field.type === "select" ? (
                       <select
@@ -268,12 +338,20 @@ const StudentProfile = () => {
                       </select>
                     ) : (
                       <input
-                        className="profile-information-control"
+                        className={`profile-information-control${
+                          informationErrors[field.key] ? " is-invalid" : ""
+                        }`}
                         id={fieldId}
                         name={field.key}
                         type={field.type}
                         value={value}
                         onChange={handleInformationChange}
+                        aria-invalid={Boolean(informationErrors[field.key])}
+                        aria-describedby={
+                          informationErrors[field.key]
+                            ? `${fieldId}-error`
+                            : undefined
+                        }
                       />
                     )
                   ) : (
@@ -281,6 +359,15 @@ const StudentProfile = () => {
                       {field.key === "dateOfBirth"
                         ? formatDateOfBirth(value)
                         : value}
+                    </p>
+                  )}
+                  {isEditingInformation && informationErrors[field.key] && (
+                    <p
+                      className="profile-information-error"
+                      id={`${fieldId}-error`}
+                      role="alert"
+                    >
+                      {informationErrors[field.key]}
                     </p>
                   )}
                 </div>
