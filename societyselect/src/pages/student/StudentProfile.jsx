@@ -4,6 +4,7 @@ import {
   personalInformationData,
   profileCompletionData,
   studentData,
+  technicalSkillsData,
 } from "../../data/studentProfileData";
 import "../../styles/profile.css";
 
@@ -63,6 +64,12 @@ const validatePersonalInformation = (information) => {
   return errors;
 };
 
+const cloneTechnicalSkills = (categories) =>
+  categories.map((category) => ({
+    ...category,
+    skills: category.skills.map((skill) => ({ ...skill })),
+  }));
+
 const StudentProfile = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [personalInformation, setPersonalInformation] = useState(
@@ -81,6 +88,15 @@ const StudentProfile = () => {
   );
   const [isEditingAcademicInformation, setIsEditingAcademicInformation] =
     useState(false);
+  const [technicalSkills, setTechnicalSkills] = useState(() =>
+    cloneTechnicalSkills(technicalSkillsData),
+  );
+  const [technicalSkillsDraft, setTechnicalSkillsDraft] = useState(() =>
+    cloneTechnicalSkills(technicalSkillsData),
+  );
+  const [isEditingSkills, setIsEditingSkills] = useState(false);
+  const [newSkills, setNewSkills] = useState({});
+  const [skillErrors, setSkillErrors] = useState({});
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -145,6 +161,88 @@ const StudentProfile = () => {
   const cancelAcademicInformationEdit = () => {
     setAcademicInformationDraft({ ...academicInformation });
     setIsEditingAcademicInformation(false);
+  };
+
+  const startEditingSkills = () => {
+    setTechnicalSkillsDraft(cloneTechnicalSkills(technicalSkills));
+    setNewSkills({});
+    setSkillErrors({});
+    setIsEditingSkills(true);
+  };
+
+  const handleNewSkillChange = (categoryId, value) => {
+    setNewSkills((currentSkills) => ({
+      ...currentSkills,
+      [categoryId]: value,
+    }));
+    setSkillErrors((currentErrors) => ({
+      ...currentErrors,
+      [categoryId]: "",
+    }));
+  };
+
+  const addSkill = (categoryId) => {
+    const name = (newSkills[categoryId] || "").trim();
+    if (!name) return;
+
+    const category = technicalSkillsDraft.find(
+      (item) => item.id === categoryId,
+    );
+    if (
+      category.skills.some(
+        (skill) => skill.name.toLowerCase() === name.toLowerCase(),
+      )
+    ) {
+      setSkillErrors((currentErrors) => ({
+        ...currentErrors,
+        [categoryId]: "This skill is already in the category.",
+      }));
+      return;
+    }
+
+    setTechnicalSkillsDraft((currentCategories) =>
+      currentCategories.map((item) =>
+        item.id === categoryId
+          ? {
+              ...item,
+              skills: [...item.skills, { name, proficiency: 70 }],
+            }
+          : item,
+      ),
+    );
+    setNewSkills((currentSkills) => ({ ...currentSkills, [categoryId]: "" }));
+    setSkillErrors((currentErrors) => ({
+      ...currentErrors,
+      [categoryId]: "",
+    }));
+  };
+
+  const removeSkill = (categoryId, skillName) => {
+    setTechnicalSkillsDraft((currentCategories) =>
+      currentCategories.map((item) =>
+        item.id === categoryId
+          ? {
+              ...item,
+              skills: item.skills.filter((skill) => skill.name !== skillName),
+            }
+          : item,
+      ),
+    );
+  };
+
+  const saveTechnicalSkills = (event) => {
+    event.preventDefault();
+    setTechnicalSkills(cloneTechnicalSkills(technicalSkillsDraft));
+    setNewSkills({});
+    setSkillErrors({});
+    setIsEditingSkills(false);
+  };
+
+  const cancelTechnicalSkillsEdit = () => {
+    setTechnicalSkillsDraft(cloneTechnicalSkills(technicalSkills));
+    setNewSkills({});
+    setSkillErrors({});
+    setIsEditingSkills(false);
   };
 
   const formatDateOfBirth = (dateOfBirth) => {
@@ -508,6 +606,121 @@ const StudentProfile = () => {
                     </p>
                   )}
                 </div>
+              );
+            })}
+          </div>
+        </form>
+      </section>
+
+      <section
+        className="profile-information profile-skills-section"
+        aria-labelledby="technical-skills-title"
+      >
+        <form onSubmit={saveTechnicalSkills} noValidate>
+          <div className="profile-information-heading">
+            <div>
+              <p className="profile-information-eyebrow">
+                Technical skills &amp; domains
+              </p>
+              <h2 id="technical-skills-title">What you build with</h2>
+            </div>
+            {isEditingSkills ? (
+              <div className="profile-information-actions">
+                <button className="profile-information-action" type="submit">
+                  Save Skills
+                </button>
+                <button
+                  className="profile-information-action is-secondary"
+                  type="button"
+                  onClick={cancelTechnicalSkillsEdit}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                className="profile-information-action"
+                type="button"
+                onClick={startEditingSkills}
+              >
+                Edit Skills
+              </button>
+            )}
+          </div>
+
+          <div className="profile-skill-categories">
+            {technicalSkills.map((category) => {
+              const editableCategory = isEditingSkills
+                ? technicalSkillsDraft.find((item) => item.id === category.id)
+                : category;
+
+              return (
+                <section
+                  className="profile-skill-category"
+                  aria-labelledby={`skill-category-${category.id}`}
+                  key={category.id}
+                >
+                  <h3 id={`skill-category-${category.id}`}>
+                    {category.category}
+                  </h3>
+                  <div className="profile-skill-tags">
+                    {editableCategory.skills.map((skill) => (
+                      <span className="profile-skill-tag" key={skill.name}>
+                        <span>{skill.name}</span>
+                        {skill.proficiency != null && (
+                          <span className="profile-skill-proficiency">
+                            {skill.proficiency}%
+                          </span>
+                        )}
+                        {isEditingSkills && (
+                          <button
+                            className="profile-skill-remove"
+                            type="button"
+                            aria-label={`Remove ${skill.name} from ${category.category}`}
+                            onClick={() =>
+                              removeSkill(category.id, skill.name)
+                            }
+                          >
+                            ×
+                          </button>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                  {isEditingSkills && (
+                    <div className="profile-skill-add">
+                      <input
+                        className="profile-information-control"
+                        type="text"
+                        aria-label={`New skill for ${category.category}`}
+                        placeholder="Add a skill"
+                        value={newSkills[category.id] || ""}
+                        onChange={(event) =>
+                          handleNewSkillChange(category.id, event.target.value)
+                        }
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault();
+                            addSkill(category.id);
+                          }
+                        }}
+                      />
+                      <button
+                        className="profile-skill-add-button"
+                        type="button"
+                        disabled={!(newSkills[category.id] || "").trim()}
+                        onClick={() => addSkill(category.id)}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  )}
+                  {skillErrors[category.id] && (
+                    <p className="profile-information-error" role="alert">
+                      {skillErrors[category.id]}
+                    </p>
+                  )}
+                </section>
               );
             })}
           </div>

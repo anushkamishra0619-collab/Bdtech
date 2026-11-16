@@ -35,6 +35,56 @@ export const academicInformationData = {
   academicPerformance: "86% overall evaluation — Good standing",
 };
 
+export const technicalSkillsData = [
+  {
+    id: "programming-languages",
+    category: "Programming Languages",
+    skills: [
+      { name: "C", proficiency: 68 },
+      { name: "C++", proficiency: 72 },
+      { name: "Java", proficiency: 70 },
+      { name: "JavaScript", proficiency: 84 },
+      { name: "Python", proficiency: 76 },
+    ],
+  },
+  {
+    id: "frontend-development",
+    category: "Frontend Development",
+    skills: [
+      { name: "HTML", proficiency: 90 },
+      { name: "CSS", proficiency: 86 },
+      { name: "React", proficiency: 82 },
+    ],
+  },
+  {
+    id: "backend-development",
+    category: "Backend Development",
+    skills: [
+      { name: "Node.js", proficiency: 72 },
+      { name: "Express", proficiency: 68 },
+      { name: "MongoDB", proficiency: 64 },
+    ],
+  },
+  {
+    id: "developer-tools",
+    category: "Developer Tools",
+    skills: [
+      { name: "Git", proficiency: 80 },
+      { name: "GitHub", proficiency: 84 },
+      { name: "VS Code", proficiency: 90 },
+    ],
+  },
+  {
+    id: "technical-domains",
+    category: "Technical Domains",
+    skills: [
+      { name: "Web Development", proficiency: 82 },
+      { name: "AI/ML", proficiency: 58 },
+      { name: "App Development", proficiency: 54 },
+    ],
+  },
+];
+
 export const profileCompletionData = {
   percentage: 85,
   completedSections: [
