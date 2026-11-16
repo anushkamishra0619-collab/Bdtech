@@ -1,14 +1,63 @@
 import { useState } from "react";
 import {
+  personalInformationData,
   profileCompletionData,
   studentData,
 } from "../../data/studentProfileData";
 import "../../styles/profile.css";
 
+const personalInformationFields = [
+  { key: "fullName", label: "Full Name", type: "text" },
+  { key: "personalEmail", label: "Personal Email", type: "email" },
+  { key: "collegeEmail", label: "College Email", type: "email" },
+  { key: "phoneNumber", label: "Phone Number", type: "tel" },
+  { key: "dateOfBirth", label: "Date of Birth", type: "date" },
+  { key: "gender", label: "Gender", type: "select" },
+  { key: "address", label: "Address", type: "textarea", isWide: true },
+  { key: "city", label: "City", type: "text" },
+  { key: "state", label: "State", type: "text" },
+];
+
 const StudentProfile = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [personalInformation, setPersonalInformation] = useState(
+    personalInformationData,
+  );
+  const [informationDraft, setInformationDraft] = useState(
+    personalInformationData,
+  );
+  const [isEditingInformation, setIsEditingInformation] = useState(false);
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  const startEditingInformation = () => {
+    setInformationDraft({ ...personalInformation });
+    setIsEditingInformation(true);
+  };
+
+  const handleInformationChange = (event) => {
+    const { name, value } = event.target;
+    setInformationDraft((currentDraft) => ({
+      ...currentDraft,
+      [name]: value,
+    }));
+  };
+
+  const savePersonalInformation = (event) => {
+    event.preventDefault();
+    setPersonalInformation({ ...informationDraft });
+    setIsEditingInformation(false);
+  };
+
+  const formatDateOfBirth = (dateOfBirth) => {
+    if (!dateOfBirth) return "Not provided";
+
+    return new Date(`${dateOfBirth}T00:00:00`).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
   return (
     <main className="student-profile-page">
@@ -152,6 +201,93 @@ const StudentProfile = () => {
             Complete Profile <span aria-hidden="true">→</span>
           </a>
         </div>
+      </section>
+
+      <section
+        className="profile-information"
+        aria-labelledby="profile-information-title"
+      >
+        <form onSubmit={savePersonalInformation}>
+          <div className="profile-information-heading">
+            <div>
+              <p className="profile-information-eyebrow">Personal information</p>
+              <h2 id="profile-information-title">Your details</h2>
+            </div>
+            <button
+              className="profile-information-action"
+              type={isEditingInformation ? "submit" : "button"}
+              onClick={
+                isEditingInformation ? undefined : startEditingInformation
+              }
+            >
+              {isEditingInformation ? "Save Information" : "Edit Information"}
+            </button>
+          </div>
+
+          <div className="profile-information-grid">
+            {personalInformationFields.map((field) => {
+              const value = isEditingInformation
+                ? informationDraft[field.key]
+                : personalInformation[field.key];
+              const fieldId = `personal-information-${field.key}`;
+
+              return (
+                <div
+                  className={`profile-information-field${
+                    field.isWide ? " is-wide" : ""
+                  }`}
+                  key={field.key}
+                >
+                  <label
+                    className="profile-information-label"
+                    htmlFor={fieldId}
+                  >
+                    {field.label}
+                  </label>
+                  {isEditingInformation ? (
+                    field.type === "textarea" ? (
+                      <textarea
+                        className="profile-information-control"
+                        id={fieldId}
+                        name={field.key}
+                        value={value}
+                        onChange={handleInformationChange}
+                      />
+                    ) : field.type === "select" ? (
+                      <select
+                        className="profile-information-control"
+                        id={fieldId}
+                        name={field.key}
+                        value={value}
+                        onChange={handleInformationChange}
+                      >
+                        <option>Female</option>
+                        <option>Male</option>
+                        <option>Non-binary</option>
+                        <option>Prefer not to say</option>
+                      </select>
+                    ) : (
+                      <input
+                        className="profile-information-control"
+                        id={fieldId}
+                        name={field.key}
+                        type={field.type}
+                        value={value}
+                        onChange={handleInformationChange}
+                      />
+                    )
+                  ) : (
+                    <p className="profile-information-value">
+                      {field.key === "dateOfBirth"
+                        ? formatDateOfBirth(value)
+                        : value}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </form>
       </section>
     </main>
   );

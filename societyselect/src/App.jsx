@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import "./App.css";
 import AIRecommendations from "./pages/student/AIRecommendations";
 import ApplicationTracking from "./pages/student/ApplicationTracking";
@@ -69,11 +75,20 @@ function LegacyRoutes() {
   return <LandingPage />;
 }
 
+function RootRoute() {
+  const { hash } = useLocation();
+
+  if (hash) return <LegacyRoutes />;
+
+  // TODO: TEMPORARY DEVELOPMENT BYPASS — remove when student authentication is ready.
+  return <Navigate to="/student/dashboard" replace />;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LegacyRoutes />} />
+        <Route path="/" element={<RootRoute />} />
         <Route path="/login" element={<LegacyRoutes />} />
         <Route path="/signup" element={<LegacyRoutes />} />
         <Route path="/register" element={<LegacyRoutes />} />

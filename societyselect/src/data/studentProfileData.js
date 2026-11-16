@@ -10,6 +10,18 @@ export const studentData = {
   applicationStatus: "In Review",
 };
 
+export const personalInformationData = {
+  fullName: "Ashutosh",
+  personalEmail: "ashutosh.dev@example.com",
+  collegeEmail: "ashutosh@demo-college.edu",
+  phoneNumber: "+91 98765 43210",
+  dateOfBirth: "2004-08-19",
+  gender: "Male",
+  address: "A-204, Green Park Apartments",
+  city: "Ghaziabad",
+  state: "Uttar Pradesh",
+};
+
 export const profileCompletionData = {
   percentage: 85,
   completedSections: [
