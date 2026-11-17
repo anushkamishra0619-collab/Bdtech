@@ -75,3 +75,116 @@ export const githubAnalyticsStats = [
     sparkline: [18, 15, 13, 16, 18, 22, 19, 16, 18, 17, 14, 11, 8, 14, 17],
   },
 ];
+
+const millisecondsPerDay = 24 * 60 * 60 * 1000;
+
+const buildContributionYear = (year, targetTotal, peakCount) => {
+  const firstDay = Date.UTC(year, 0, 1);
+  const dayCount = (Date.UTC(year + 1, 0, 1) - firstDay) / millisecondsPerDay;
+  const peakIndex = (Date.UTC(year, 5, 25) - firstDay) / millisecondsPerDay;
+  const rawCounts = [];
+  let activeRun = 0;
+
+  for (let index = 0; index < dayCount; index += 1) {
+    const date = new Date(firstDay + index * millisecondsPerDay);
+    const weekday = date.getUTCDay();
+    const seed = Math.sin((index + 1) * 127.1 + year * 311.7) * 43758.5453;
+    const random = seed - Math.floor(seed);
+    const weekendThreshold = weekday === 0 || weekday === 6 ? 0.46 : 0.24;
+    const isActive = random > weekendThreshold && activeRun < 10;
+
+    rawCounts.push(isActive ? 1 + Math.floor(random * 5) : 0);
+    activeRun = isActive ? activeRun + 1 : 0;
+  }
+
+  rawCounts[peakIndex] = 0;
+
+  const longestRunStart = Math.floor(
+    (Date.UTC(year, 3, 10) - firstDay) / millisecondsPerDay,
+  );
+  rawCounts[longestRunStart - 1] = 0;
+  for (let index = longestRunStart; index < longestRunStart + 11; index += 1) {
+    rawCounts[index] = Math.max(1, rawCounts[index]);
+  }
+  rawCounts[longestRunStart + 11] = 0;
+
+  rawCounts[dayCount - 4] = 0;
+  for (let index = dayCount - 3; index < dayCount; index += 1) {
+    rawCounts[index] = Math.max(1, rawCounts[index]);
+  }
+
+  const availableForOtherDays = targetTotal - peakCount;
+  const rawTotal = rawCounts.reduce((sum, count) => sum + count, 0);
+  const scaledCounts = rawCounts.map((count) =>
+    count === 0 ? 0 : Math.floor((count * availableForOtherDays) / rawTotal),
+  );
+  let remainder = availableForOtherDays - scaledCounts.reduce((sum, count) => sum + count, 0);
+  const activeDays = rawCounts
+    .map((count, index) => ({ count, index }))
+    .filter(({ count }) => count > 0)
+    .sort((left, right) => right.count - left.count);
+
+  for (let index = 0; index < remainder; index += 1) {
+    scaledCounts[activeDays[index].index] += 1;
+  }
+  scaledCounts[peakIndex] = peakCount;
+
+  const days = scaledCounts.map((count, index) => ({
+    date: new Date(firstDay + index * millisecondsPerDay).toISOString().slice(0, 10),
+    count,
+  }));
+  let currentStreak = 0;
+  let longestStreak = 0;
+  let activeStreak = 0;
+  let busiestDay = days[0];
+
+  for (const day of days) {
+    activeStreak = day.count > 0 ? activeStreak + 1 : 0;
+    longestStreak = Math.max(longestStreak, activeStreak);
+    if (day.count > busiestDay.count) busiestDay = day;
+  }
+  for (let index = days.length - 1; index >= 0 && days[index].count > 0; index -= 1) {
+    currentStreak += 1;
+  }
+
+  const busiestDate = new Date(`${busiestDay.date}T00:00:00Z`);
+  const busiestDateLabel = `${busiestDate.getUTCDate()} ${busiestDate.toLocaleDateString(
+    "en-US",
+    { month: "short", timeZone: "UTC" },
+  )}`;
+
+  return {
+    totalContributions: days.reduce((sum, day) => sum + day.count, 0),
+    currentStreak,
+    longestStreak,
+    busiestDay: {
+      count: busiestDay.count,
+      date: busiestDateLabel,
+    },
+    days,
+  };
+};
+
+const contributionYears = {
+  2026: buildContributionYear(2026, 1813, 39),
+  2025: buildContributionYear(2025, 1624, 31),
+  2024: buildContributionYear(2024, 1438, 28),
+};
+
+export const githubContributionData = {
+  ...contributionYears,
+  "All Time": {
+    totalContributions: Object.values(contributionYears).reduce(
+      (sum, year) => sum + year.totalContributions,
+      0,
+    ),
+    currentStreak: contributionYears[2026].currentStreak,
+    longestStreak: Math.max(
+      ...Object.values(contributionYears).map((year) => year.longestStreak),
+    ),
+    busiestDay: contributionYears[2026].busiestDay,
+    days: Object.values(contributionYears)
+      .flatMap((year) => year.days)
+      .sort((left, right) => left.date.localeCompare(right.date)),
+  },
+};

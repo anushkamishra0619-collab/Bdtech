@@ -1,9 +1,13 @@
 import { useState } from "react";
 import {
+  githubContributionData,
   githubAnalyticsStats,
   githubProfileData,
 } from "../../data/GithubData";
 import "../../styles/GithubAnalytics.css";
+
+const contributionYears = ["2026", "2025", "2024", "All Time"];
+const weekdayLabels = ["", "Mon", "", "Wed", "", "Fri", ""];
 
 const GitHubStatIcon = ({ type }) => {
   const iconContent = {
@@ -51,9 +55,91 @@ const getSparklinePoints = (values) => {
     .join(" ");
 };
 
+const getContributionWeeks = (days) => {
+  const countsByDate = new Map(days.map((day) => [day.date, day.count]));
+  const firstDate = new Date(`${days[0].date}T00:00:00Z`);
+  const lastDate = new Date(`${days[days.length - 1].date}T00:00:00Z`);
+  const gridStart = new Date(firstDate);
+  const gridEnd = new Date(lastDate);
+  gridStart.setUTCDate(gridStart.getUTCDate() - gridStart.getUTCDay());
+  gridEnd.setUTCDate(gridEnd.getUTCDate() + (6 - gridEnd.getUTCDay()));
+
+  const weeks = [];
+  for (
+    let weekStart = new Date(gridStart);
+    weekStart <= gridEnd;
+    weekStart.setUTCDate(weekStart.getUTCDate() + 7)
+  ) {
+    const week = [];
+    for (let weekday = 0; weekday < 7; weekday += 1) {
+      const date = new Date(weekStart);
+      date.setUTCDate(date.getUTCDate() + weekday);
+      const dateKey = date.toISOString().slice(0, 10);
+      const count = countsByDate.get(dateKey);
+      week.push({
+        date: dateKey,
+        count: count || 0,
+        outsideRange: count === undefined,
+      });
+    }
+    weeks.push(week);
+  }
+  return weeks;
+};
+
+const getContributionLevel = (count) => {
+  if (count === 0) return 0;
+  if (count <= 2) return 1;
+  if (count <= 5) return 2;
+  if (count <= 9) return 3;
+  return 4;
+};
+
+const formatContributionDate = (date) =>
+  new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+
 const GitHubAnalytics = () => {
   const [syncMessage, setSyncMessage] = useState("");
+  const [selectedContributionYear, setSelectedContributionYear] = useState("2026");
+  const [hoveredContribution, setHoveredContribution] = useState(null);
   const { profile, metrics, demoMode } = githubProfileData;
+  const selectedContributionData = githubContributionData[selectedContributionYear];
+  const contributionWeeks = getContributionWeeks(selectedContributionData.days);
+  const monthMarkers = contributionWeeks.reduce((markers, week, weekIndex) => {
+    const firstOfMonth = week.find(
+      (day) => !day.outsideRange && day.date.slice(-2) === "01",
+    );
+    if (!firstOfMonth) return markers;
+
+    const date = new Date(`${firstOfMonth.date}T00:00:00Z`);
+    const month = date.toLocaleDateString("en-US", {
+      month: "short",
+      timeZone: "UTC",
+    });
+    markers.push({
+      weekIndex,
+      label:
+        selectedContributionYear === "All Time"
+          ? `${month} '${firstOfMonth.date.slice(2, 4)}`
+          : month,
+    });
+    return markers;
+  }, []);
+
+  const showContributionTooltip = (event, day) => {
+    setHoveredContribution({
+      text: `${day.count} ${
+        day.count === 1 ? "contribution" : "contributions"
+      } on ${formatContributionDate(day.date)}`,
+      left: Math.max(8, Math.min(event.clientX + 12, window.innerWidth - 220)),
+      top: Math.max(8, event.clientY - 38),
+    });
+  };
 
   return (
     <div className="github-analytics-page">
@@ -231,6 +317,148 @@ const GitHubAnalytics = () => {
             );
           })}
         </section>
+
+        <section
+          className="github-contribution-card"
+          aria-label="GitHub contribution heatmap"
+        >
+          <div className="github-contribution-header">
+            <div className="github-contribution-title">
+              <h2>
+                {selectedContributionData.totalContributions.toLocaleString()} contributions in{" "}
+                {selectedContributionYear}
+              </h2>
+              <p>Daily snapshot of pull requests, commits, issues and peer reviews.</p>
+            </div>
+            <div className="github-contribution-year-selector" aria-label="Contribution year">
+              {contributionYears.map((year) => (
+                <button
+                  type="button"
+                  className={
+                    year === selectedContributionYear ? "is-selected" : undefined
+                  }
+                  aria-pressed={year === selectedContributionYear}
+                  key={year}
+                  onClick={() => setSelectedContributionYear(year)}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div
+            className="github-heatmap-scroll"
+            tabIndex={0}
+            aria-label="Scrollable daily contribution calendar"
+          >
+            <div className="github-heatmap-scroll-content">
+              <div
+                className="github-heatmap-months"
+                style={{ width: `${contributionWeeks.length * 17 - 3}px` }}
+                aria-hidden="true"
+              >
+                {monthMarkers.map((month) => (
+                  <span
+                    key={`${month.weekIndex}-${month.label}`}
+                    style={{ left: `${month.weekIndex * 17}px` }}
+                  >
+                    {month.label}
+                  </span>
+                ))}
+              </div>
+
+              <div className="github-heatmap-chart">
+                <div className="github-heatmap-weekday-labels" aria-hidden="true">
+                  {weekdayLabels.map((label, index) => (
+                    <span key={index}>{label}</span>
+                  ))}
+                </div>
+                <div className="github-heatmap-weeks">
+                  {contributionWeeks.map((week) => (
+                    <div className="github-heatmap-week" key={week[0].date}>
+                      {week.map((day, weekdayIndex) => {
+                        if (day.outsideRange) {
+                          return (
+                            <span
+                              className="github-contribution-cell is-outside-range"
+                              key={`${day.date}-${weekdayIndex}`}
+                              aria-hidden="true"
+                            />
+                          );
+                        }
+
+                        const dayLabel = formatContributionDate(day.date);
+                        return (
+                          <button
+                            type="button"
+                            className={`github-contribution-cell github-contribution-cell--level-${getContributionLevel(
+                              day.count,
+                            )}`}
+                            key={day.date}
+                            aria-label={`${day.count} ${
+                              day.count === 1 ? "contribution" : "contributions"
+                            } on ${dayLabel}`}
+                            title={`${day.count} ${
+                              day.count === 1 ? "contribution" : "contributions"
+                            } on ${dayLabel}`}
+                            onMouseEnter={(event) =>
+                              showContributionTooltip(event, day)
+                            }
+                            onMouseLeave={() => setHoveredContribution(null)}
+                          />
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="github-contribution-summary">
+            <div className="github-contribution-highlights">
+              <div>
+                <strong>{selectedContributionData.currentStreak} days</strong>
+                <span>Current streak</span>
+              </div>
+              <div>
+                <strong>{selectedContributionData.longestStreak} days</strong>
+                <span>Longest streak</span>
+              </div>
+              <div>
+                <strong>
+                  {selectedContributionData.busiestDay.count} contributions (
+                  {selectedContributionData.busiestDay.date})
+                </strong>
+                <span>Busiest day</span>
+              </div>
+            </div>
+            <div className="github-contribution-legend" aria-label="Contribution intensity">
+              <span>Less</span>
+              {[0, 1, 2, 3, 4].map((level) => (
+                <span
+                  className={`github-contribution-cell github-contribution-cell--level-${level}`}
+                  key={level}
+                  aria-hidden="true"
+                />
+              ))}
+              <span>More</span>
+            </div>
+          </div>
+        </section>
+        {hoveredContribution && (
+          <div
+            className="github-contribution-tooltip"
+            role="tooltip"
+            style={{
+              left: `${hoveredContribution.left}px`,
+              top: `${hoveredContribution.top}px`,
+            }}
+          >
+            {hoveredContribution.text}
+          </div>
+        )}
       </main>
     </div>
   );
