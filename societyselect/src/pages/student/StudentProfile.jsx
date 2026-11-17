@@ -4,6 +4,7 @@ import {
   personalInformationData,
   profileCompletionData,
   studentData,
+  studentProjectsData,
   technicalSkillsData,
 } from "../../data/studentProfileData";
 import "../../styles/profile.css";
@@ -40,6 +41,42 @@ const academicInformationFields = [
   },
   { key: "academicPerformance", label: "Academic Performance", type: "text" },
 ];
+
+const emptyProjectDraft = {
+  name: "",
+  description: "",
+  technologyStack: "",
+  role: "Full Stack",
+  githubUrl: "",
+  liveDemoUrl: "",
+  status: "In Progress",
+};
+
+const validateProject = (project) => {
+  const errors = {};
+  const validateUrl = (value) => {
+    if (!value.trim()) return true;
+
+    try {
+      const url = new URL(value.trim());
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+      return false;
+    }
+  };
+
+  if (!project.name.trim()) {
+    errors.name = "Enter a project name.";
+  }
+  if (!validateUrl(project.githubUrl)) {
+    errors.githubUrl = "Enter a valid HTTP or HTTPS repository URL.";
+  }
+  if (!validateUrl(project.liveDemoUrl)) {
+    errors.liveDemoUrl = "Enter a valid HTTP or HTTPS demo URL.";
+  }
+
+  return errors;
+};
 
 const validatePersonalInformation = (information) => {
   const errors = {};
@@ -97,6 +134,16 @@ const StudentProfile = () => {
   const [isEditingSkills, setIsEditingSkills] = useState(false);
   const [newSkills, setNewSkills] = useState({});
   const [skillErrors, setSkillErrors] = useState({});
+  const [projects, setProjects] = useState(() =>
+    studentProjectsData.map((project) => ({
+      ...project,
+      technologyStack: [...project.technologyStack],
+    })),
+  );
+  const [projectDraft, setProjectDraft] = useState(emptyProjectDraft);
+  const [projectErrors, setProjectErrors] = useState({});
+  const [editingProjectId, setEditingProjectId] = useState(null);
+  const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -243,6 +290,85 @@ const StudentProfile = () => {
     setNewSkills({});
     setSkillErrors({});
     setIsEditingSkills(false);
+  };
+
+  const openNewProjectForm = () => {
+    setProjectDraft({ ...emptyProjectDraft });
+    setProjectErrors({});
+    setEditingProjectId(null);
+    setIsProjectFormOpen(true);
+  };
+
+  const openEditProjectForm = (project) => {
+    setProjectDraft({
+      ...project,
+      technologyStack: project.technologyStack.join(", "),
+    });
+    setProjectErrors({});
+    setEditingProjectId(project.id);
+    setIsProjectFormOpen(true);
+  };
+
+  const handleProjectChange = (event) => {
+    const { name, value } = event.target;
+    setProjectDraft((currentDraft) => ({
+      ...currentDraft,
+      [name]: value,
+    }));
+    setProjectErrors((currentErrors) => {
+      if (!currentErrors[name]) return currentErrors;
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[name];
+      return nextErrors;
+    });
+  };
+
+  const saveProject = (event) => {
+    event.preventDefault();
+    const errors = validateProject(projectDraft);
+    if (Object.keys(errors).length > 0) {
+      setProjectErrors(errors);
+      return;
+    }
+
+    const savedProject = {
+      ...projectDraft,
+      id: editingProjectId || `project-${Date.now()}`,
+      name: projectDraft.name.trim(),
+      description: projectDraft.description.trim(),
+      technologyStack: projectDraft.technologyStack
+        .split(",")
+        .map((technology) => technology.trim())
+        .filter(Boolean),
+      githubUrl: projectDraft.githubUrl.trim(),
+      liveDemoUrl: projectDraft.liveDemoUrl.trim(),
+    };
+
+    setProjects((currentProjects) =>
+      editingProjectId
+        ? currentProjects.map((project) =>
+            project.id === editingProjectId ? savedProject : project,
+          )
+        : [...currentProjects, savedProject],
+    );
+    setIsProjectFormOpen(false);
+    setEditingProjectId(null);
+    setProjectDraft({ ...emptyProjectDraft });
+    setProjectErrors({});
+  };
+
+  const cancelProjectForm = () => {
+    setIsProjectFormOpen(false);
+    setEditingProjectId(null);
+    setProjectDraft({ ...emptyProjectDraft });
+    setProjectErrors({});
+  };
+
+  const deleteProject = (projectId) => {
+    setProjects((currentProjects) =>
+      currentProjects.filter((project) => project.id !== projectId),
+    );
+    if (editingProjectId === projectId) cancelProjectForm();
   };
 
   const formatDateOfBirth = (dateOfBirth) => {
@@ -725,6 +851,302 @@ const StudentProfile = () => {
             })}
           </div>
         </form>
+      </section>
+
+      <section
+        className="profile-information profile-projects-section"
+        aria-labelledby="projects-title"
+      >
+        <div className="profile-information-heading">
+          <div>
+            <p className="profile-information-eyebrow">
+              Projects &amp; contributions
+            </p>
+            <h2 id="projects-title">Selected work</h2>
+          </div>
+          <button
+            className="profile-information-action"
+            type="button"
+            onClick={openNewProjectForm}
+          >
+            Add Project
+          </button>
+        </div>
+
+        {isProjectFormOpen && (
+          <form
+            className="profile-project-form"
+            onSubmit={saveProject}
+            noValidate
+          >
+            <h3>{editingProjectId ? "Edit project" : "New project"}</h3>
+            <div className="profile-project-form-grid">
+              <div className="profile-information-field">
+                <label
+                  className="profile-information-label"
+                  htmlFor="project-name"
+                >
+                  Project Name
+                </label>
+                <input
+                  className={`profile-information-control${
+                    projectErrors.name ? " is-invalid" : ""
+                  }`}
+                  id="project-name"
+                  name="name"
+                  type="text"
+                  value={projectDraft.name}
+                  onChange={handleProjectChange}
+                  aria-invalid={Boolean(projectErrors.name)}
+                  aria-describedby={
+                    projectErrors.name ? "project-name-error" : undefined
+                  }
+                  required
+                />
+                {projectErrors.name && (
+                  <p
+                    className="profile-information-error"
+                    id="project-name-error"
+                    role="alert"
+                  >
+                    {projectErrors.name}
+                  </p>
+                )}
+              </div>
+              <div className="profile-information-field">
+                <label
+                  className="profile-information-label"
+                  htmlFor="project-technology-stack"
+                >
+                  Technology Stack
+                </label>
+                <input
+                  className="profile-information-control"
+                  id="project-technology-stack"
+                  name="technologyStack"
+                  type="text"
+                  placeholder="React, Node.js, MongoDB"
+                  value={projectDraft.technologyStack}
+                  onChange={handleProjectChange}
+                />
+              </div>
+              <div className="profile-information-field is-wide">
+                <label
+                  className="profile-information-label"
+                  htmlFor="project-description"
+                >
+                  Description
+                </label>
+                <textarea
+                  className="profile-information-control"
+                  id="project-description"
+                  name="description"
+                  value={projectDraft.description}
+                  onChange={handleProjectChange}
+                  rows="3"
+                />
+              </div>
+              <div className="profile-information-field">
+                <label
+                  className="profile-information-label"
+                  htmlFor="project-role"
+                >
+                  Project Role
+                </label>
+                <select
+                  className="profile-information-control"
+                  id="project-role"
+                  name="role"
+                  value={projectDraft.role}
+                  onChange={handleProjectChange}
+                >
+                  <option>Frontend</option>
+                  <option>Backend</option>
+                  <option>Full Stack</option>
+                </select>
+              </div>
+              <div className="profile-information-field">
+                <label
+                  className="profile-information-label"
+                  htmlFor="project-status"
+                >
+                  Project Status
+                </label>
+                <select
+                  className="profile-information-control"
+                  id="project-status"
+                  name="status"
+                  value={projectDraft.status}
+                  onChange={handleProjectChange}
+                >
+                  <option>In Progress</option>
+                  <option>Completed</option>
+                  <option>On Hold</option>
+                </select>
+              </div>
+              <div className="profile-information-field">
+                <label
+                  className="profile-information-label"
+                  htmlFor="project-github-url"
+                >
+                  GitHub Repository Link
+                </label>
+                <input
+                  className={`profile-information-control${
+                    projectErrors.githubUrl ? " is-invalid" : ""
+                  }`}
+                  id="project-github-url"
+                  name="githubUrl"
+                  type="url"
+                  placeholder="https://github.com/..."
+                  value={projectDraft.githubUrl}
+                  onChange={handleProjectChange}
+                  aria-invalid={Boolean(projectErrors.githubUrl)}
+                  aria-describedby={
+                    projectErrors.githubUrl
+                      ? "project-github-url-error"
+                      : undefined
+                  }
+                />
+                {projectErrors.githubUrl && (
+                  <p
+                    className="profile-information-error"
+                    id="project-github-url-error"
+                    role="alert"
+                  >
+                    {projectErrors.githubUrl}
+                  </p>
+                )}
+              </div>
+              <div className="profile-information-field">
+                <label
+                  className="profile-information-label"
+                  htmlFor="project-live-demo-url"
+                >
+                  Live Demo Link
+                </label>
+                <input
+                  className={`profile-information-control${
+                    projectErrors.liveDemoUrl ? " is-invalid" : ""
+                  }`}
+                  id="project-live-demo-url"
+                  name="liveDemoUrl"
+                  type="url"
+                  placeholder="https://..."
+                  value={projectDraft.liveDemoUrl}
+                  onChange={handleProjectChange}
+                  aria-invalid={Boolean(projectErrors.liveDemoUrl)}
+                  aria-describedby={
+                    projectErrors.liveDemoUrl
+                      ? "project-live-demo-url-error"
+                      : undefined
+                  }
+                />
+                {projectErrors.liveDemoUrl && (
+                  <p
+                    className="profile-information-error"
+                    id="project-live-demo-url-error"
+                    role="alert"
+                  >
+                    {projectErrors.liveDemoUrl}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="profile-information-actions profile-project-form-actions">
+              <button className="profile-information-action" type="submit">
+                {editingProjectId ? "Save Changes" : "Save Project"}
+              </button>
+              <button
+                className="profile-information-action is-secondary"
+                type="button"
+                onClick={cancelProjectForm}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        <div className="profile-project-grid">
+          {projects.map((project) => (
+            <article className="profile-project-card" key={project.id}>
+              <div className="profile-project-thumbnail" aria-hidden="true">
+                <span className="profile-project-thumbnail-mark">
+                  {project.name.slice(0, 1).toUpperCase()}
+                </span>
+                <span className="profile-project-thumbnail-line" />
+                <span className="profile-project-thumbnail-line" />
+              </div>
+              <div className="profile-project-content">
+                <div className="profile-project-title-row">
+                  <h3>{project.name}</h3>
+                  <span
+                    className={`profile-project-status status-${project.status
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")}`}
+                  >
+                    {project.status}
+                  </span>
+                </div>
+                <p className="profile-project-description">
+                  {project.description}
+                </p>
+                <p className="profile-project-role">Role · {project.role}</p>
+                <div className="profile-project-technologies">
+                  {project.technologyStack.map((technology) => (
+                    <span className="profile-project-technology" key={technology}>
+                      {technology}
+                    </span>
+                  ))}
+                </div>
+                <div className="profile-project-footer">
+                  <div className="profile-project-links">
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        GitHub
+                      </a>
+                    )}
+                    {project.liveDemoUrl && (
+                      <a
+                        href={project.liveDemoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Live Demo
+                      </a>
+                    )}
+                  </div>
+                  <div className="profile-project-actions">
+                    <button
+                      className="profile-project-manage"
+                      type="button"
+                      onClick={() => openEditProjectForm(project)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="profile-project-manage is-delete"
+                      type="button"
+                      onClick={() => deleteProject(project.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+          {projects.length === 0 && !isProjectFormOpen && (
+            <p className="profile-project-empty">
+              No projects added yet. Add a project to showcase your work.
+            </p>
+          )}
+        </div>
       </section>
     </main>
   );

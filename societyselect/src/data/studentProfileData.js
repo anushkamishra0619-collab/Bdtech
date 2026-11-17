@@ -85,6 +85,31 @@ export const technicalSkillsData = [
   },
 ];
 
+export const studentProjectsData = [
+  {
+    id: "project-campus-connect",
+    name: "Campus Connect",
+    description:
+      "A student community platform for discovering campus events, sharing updates, and connecting with peers.",
+    technologyStack: ["React", "Node.js", "Express", "MongoDB"],
+    role: "Full Stack",
+    githubUrl: "https://github.com/example/campus-connect",
+    liveDemoUrl: "https://campus-connect.example.com",
+    status: "Completed",
+  },
+  {
+    id: "project-study-planner",
+    name: "Study Planner",
+    description:
+      "A focused study planner that helps students organize coursework and keep track of weekly goals.",
+    technologyStack: ["JavaScript", "HTML", "CSS"],
+    role: "Frontend",
+    githubUrl: "https://github.com/example/study-planner",
+    liveDemoUrl: "",
+    status: "In Progress",
+  },
+];
+
 export const profileCompletionData = {
   percentage: 85,
   completedSections: [
