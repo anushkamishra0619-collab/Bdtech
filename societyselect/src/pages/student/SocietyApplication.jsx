@@ -1,9 +1,16 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { societiesData } from "../../data/societiesData";
 import {
   academicInformationData,
   studentData,
 } from "../../data/studentProfileData";
+import {
+  createApplicationRecord,
+  getApplications,
+  hasDuplicateApplication,
+  saveApplication,
+  validateApplication,
+} from "../../data/applicationService";
 import "../../styles/SocietyApplication.css";
 
 const formatDeadline = (deadline) =>
@@ -35,40 +42,66 @@ const createEmptyApplicationForm = (society) => ({
   confirmed: false,
 });
 
-const SocietyApplicationForm = ({ society, formData, onChange, onBack, onSubmit }) => {
-  const positions = society.details?.availablePositions ?? [];
-  const yearAndSemester = [
+const getStudentApplicationDetails = () => ({
+  fullName: studentData.name ?? "",
+  studentNumber: studentData.studentId ?? "",
+  branch: academicInformationData.branch ?? studentData.branch ?? "",
+  academicYear: academicInformationData.academicYear ?? studentData.academicYear ?? "",
+  currentSemester: academicInformationData.currentSemester ?? "",
+  yearAndSemester: [
     academicInformationData.academicYear ?? studentData.academicYear,
     academicInformationData.currentSemester,
   ]
     .filter(Boolean)
-    .join(" · ");
+    .join(" · "),
+  currentCgpa: academicInformationData.currentCgpa ?? "",
+});
+
+const getCurrentApplicationStatus = (society, applications, studentNumber) =>
+  applications.find(
+    (application) =>
+      application.societyId === society.id &&
+      application.student?.studentNumber === studentNumber,
+  )?.status ?? society.applicationStatus;
+
+const SocietyApplicationForm = ({
+  society,
+  formData,
+  fieldErrors,
+  submissionError,
+  submissionResult,
+  onChange,
+  onBack,
+  onSubmit,
+}) => {
+  const positions = society.details?.availablePositions ?? [];
+  const student = getStudentApplicationDetails();
   const studentFields = [
-    { label: "Full Name", value: studentData.name },
-    { label: "Student Number", value: studentData.studentId },
+    { name: "fullName", label: "Full Name", value: student.fullName },
+    { name: "studentNumber", label: "Student Number", value: student.studentNumber },
+    { name: "branch", label: "Branch", value: student.branch },
+    { name: "yearAndSemester", label: "Year and Semester", value: student.yearAndSemester },
     {
-      label: "Branch",
-      value: academicInformationData.branch ?? studentData.branch,
-    },
-    { label: "Year and Semester", value: yearAndSemester },
-    {
+      name: "currentCgpa",
       label: "Current CGPA",
-      value: academicInformationData.currentCgpa
-        ? `${academicInformationData.currentCgpa} / 10`
-        : "",
+      value: student.currentCgpa ? `${student.currentCgpa} / 10` : "",
     },
   ];
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
-    onChange((previous) => ({
-      ...previous,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    onChange(name, type === "checkbox" ? checked : value);
   };
 
-  const renderStudentField = ({ label, value }) => (
-    <label className="society-application-field" key={label}>
+  const renderError = (name) =>
+    fieldErrors[name] && (
+      <small className="society-application-error" id={`application-error-${name}`} role="alert">
+        {fieldErrors[name]}
+      </small>
+    );
+
+  const renderStudentField = ({ name, label, value }) => (
+    <label className="society-application-field" key={name}>
       <span>{label}</span>
       <input
         type="text"
@@ -76,7 +109,10 @@ const SocietyApplicationForm = ({ society, formData, onChange, onBack, onSubmit 
         placeholder="Not provided in profile"
         readOnly
         aria-readonly="true"
+        aria-invalid={Boolean(fieldErrors[name])}
+        aria-describedby={fieldErrors[name] ? `application-error-${name}` : undefined}
       />
+      {renderError(name)}
     </label>
   );
 
@@ -114,111 +150,181 @@ const SocietyApplicationForm = ({ society, formData, onChange, onBack, onSubmit 
         </p>
       </aside>
 
-      <form className="society-application-form" onSubmit={onSubmit} noValidate>
-        <h2 className="society-application-section-title">Student Details</h2>
-        <p className="society-application-demo-note">
-          Student details are shown from the current demonstration profile. Please verify them before submitting.
-        </p>
+      {submissionResult ? (
+        <section className="society-application-success" role="status">
+          <span className="society-application-success-mark" aria-hidden="true">✓</span>
+          <p className="society-eyebrow">Application received</p>
+          <h2>Your application has been submitted</h2>
+          <p>
+            Your application to <strong>{submissionResult.societyName}</strong> for{" "}
+            <strong>{submissionResult.position}</strong> is now marked as submitted.
+          </p>
+          <dl>
+            <div>
+              <dt>Application ID</dt>
+              <dd>{submissionResult.applicationId}</dd>
+            </div>
+            <div>
+              <dt>Submitted</dt>
+              <dd>{new Date(submissionResult.submittedAt).toLocaleString()}</dd>
+            </div>
+          </dl>
+          <div className="society-application-success-actions">
+            <button className="society-secondary-button" type="button" onClick={onBack}>
+              Back to Society Details
+            </button>
+            <a className="society-primary-button" href="/student/application-tracking">
+              View Application Tracking
+            </a>
+          </div>
+        </section>
+      ) : (
+        <form className="society-application-form" onSubmit={onSubmit} noValidate>
+          <h2 className="society-application-section-title">Student Details</h2>
+          <p className="society-application-demo-note">
+            Student details are shown from the current demonstration profile. Please verify them before submitting.
+          </p>
 
-        <div className="society-application-grid society-application-student-grid">
-          {studentFields.map(renderStudentField)}
+          {submissionError && (
+            <p className="society-application-submit-error" role="alert">
+              {submissionError}
+            </p>
+          )}
 
-          <label className="society-application-field">
-            <span>Position Applying For</span>
-            <select
-              name="position"
-              value={formData.position}
-              onChange={handleChange}
-              disabled={positions.length === 0}
-            >
-              {positions.length === 0 ? (
-                <option value="">No positions available</option>
-              ) : (
-                positions.map((position) => (
-                  <option value={position.title} key={position.title}>
-                    {position.title}
-                  </option>
-                ))
-              )}
-            </select>
-          </label>
-        </div>
+          <div className="society-application-grid society-application-student-grid">
+            {studentFields.map(renderStudentField)}
 
-        <div className="society-application-fields">
-          <label className="society-application-field society-application-field-wide">
-            <span>Why do you want to join?</span>
-            <textarea
-              name="motivation"
-              rows="5"
-              value={formData.motivation}
-              onChange={handleChange}
-            />
-          </label>
-
-          <label className="society-application-field society-application-field-wide">
-            <span>Relevant Skills and Experience</span>
-            <textarea
-              name="relevantSkills"
-              rows="5"
-              value={formData.relevantSkills}
-              onChange={handleChange}
-            />
-          </label>
-
-          <div className="society-application-grid society-application-link-grid">
             <label className="society-application-field">
-              <span>GitHub Profile URL</span>
-              <input
-                type="text"
-                inputMode="url"
-                name="githubUrl"
-                value={formData.githubUrl}
+              <span>Position Applying For</span>
+              <select
+                name="position"
+                value={formData.position}
                 onChange={handleChange}
-                placeholder="https://github.com/username"
-              />
-            </label>
-            <label className="society-application-field">
-              <span>Portfolio URL <em>(Optional)</em></span>
-              <input
-                type="text"
-                inputMode="url"
-                name="portfolioUrl"
-                value={formData.portfolioUrl}
-                onChange={handleChange}
-                placeholder="https://"
-              />
+                disabled={positions.length === 0}
+                aria-invalid={Boolean(fieldErrors.position)}
+                aria-describedby={fieldErrors.position ? "application-error-position" : undefined}
+              >
+                {positions.length === 0 ? (
+                  <option value="">No positions available</option>
+                ) : (
+                  positions.map((position) => (
+                    <option value={position.title} key={position.title}>
+                      {position.title}
+                    </option>
+                  ))
+                )}
+              </select>
+              {renderError("position")}
             </label>
           </div>
 
-          <label className="society-application-confirmation">
-            <input
-              type="checkbox"
-              name="confirmed"
-              checked={formData.confirmed}
-              onChange={handleChange}
-            />
-            <span>I confirm that the information provided is accurate.</span>
-          </label>
+          <div className="society-application-fields">
+            <label className="society-application-field society-application-field-wide">
+              <span>Why do you want to join?</span>
+              <textarea
+                name="motivation"
+                rows="5"
+                value={formData.motivation}
+                onChange={handleChange}
+                aria-invalid={Boolean(fieldErrors.motivation)}
+                aria-describedby={[
+                  "application-motivation-help",
+                  fieldErrors.motivation && "application-error-motivation",
+                ].filter(Boolean).join(" ")}
+              />
+              <div className="society-application-field-meta">
+                {renderError("motivation")}
+                <span id="application-motivation-help" aria-live="polite">
+                  {formData.motivation.length}/600 · minimum 50 characters
+                </span>
+              </div>
+            </label>
 
-          <div className="society-application-actions">
-            <button
-              className="society-secondary-button"
-              type="button"
-              onClick={onBack}
-            >
-              Back to Details
-            </button>
-            <button className="society-primary-button" type="submit">
-              Submit Application
-            </button>
+            <label className="society-application-field society-application-field-wide">
+              <span>Relevant Skills and Experience</span>
+              <textarea
+                name="relevantSkills"
+                rows="5"
+                value={formData.relevantSkills}
+                onChange={handleChange}
+                aria-invalid={Boolean(fieldErrors.relevantSkills)}
+                aria-describedby={fieldErrors.relevantSkills ? "application-error-relevantSkills" : undefined}
+              />
+              {renderError("relevantSkills")}
+            </label>
+
+            <div className="society-application-grid society-application-link-grid">
+              <label className="society-application-field">
+                <span>GitHub Profile URL</span>
+                <input
+                  type="text"
+                  inputMode="url"
+                  name="githubUrl"
+                  value={formData.githubUrl}
+                  onChange={handleChange}
+                  placeholder="https://github.com/username"
+                  aria-invalid={Boolean(fieldErrors.githubUrl)}
+                  aria-describedby={fieldErrors.githubUrl ? "application-error-githubUrl" : undefined}
+                />
+                {renderError("githubUrl")}
+              </label>
+              <label className="society-application-field">
+                <span>Portfolio URL <em>(Optional)</em></span>
+                <input
+                  type="text"
+                  inputMode="url"
+                  name="portfolioUrl"
+                  value={formData.portfolioUrl}
+                  onChange={handleChange}
+                  placeholder="https://"
+                  aria-invalid={Boolean(fieldErrors.portfolioUrl)}
+                  aria-describedby={fieldErrors.portfolioUrl ? "application-error-portfolioUrl" : undefined}
+                />
+                {renderError("portfolioUrl")}
+              </label>
+            </div>
+
+            <div className="society-application-confirmation-wrap">
+              <label className="society-application-confirmation">
+                <input
+                  type="checkbox"
+                  name="confirmed"
+                  checked={formData.confirmed}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(fieldErrors.confirmed)}
+                  aria-describedby={fieldErrors.confirmed ? "application-error-confirmed" : undefined}
+                />
+                <span>I confirm that the information provided is accurate.</span>
+              </label>
+              {renderError("confirmed")}
+            </div>
+
+            <div className="society-application-actions">
+              <button
+                className="society-secondary-button"
+                type="button"
+                onClick={onBack}
+              >
+                Back to Details
+              </button>
+              <button className="society-primary-button" type="submit">
+                Submit Application
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   );
 };
 
-const SocietyDetailsView = ({ society, onBack, onApply }) => {
+const SocietyDetailsView = ({
+  society,
+  applicationStatus,
+  hasApplication,
+  onBack,
+  onApply,
+}) => {
   const daysRemaining = daysUntilDeadline(society.deadline);
   const details = society.details ?? {};
   const positions = details.availablePositions ?? [];
@@ -442,11 +548,11 @@ const SocietyDetailsView = ({ society, onBack, onApply }) => {
           <button
             className="society-primary-button society-details-apply-button"
             type="button"
-            disabled={!society.isOpen || society.applicationStatus !== "Not Applied"}
+            disabled={!society.isOpen || hasApplication}
             onClick={onApply}
           >
-            {society.applicationStatus !== "Not Applied"
-              ? "Application Started"
+            {hasApplication
+              ? `${applicationStatus} ✓`
               : !society.isOpen
                 ? "Applications Closed"
                 : <>Apply Now <span aria-hidden="true">→</span></>}
@@ -464,6 +570,8 @@ const SocietyApplication = () => {
   const [sortOrder, setSortOrder] = useState("deadline");
   const [activeView, setActiveView] = useState("listing");
   const [selectedSociety, setSelectedSociety] = useState(null);
+  const [applications, setApplications] = useState([]);
+  const [storageError, setStorageError] = useState("");
   const [applicationForm, setApplicationForm] = useState({
     position: "",
     motivation: "",
@@ -472,15 +580,38 @@ const SocietyApplication = () => {
     portfolioUrl: "",
     confirmed: false,
   });
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [submissionError, setSubmissionError] = useState("");
+  const [submissionResult, setSubmissionResult] = useState(null);
   const [notice, setNotice] = useState("");
+  const studentDetails = getStudentApplicationDetails();
+
+  useEffect(() => {
+    try {
+      setApplications(getApplications());
+    } catch (error) {
+      setStorageError(
+        error instanceof Error ? error.message : "Saved applications could not be loaded.",
+      );
+    }
+  }, []);
 
   const openSocieties = societiesData.filter((society) => society.isOpen);
-  const myApplications = societiesData.filter(
-    (society) => society.applicationStatus !== "Not Applied",
-  );
-  const inReview = societiesData.filter(
-    (society) => society.applicationStatus === "In Review",
-  );
+  const myApplications = new Set([
+    ...societiesData
+      .filter((society) => society.applicationStatus !== "Not Applied")
+      .map((society) => society.id),
+    ...applications.map((application) => application.societyId),
+  ]).size;
+  const inReview = new Set([
+    ...societiesData
+      .filter((society) => society.applicationStatus === "In Review")
+      .map((society) => society.id),
+    ...applications
+      .filter((application) => application.status === "In Review")
+      .map((application) => application.societyId),
+  ]).size;
   const closingThisWeek = openSocieties.filter((society) => {
     const daysRemaining = daysUntilDeadline(society.deadline);
     return daysRemaining >= 0 && daysRemaining <= 7;
@@ -521,17 +652,76 @@ const SocietyApplication = () => {
     setActiveView("details");
   };
   const openApplication = (society) => {
-    if (!society.isOpen || society.applicationStatus !== "Not Applied") return;
+    if (!society.isOpen) {
+      setNotice("Applications for this society are closed.");
+      return;
+    }
+    if (
+      society.applicationStatus !== "Not Applied" ||
+      hasDuplicateApplication(applications, society.id, studentDetails.studentNumber)
+    ) {
+      setNotice("An application for this society has already been recorded.");
+      return;
+    }
     setSelectedSociety(society);
     setApplicationForm(createEmptyApplicationForm(society));
+    setFieldErrors({});
+    setSubmitAttempted(false);
+    setSubmissionError("");
+    setSubmissionResult(null);
     setActiveView("application");
+  };
+  const handleApplicationChange = (name, value) => {
+    const updatedForm = { ...applicationForm, [name]: value };
+    setApplicationForm(updatedForm);
+    setSubmissionError("");
+    if (submitAttempted && selectedSociety) {
+      setFieldErrors(
+        validateApplication({
+          society: selectedSociety,
+          student: studentDetails,
+          formData: updatedForm,
+        }),
+      );
+    }
   };
   const handleApplicationSubmit = (event) => {
     event.preventDefault();
-    setNotice(
-      "Application validation and submission will be added in the next step. Your entries have not been submitted.",
-    );
+    setSubmitAttempted(true);
+    if (!selectedSociety) return;
+
+    const errors = validateApplication({
+      society: selectedSociety,
+      student: studentDetails,
+      formData: applicationForm,
+    });
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
+    const application = createApplicationRecord({
+      society: selectedSociety,
+      student: studentDetails,
+      formData: applicationForm,
+    });
+    try {
+      const updatedApplications = saveApplication(application);
+      setApplications(updatedApplications);
+      setSubmissionResult(application);
+      setSubmissionError("");
+      setStorageError("");
+    } catch (error) {
+      setSubmissionError(
+        error instanceof Error ? error.message : "The application could not be saved.",
+      );
+    }
   };
+  const selectedApplicationStatus = selectedSociety
+    ? getCurrentApplicationStatus(
+        selectedSociety,
+        applications,
+        studentDetails.studentNumber,
+      )
+    : "";
 
   return (
     <main className={`society-listing-page${activeView !== "listing" ? " is-viewing-details" : ""}`}>
@@ -590,17 +780,28 @@ const SocietyApplication = () => {
         </button>
       </header>
 
+      {storageError && (
+        <p className="society-application-submit-error society-application-storage-error" role="alert">
+          {storageError}
+        </p>
+      )}
+
       {activeView === "application" && selectedSociety ? (
         <SocietyApplicationForm
           society={selectedSociety}
           formData={applicationForm}
-          onChange={setApplicationForm}
+          fieldErrors={fieldErrors}
+          submissionError={submissionError}
+          submissionResult={submissionResult}
+          onChange={handleApplicationChange}
           onBack={() => setActiveView("details")}
           onSubmit={handleApplicationSubmit}
         />
       ) : activeView === "details" && selectedSociety ? (
         <SocietyDetailsView
           society={selectedSociety}
+          applicationStatus={selectedApplicationStatus}
+          hasApplication={selectedApplicationStatus !== "Not Applied"}
           onBack={() => {
             setSelectedSociety(null);
             setActiveView("listing");
@@ -746,13 +947,16 @@ const SocietyApplication = () => {
                       View Details
                     </button>
                     <button
-                      className={`society-primary-button${society.applicationStatus !== "Not Applied" ? " is-applied" : ""}`}
+                      className={`society-primary-button${getCurrentApplicationStatus(society, applications, studentDetails.studentNumber) !== "Not Applied" ? " is-applied" : ""}`}
                       type="button"
-                      disabled={!society.isOpen || society.applicationStatus !== "Not Applied"}
+                      disabled={
+                        !society.isOpen ||
+                        getCurrentApplicationStatus(society, applications, studentDetails.studentNumber) !== "Not Applied"
+                      }
                       onClick={() => openApplication(society)}
                     >
-                      {society.applicationStatus !== "Not Applied"
-                        ? `${society.applicationStatus} ✓`
+                      {getCurrentApplicationStatus(society, applications, studentDetails.studentNumber) !== "Not Applied"
+                        ? `${getCurrentApplicationStatus(society, applications, studentDetails.studentNumber)} ✓`
                         : !society.isOpen
                           ? "Applications Closed"
                           : <>Apply Now <span aria-hidden="true">→</span></>}
