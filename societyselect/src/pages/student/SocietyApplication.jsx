@@ -17,6 +17,101 @@ const daysUntilDeadline = (deadline) => {
   return Math.ceil((closingDate - today) / (1000 * 60 * 60 * 24));
 };
 
+const SocietyDetailsView = ({ society, onBack }) => {
+  const daysRemaining = daysUntilDeadline(society.deadline);
+
+  return (
+    <div className="society-listing-content society-details-content">
+      <nav className="society-breadcrumbs" aria-label="Breadcrumb">
+        <a href="/student/dashboard">Dashboard</a>
+        <span aria-hidden="true">/</span>
+        <button type="button" onClick={onBack}>
+          Society Applications
+        </button>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{society.name}</span>
+      </nav>
+
+      <button
+        className="society-back-button"
+        type="button"
+        onClick={onBack}
+      >
+        <span aria-hidden="true">←</span> Back to Society Applications
+      </button>
+
+      <section className="society-details-hero" aria-labelledby="society-details-title">
+        <div className="society-details-heading">
+          <span className={`society-category-label ${society.category.toLowerCase()}`}>
+            {society.category}
+          </span>
+          <span className="society-card-initial" aria-hidden="true">
+            {society.name.charAt(0)}
+          </span>
+        </div>
+        <h1 id="society-details-title">{society.name}</h1>
+        <p>{society.description}</p>
+      </section>
+
+      <section className="society-details-panel" aria-label={`${society.name} details`}>
+        <div className="society-details-facts">
+          <div className="society-details-fact">
+            <span className="society-field-label">Available positions</span>
+            <strong>{society.positionsAvailable} open · {society.positions.length} roles</strong>
+          </div>
+          <div className="society-details-fact">
+            <span className="society-field-label">Application deadline</span>
+            <strong>
+              {formatDeadline(society.deadline)}
+              <em>
+                {daysRemaining >= 0
+                  ? `${daysRemaining} days left`
+                  : "Applications closed"}
+              </em>
+            </strong>
+          </div>
+          <div className="society-details-fact">
+            <span className="society-field-label">Eligibility</span>
+            <strong className="society-eligible">
+              ✓ Eligible · {society.eligibility} only
+            </strong>
+          </div>
+          <div className="society-details-fact">
+            <span className="society-field-label">Application status</span>
+            <strong>{society.applicationStatus}</strong>
+          </div>
+        </div>
+
+        <div className="society-details-section">
+          <h2>Available roles</h2>
+          <div className="society-details-roles">
+            {society.positions.map((position) => (
+              <span key={position}>{position}</span>
+            ))}
+          </div>
+        </div>
+
+        <div className="society-details-section">
+          <h2>Skills</h2>
+          <div className="society-skill-tags">
+            {society.skills.map((skill) => (
+              <span key={skill}>{skill}</span>
+            ))}
+          </div>
+        </div>
+
+        <button
+          className="society-back-button society-details-back-bottom"
+          type="button"
+          onClick={onBack}
+        >
+          <span aria-hidden="true">←</span> Back to Society Applications
+        </button>
+      </section>
+    </div>
+  );
+};
+
 const SocietyApplication = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState("All");
@@ -69,7 +164,7 @@ const SocietyApplication = () => {
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <main className="society-listing-page">
+    <main className={`society-listing-page${selectedSociety ? " is-viewing-details" : ""}`}>
       <header className="society-navbar">
         <a
           className="society-navbar-brand"
@@ -125,6 +220,12 @@ const SocietyApplication = () => {
         </button>
       </header>
 
+      {selectedSociety ? (
+        <SocietyDetailsView
+          society={selectedSociety}
+          onBack={() => setSelectedSociety(null)}
+        />
+      ) : (
       <div className="society-listing-content">
         <nav className="society-breadcrumbs" aria-label="Breadcrumb">
           <a href="/student/dashboard">Dashboard</a>
@@ -280,8 +381,9 @@ const SocietyApplication = () => {
           </div>
         </section>
       </div>
+      )}
 
-      {(selectedSociety || notice) && (
+      {notice && (
         <div
           className="society-dialog-backdrop"
           role="presentation"
@@ -308,44 +410,16 @@ const SocietyApplication = () => {
             >
               ×
             </button>
-            {selectedSociety ? (
-              <>
-                <span className="society-category-label">{selectedSociety.category}</span>
-                <h2 id="society-dialog-title">{selectedSociety.name}</h2>
-                <p>{selectedSociety.description}</p>
-                <h3>Available roles</h3>
-                <ul>
-                  {selectedSociety.positions.map((position) => (
-                    <li key={position}>{position}</li>
-                  ))}
-                </ul>
-                <p><strong>Deadline:</strong> {formatDeadline(selectedSociety.deadline)}</p>
-                <p><strong>Eligibility:</strong> {selectedSociety.eligibility}</p>
-                <button
-                  className="society-primary-button"
-                  type="button"
-                  onClick={() => {
-                    setSelectedSociety(null);
-                    setNotice("The application form will be available in the next step.");
-                  }}
-                >
-                  Apply Now
-                </button>
-              </>
-            ) : (
-              <>
-                <span className="society-eyebrow">Applications</span>
-                <h2 id="society-dialog-title">Coming soon</h2>
-                <p>{notice}</p>
-                <button
-                  className="society-primary-button"
-                  type="button"
-                  onClick={() => setNotice("")}
-                >
-                  Understood
-                </button>
-              </>
-            )}
+            <span className="society-eyebrow">Applications</span>
+            <h2 id="society-dialog-title">Coming soon</h2>
+            <p>{notice}</p>
+            <button
+              className="society-primary-button"
+              type="button"
+              onClick={() => setNotice("")}
+            >
+              Understood
+            </button>
           </section>
         </div>
       )}

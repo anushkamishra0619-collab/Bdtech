@@ -1010,6 +1010,207 @@
   }
 }
 
+.society-details-content {
+  max-width: 1440px;
+  animation: society-content-in 320ms ease both;
+}
+
+.society-breadcrumbs button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #72889d;
+  font: inherit;
+  cursor: pointer;
+}
+
+.society-breadcrumbs button:hover {
+  color: var(--society-blue);
+}
+
+.society-back-button {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 30px;
+  padding: 0 15px;
+  border: 1px solid #cbdce3;
+  border-radius: 999px;
+  background: #fff;
+  color: #4d7487;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.society-back-button:hover {
+  background: #f2f7f9;
+  color: #263d4c;
+}
+
+.society-details-hero {
+  margin-top: 22px;
+  padding: 34px 0 38px;
+  border-bottom: 1px solid #dce7ec;
+}
+
+.society-details-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.society-details-heading .society-card-initial {
+  width: 58px;
+  height: 58px;
+}
+
+.society-details-hero h1 {
+  margin-top: 18px;
+  color: var(--society-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 5vw, 64px);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.society-details-hero > p {
+  max-width: 760px;
+  margin-top: 12px;
+  color: #728493;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.society-details-panel {
+  margin: 28px 0 72px;
+  padding: 32px;
+  border: 1px solid #dce7ec;
+  border-radius: 30px;
+  background: #fff;
+  animation: society-card-in 380ms ease both;
+}
+
+.society-details-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid #e6edf0;
+}
+
+.society-details-fact {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.society-details-fact strong {
+  color: #314b5c;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.society-details-fact strong em {
+  display: block;
+  margin-top: 3px;
+  color: #468e83;
+  font-size: 14px;
+  font-style: normal;
+}
+
+.society-details-section {
+  padding: 25px 0;
+  border-bottom: 1px solid #e6edf0;
+}
+
+.society-details-section h2 {
+  margin-bottom: 14px;
+  color: #263d4c;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.society-details-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.society-details-roles span {
+  padding: 9px 13px;
+  border: 1px solid #dce8ed;
+  border-radius: 999px;
+  background: #f7fafb;
+  color: #4b6574;
+  font-size: 12px;
+}
+
+.society-details-section .society-skill-tags span {
+  padding: 7px 12px;
+  font-size: 12px;
+}
+
+.society-details-back-bottom {
+  margin-top: 24px;
+}
+
+.is-viewing-details .society-navbar-links a.active {
+  color: var(--society-ink);
+}
+
+.society-back-button:focus-visible,
+.society-breadcrumbs button:focus-visible {
+  outline: 2px solid #6d9fb1;
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .society-details-panel {
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .society-details-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .society-details-hero {
+    padding-top: 25px;
+  }
+
+  .society-details-hero h1 {
+    font-size: 42px;
+  }
+
+  .society-details-hero > p {
+    font-size: 16px;
+  }
+
+  .society-details-panel {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .society-details-facts {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .society-listing-content,
   .society-card,
@@ -1025,7 +1226,8 @@
   .society-search,
   .society-filter-tabs button,
   .society-card-actions button,
-  .society-dialog .society-primary-button {
+  .society-dialog .society-primary-button,
+  .society-back-button {
     transition: none;
   }
 }
