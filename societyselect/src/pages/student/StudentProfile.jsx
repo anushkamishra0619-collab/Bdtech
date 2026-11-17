@@ -1,8 +1,16 @@
 import { useState } from "react";
 import {
+  achievementsData,
+  additionalProfileData,
   academicInformationData,
+  collegeSocietyData,
+  extracurricularActivitiesData,
+  githubActivityData,
+  performanceData,
   personalInformationData,
   profileCompletionData,
+  profileDocumentsData,
+  profileSummaryData,
   studentData,
   studentProjectsData,
   technicalSkillsData,
@@ -107,6 +115,210 @@ const cloneTechnicalSkills = (categories) =>
     skills: category.skills.map((skill) => ({ ...skill })),
   }));
 
+const EditableProfileCollection = ({
+  eyebrow,
+  title,
+  addLabel,
+  fields,
+  initialRecords,
+  emptyText,
+  renderRecord,
+}) => {
+  const [records, setRecords] = useState(() =>
+    initialRecords.map((record) => ({ ...record })),
+  );
+  const [draft, setDraft] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [expandedId, setExpandedId] = useState(null);
+
+  const beginAdd = () => {
+    setDraft(
+      Object.fromEntries(fields.map((field) => [field.key, field.defaultValue || ""])),
+    );
+    setEditingId(null);
+    setErrors({});
+  };
+
+  const beginEdit = (record) => {
+    setDraft({ ...record });
+    setEditingId(record.id);
+    setErrors({});
+  };
+
+  const cancelEdit = () => {
+    setDraft(null);
+    setEditingId(null);
+    setErrors({});
+  };
+
+  const updateDraft = (event) => {
+    const { name, value } = event.target;
+    setDraft((currentDraft) => ({ ...currentDraft, [name]: value }));
+    setErrors((currentErrors) => {
+      if (!currentErrors[name]) return currentErrors;
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[name];
+      return nextErrors;
+    });
+  };
+
+  const saveRecord = (event) => {
+    event.preventDefault();
+    const nextErrors = {};
+    fields.forEach((field) => {
+      if (field.required && !String(draft[field.key] || "").trim()) {
+        nextErrors[field.key] = `${field.label} is required.`;
+      }
+    });
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    const savedRecord = {
+      ...draft,
+      id: editingId || `${title.toLowerCase().replace(/\W+/g, "-")}-${Date.now()}`,
+    };
+    setRecords((currentRecords) =>
+      editingId
+        ? currentRecords.map((record) =>
+            record.id === editingId ? savedRecord : record,
+          )
+        : [...currentRecords, savedRecord],
+    );
+    cancelEdit();
+  };
+
+  const deleteRecord = (recordId) => {
+    setRecords((currentRecords) =>
+      currentRecords.filter((record) => record.id !== recordId),
+    );
+    if (expandedId === recordId) setExpandedId(null);
+    if (editingId === recordId) cancelEdit();
+  };
+
+  return (
+    <section className="profile-information profile-extra-section">
+      <div className="profile-information-heading">
+        <div>
+          <p className="profile-information-eyebrow">{eyebrow}</p>
+          <h2>{title}</h2>
+        </div>
+        {!draft && (
+          <button
+            className="profile-information-action"
+            type="button"
+            onClick={beginAdd}
+          >
+            {addLabel}
+          </button>
+        )}
+      </div>
+
+      {draft && (
+        <form className="profile-extra-form" onSubmit={saveRecord} noValidate>
+          <div className="profile-extra-form-grid">
+            {fields.map((field) => {
+              const fieldId = `${title.toLowerCase().replace(/\W+/g, "-")}-${field.key}`;
+              return (
+                <div
+                  className={`profile-information-field${field.wide ? " is-wide" : ""}`}
+                  key={field.key}
+                >
+                  <label className="profile-information-label" htmlFor={fieldId}>
+                    {field.label}
+                  </label>
+                  {field.type === "select" ? (
+                    <select
+                      className="profile-information-control"
+                      id={fieldId}
+                      name={field.key}
+                      value={draft[field.key]}
+                      onChange={updateDraft}
+                    >
+                      {field.options.map((option) => (
+                        <option key={option}>{option}</option>
+                      ))}
+                    </select>
+                  ) : field.type === "textarea" ? (
+                    <textarea
+                      className="profile-information-control"
+                      id={fieldId}
+                      name={field.key}
+                      value={draft[field.key]}
+                      onChange={updateDraft}
+                      rows="3"
+                    />
+                  ) : (
+                    <input
+                      className={`profile-information-control${errors[field.key] ? " is-invalid" : ""}`}
+                      id={fieldId}
+                      name={field.key}
+                      type={field.type || "text"}
+                      value={draft[field.key]}
+                      onChange={updateDraft}
+                      required={field.required}
+                      aria-invalid={Boolean(errors[field.key])}
+                    />
+                  )}
+                  {errors[field.key] && (
+                    <p className="profile-information-error" role="alert">
+                      {errors[field.key]}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div className="profile-information-actions profile-extra-form-actions">
+            <button className="profile-information-action" type="submit">
+              {editingId ? "Save Changes" : "Save"}
+            </button>
+            <button
+              className="profile-information-action is-secondary"
+              type="button"
+              onClick={cancelEdit}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
+      {records.length ? (
+        <div className="profile-record-grid">
+          {records.map((record) => (
+            <article className="profile-record-card" key={record.id}>
+              {renderRecord(record, {
+                isExpanded: expandedId === record.id,
+                toggleDetails: () =>
+                  setExpandedId((currentId) =>
+                    currentId === record.id ? null : record.id,
+                  ),
+              })}
+              <div className="profile-record-actions">
+                <button type="button" onClick={() => beginEdit(record)}>
+                  Edit
+                </button>
+                <button
+                  className="is-delete"
+                  type="button"
+                  onClick={() => deleteRecord(record.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        !draft && <p className="profile-extra-empty">{emptyText}</p>
+      )}
+    </section>
+  );
+};
+
 const StudentProfile = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [personalInformation, setPersonalInformation] = useState(
@@ -144,6 +356,44 @@ const StudentProfile = () => {
   const [projectErrors, setProjectErrors] = useState({});
   const [editingProjectId, setEditingProjectId] = useState(null);
   const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
+  const [societies, setSocieties] = useState(() =>
+    collegeSocietyData.appliedSocieties.map((society) => ({ ...society })),
+  );
+  const [isEditingSocieties, setIsEditingSocieties] = useState(false);
+  const [societiesDraft, setSocietiesDraft] = useState([]);
+  const [performance, setPerformance] = useState({ ...performanceData });
+  const [performanceDraft, setPerformanceDraft] = useState({
+    ...performanceData,
+  });
+  const [isEditingPerformance, setIsEditingPerformance] = useState(false);
+  const [githubActivity, setGithubActivity] = useState({
+    ...githubActivityData,
+    recentProjects: githubActivityData.recentProjects.map((project) => ({
+      ...project,
+    })),
+    recentActivity: githubActivityData.recentActivity.map((activity) => ({
+      ...activity,
+    })),
+    contributionActivity: [...githubActivityData.contributionActivity],
+  });
+  const [githubDraft, setGithubDraft] = useState({ ...githubActivityData });
+  const [isEditingGithub, setIsEditingGithub] = useState(false);
+  const [documents, setDocuments] = useState(() =>
+    profileDocumentsData.map((document) => ({ ...document })),
+  );
+  const [previewDocument, setPreviewDocument] = useState(null);
+  const [additionalProfile, setAdditionalProfile] = useState({
+    ...additionalProfileData,
+    interests: [...additionalProfileData.interests],
+    languages: [...additionalProfileData.languages],
+  });
+  const [additionalDraft, setAdditionalDraft] = useState({
+    ...additionalProfileData,
+    interests: additionalProfileData.interests.join(", "),
+    languages: additionalProfileData.languages.join(", "),
+  });
+  const [isEditingAdditional, setIsEditingAdditional] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(profileSummaryData.lastUpdated);
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -369,6 +619,169 @@ const StudentProfile = () => {
       currentProjects.filter((project) => project.id !== projectId),
     );
     if (editingProjectId === projectId) cancelProjectForm();
+  };
+
+  const startEditingSocieties = () => {
+    setSocietiesDraft(societies.map((society) => ({ ...society })));
+    setIsEditingSocieties(true);
+  };
+
+  const updateSocietyDraft = (societyId, field, value) => {
+    setSocietiesDraft((currentSocieties) =>
+      currentSocieties.map((society) =>
+        society.id === societyId ? { ...society, [field]: value } : society,
+      ),
+    );
+  };
+
+  const addSociety = () => {
+    setSocietiesDraft((currentSocieties) => [
+      ...currentSocieties,
+      {
+        id: `society-${Date.now()}`,
+        name: "",
+        role: "Applicant",
+        applicationStatus: "Applied",
+        recruitmentProgress: "Application submitted",
+        examStatus: "Pending",
+        interviewStatus: "Pending",
+        probationStatus: "Not Started",
+      },
+    ]);
+  };
+
+  const saveSocieties = (event) => {
+    event.preventDefault();
+    const savedSocieties = societiesDraft
+      .filter((society) => society.name.trim())
+      .map((society) => ({ ...society, name: society.name.trim() }));
+    setSocieties(savedSocieties);
+    setIsEditingSocieties(false);
+    setLastUpdated("Today");
+  };
+
+  const cancelSocietyEdit = () => {
+    setSocietiesDraft(societies.map((society) => ({ ...society })));
+    setIsEditingSocieties(false);
+  };
+
+  const startEditingPerformance = () => {
+    setPerformanceDraft({ ...performance });
+    setIsEditingPerformance(true);
+  };
+
+  const handlePerformanceChange = (event) => {
+    const { name, value } = event.target;
+    setPerformanceDraft((currentDraft) => ({
+      ...currentDraft,
+      [name]: name === "mentorFeedback" ? value : Number(value),
+    }));
+  };
+
+  const savePerformance = (event) => {
+    event.preventDefault();
+    setPerformance({ ...performanceDraft });
+    setIsEditingPerformance(false);
+    setLastUpdated("Today");
+  };
+
+  const cancelPerformanceEdit = () => {
+    setPerformanceDraft({ ...performance });
+    setIsEditingPerformance(false);
+  };
+
+  const startEditingGithub = () => {
+    setGithubDraft({ ...githubActivity });
+    setIsEditingGithub(true);
+  };
+
+  const handleGithubChange = (event) => {
+    const { name, value } = event.target;
+    setGithubDraft((currentDraft) => ({
+      ...currentDraft,
+      [name]: ["repositoryCount", "contributionsThisYear", "commitsThisMonth"].includes(name)
+        ? Number(value)
+        : value,
+    }));
+  };
+
+  const saveGithub = (event) => {
+    event.preventDefault();
+    try {
+      const profileUrl = new URL(githubDraft.profileUrl);
+      if (!["http:", "https:"].includes(profileUrl.protocol)) return;
+    } catch {
+      return;
+    }
+
+    setGithubActivity({ ...githubActivity, ...githubDraft });
+    setIsEditingGithub(false);
+    setLastUpdated("Today");
+  };
+
+  const cancelGithubEdit = () => {
+    setGithubDraft({ ...githubActivity });
+    setIsEditingGithub(false);
+  };
+
+  const uploadDocument = (documentId, file) => {
+    if (!file) return;
+    setDocuments((currentDocuments) =>
+      currentDocuments.map((document) =>
+        document.id === documentId
+          ? {
+              ...document,
+              fileName: file.name,
+              verificationStatus: "Pending",
+              updated: "Uploaded just now",
+            }
+          : document,
+      ),
+    );
+    setLastUpdated("Today");
+  };
+
+  const startEditingAdditional = () => {
+    setAdditionalDraft({
+      ...additionalProfile,
+      interests: additionalProfile.interests.join(", "),
+      languages: additionalProfile.languages.join(", "),
+    });
+    setIsEditingAdditional(true);
+  };
+
+  const handleAdditionalChange = (event) => {
+    const { name, value } = event.target;
+    setAdditionalDraft((currentDraft) => ({
+      ...currentDraft,
+      [name]: value,
+    }));
+  };
+
+  const saveAdditionalProfile = (event) => {
+    event.preventDefault();
+    setAdditionalProfile({
+      ...additionalDraft,
+      interests: additionalDraft.interests
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean),
+      languages: additionalDraft.languages
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    });
+    setIsEditingAdditional(false);
+    setLastUpdated("Today");
+  };
+
+  const cancelAdditionalEdit = () => {
+    setAdditionalDraft({
+      ...additionalProfile,
+      interests: additionalProfile.interests.join(", "),
+      languages: additionalProfile.languages.join(", "),
+    });
+    setIsEditingAdditional(false);
   };
 
   const formatDateOfBirth = (dateOfBirth) => {
@@ -1146,6 +1559,758 @@ const StudentProfile = () => {
               No projects added yet. Add a project to showcase your work.
             </p>
           )}
+        </div>
+      </section>
+
+      <EditableProfileCollection
+        eyebrow="Recognition & learning"
+        title="Achievements & Certifications"
+        addLabel="Add Achievement"
+        fields={[
+          { key: "title", label: "Certificate or achievement", required: true },
+          { key: "organization", label: "Issuing organization" },
+          {
+            key: "type",
+            label: "Type",
+            type: "select",
+            options: ["Certificate", "Award", "Competition", "Achievement"],
+          },
+          { key: "date", label: "Date", type: "date" },
+          {
+            key: "description",
+            label: "Details",
+            type: "textarea",
+            wide: true,
+          },
+          {
+            key: "verificationStatus",
+            label: "Verification",
+            type: "select",
+            options: ["Verified", "Pending", "Unverified"],
+          },
+          { key: "verificationUrl", label: "Certificate verification link", type: "url" },
+        ]}
+        initialRecords={achievementsData}
+        emptyText="Add certificates, awards, and other achievements."
+        renderRecord={(record, { isExpanded, toggleDetails }) => (
+          <>
+            <div className="profile-record-topline">
+              <span className="profile-record-kind">{record.type}</span>
+              <span
+                className={`profile-status-badge status-${record.verificationStatus
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}`}
+              >
+                {record.verificationStatus}
+              </span>
+            </div>
+            <h3>{record.title}</h3>
+            <p className="profile-record-meta">
+              {record.organization}
+              {record.date &&
+                ` · ${new Date(`${record.date}T00:00:00`).toLocaleDateString("en-IN", {
+                  month: "short",
+                  year: "numeric",
+                })}`}
+            </p>
+            {isExpanded && (
+              <p className="profile-record-description">{record.description}</p>
+            )}
+            <div className="profile-record-links">
+              <button type="button" onClick={toggleDetails}>
+                {isExpanded ? "Hide details" : "View details"}
+              </button>
+              {record.verificationUrl && (
+                <a href={record.verificationUrl} target="_blank" rel="noreferrer">
+                  Verify certificate
+                </a>
+              )}
+            </div>
+          </>
+        )}
+      />
+
+      <section
+        className="profile-information profile-extra-section"
+        aria-labelledby="society-information-title"
+      >
+        <div className="profile-information-heading">
+          <div>
+            <p className="profile-information-eyebrow">Campus involvement</p>
+            <h2 id="society-information-title">College Society Information</h2>
+          </div>
+          {!isEditingSocieties ? (
+            <button
+              className="profile-information-action"
+              type="button"
+              onClick={startEditingSocieties}
+            >
+              Edit Societies
+            </button>
+          ) : (
+            <div className="profile-information-actions">
+              <button
+                className="profile-information-action"
+                type="submit"
+                form="societies-form"
+              >
+                Save Changes
+              </button>
+              <button
+                className="profile-information-action is-secondary"
+                type="button"
+                onClick={cancelSocietyEdit}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+        <form id="societies-form" onSubmit={saveSocieties}>
+          <div className="profile-society-list">
+            {(isEditingSocieties ? societiesDraft : societies).map((society) => (
+              <article className="profile-society-card" key={society.id}>
+                <div className="profile-society-heading">
+                  {isEditingSocieties ? (
+                    <input
+                      className="profile-information-control"
+                      aria-label="Society name"
+                      value={society.name}
+                      required
+                      onChange={(event) =>
+                        updateSocietyDraft(society.id, "name", event.target.value)
+                      }
+                    />
+                  ) : (
+                    <h3>{society.name}</h3>
+                  )}
+                  <span className="profile-status-badge status-in-progress">
+                    {society.role}
+                  </span>
+                </div>
+                <div className="profile-society-details">
+                  {[
+                    ["Application status", "applicationStatus", ["Applied", "In Review", "Shortlisted", "Accepted", "Rejected"]],
+                    ["Recruitment progress", "recruitmentProgress"],
+                    ["Exam", "examStatus", ["Pending", "Scheduled", "Passed", "Not Required"]],
+                    ["Interview", "interviewStatus", ["Pending", "Scheduled", "Passed", "Not Required"]],
+                    ["Probation", "probationStatus", ["Not Started", "In Progress", "Completed"]],
+                    ["Membership role", "role", ["Applicant", "Probationer", "Member", "Lead"]],
+                  ].map(([label, key, options]) => (
+                    <div className="profile-society-detail" key={key}>
+                      <span className="profile-information-label">{label}</span>
+                      {isEditingSocieties && options ? (
+                        <select
+                          className="profile-information-control"
+                          aria-label={`${label} for ${society.name || "new society"}`}
+                          value={society[key]}
+                          onChange={(event) =>
+                            updateSocietyDraft(society.id, key, event.target.value)
+                          }
+                        >
+                          {options.map((option) => (
+                            <option key={option}>{option}</option>
+                          ))}
+                        </select>
+                      ) : isEditingSocieties ? (
+                        <input
+                          className="profile-information-control"
+                          aria-label={label}
+                          value={society[key]}
+                          onChange={(event) =>
+                            updateSocietyDraft(society.id, key, event.target.value)
+                          }
+                        />
+                      ) : (
+                        <strong>{society[key]}</strong>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {isEditingSocieties && (
+                  <button
+                    className="profile-record-remove"
+                    type="button"
+                    onClick={() =>
+                      setSocietiesDraft((current) =>
+                        current.filter((item) => item.id !== society.id),
+                      )
+                    }
+                  >
+                    Remove society
+                  </button>
+                )}
+              </article>
+            ))}
+          </div>
+          {isEditingSocieties && (
+            <div className="profile-society-edit-footer">
+              <button
+                className="profile-completion-action"
+                type="button"
+                onClick={addSociety}
+              >
+                Add Society
+              </button>
+            </div>
+          )}
+        </form>
+      </section>
+
+      <section
+        className="profile-information profile-extra-section"
+        aria-labelledby="performance-title"
+      >
+        <div className="profile-information-heading">
+          <div>
+            <p className="profile-information-eyebrow">Growth &amp; feedback</p>
+            <h2 id="performance-title">Performance &amp; Evaluation</h2>
+          </div>
+          {!isEditingPerformance ? (
+            <button
+              className="profile-information-action"
+              type="button"
+              onClick={startEditingPerformance}
+            >
+              Edit Evaluation
+            </button>
+          ) : (
+            <div className="profile-information-actions">
+              <button
+                className="profile-information-action"
+                type="submit"
+                form="performance-form"
+              >
+                Save Changes
+              </button>
+              <button
+                className="profile-information-action is-secondary"
+                type="button"
+                onClick={cancelPerformanceEdit}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+        <form id="performance-form" onSubmit={savePerformance}>
+          <div className="profile-performance-score">
+            <div className="profile-performance-overall">
+              <span>Overall performance</span>
+              {isEditingPerformance ? (
+                <input
+                  className="profile-information-control"
+                  aria-label="Overall performance score"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={performanceDraft.overallScore}
+                  name="overallScore"
+                  onChange={handlePerformanceChange}
+                />
+              ) : (
+                <strong>{performance.overallScore}<small>/100</small></strong>
+              )}
+            </div>
+            <div className="profile-performance-metrics">
+              {[
+                ["Technical skills", "technicalSkillsScore"],
+                ["Communication", "communicationScore"],
+                ["Teamwork", "teamworkScore"],
+              ].map(([label, key]) => {
+                const score = performance[key];
+                return (
+                  <div className="profile-performance-metric" key={key}>
+                    <div className="profile-performance-label">
+                      <span>{label}</span>
+                      {isEditingPerformance ? (
+                        <input
+                          className="profile-performance-number"
+                          aria-label={`${label} score`}
+                          type="number"
+                          min="0"
+                          max="100"
+                          name={key}
+                          value={performanceDraft[key]}
+                          onChange={handlePerformanceChange}
+                        />
+                      ) : (
+                        <strong>{score}%</strong>
+                      )}
+                    </div>
+                    <div
+                      className="profile-performance-track"
+                      role="progressbar"
+                      aria-label={`${label} score`}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      aria-valuenow={score}
+                    >
+                      <span style={{ width: `${score}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="profile-feedback">
+            <h3>Mentor feedback</h3>
+            {isEditingPerformance ? (
+              <textarea
+                className="profile-information-control"
+                name="mentorFeedback"
+                aria-label="Mentor feedback"
+                rows="3"
+                value={performanceDraft.mentorFeedback}
+                onChange={handlePerformanceChange}
+              />
+            ) : (
+              <p>{performance.mentorFeedback}</p>
+            )}
+          </div>
+        </form>
+        <div className="profile-evaluation-history">
+          <h3>Evaluation history</h3>
+          <div className="profile-evaluation-list">
+            {performance.evaluationHistory.map((evaluation) => (
+              <div className="profile-evaluation-item" key={evaluation.period}>
+                <span>{evaluation.period}</span>
+                <strong>{evaluation.score}%</strong>
+                <small>{evaluation.evaluator}</small>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section
+        className="profile-information profile-extra-section"
+        aria-labelledby="github-activity-title"
+      >
+        <div className="profile-information-heading">
+          <div>
+            <p className="profile-information-eyebrow">Open source &amp; code</p>
+            <h2 id="github-activity-title">GitHub &amp; Development Activity</h2>
+          </div>
+          {!isEditingGithub ? (
+            <button
+              className="profile-information-action"
+              type="button"
+              onClick={startEditingGithub}
+            >
+              Edit Activity
+            </button>
+          ) : (
+            <div className="profile-information-actions">
+              <button
+                className="profile-information-action"
+                type="submit"
+                form="github-form"
+              >
+                Save Changes
+              </button>
+              <button
+                className="profile-information-action is-secondary"
+                type="button"
+                onClick={cancelGithubEdit}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+        <form id="github-form" onSubmit={saveGithub} noValidate>
+          {isEditingGithub ? (
+            <div className="profile-github-edit-grid">
+              <label className="profile-information-field">
+                <span className="profile-information-label">GitHub username</span>
+                <input
+                  className="profile-information-control"
+                  name="username"
+                  value={githubDraft.username}
+                  onChange={handleGithubChange}
+                />
+              </label>
+              <label className="profile-information-field">
+                <span className="profile-information-label">Profile link</span>
+                <input
+                  className="profile-information-control"
+                  name="profileUrl"
+                  type="url"
+                  value={githubDraft.profileUrl}
+                  onChange={handleGithubChange}
+                />
+              </label>
+              {[
+                ["Repositories", "repositoryCount"],
+                ["Contributions this year", "contributionsThisYear"],
+                ["Commits this month", "commitsThisMonth"],
+              ].map(([label, key]) => (
+                <label className="profile-information-field" key={key}>
+                  <span className="profile-information-label">{label}</span>
+                  <input
+                    className="profile-information-control"
+                    type="number"
+                    min="0"
+                    name={key}
+                    value={githubDraft[key]}
+                    onChange={handleGithubChange}
+                  />
+                </label>
+              ))}
+            </div>
+          ) : (
+            <div className="profile-github-overview">
+              <a
+                className="profile-github-identity"
+                href={githubActivity.profileUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="profile-github-mark" aria-hidden="true">GH</span>
+                <span>@{githubActivity.username}</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+              <div className="profile-github-stats">
+                <div><strong>{githubActivity.repositoryCount}</strong><span>Repositories</span></div>
+                <div><strong>{githubActivity.contributionsThisYear}</strong><span>Contributions</span></div>
+                <div><strong>{githubActivity.commitsThisMonth}</strong><span>Commits this month</span></div>
+              </div>
+            </div>
+          )}
+        </form>
+        <div className="profile-contribution-panel">
+          <div className="profile-subsection-heading">
+            <h3>Contribution activity</h3>
+            <span>Last 12 weeks · {githubActivity.contributionsThisYear} this year</span>
+          </div>
+          <div
+            className="profile-contribution-grid"
+            role="img"
+            aria-label="Mock contribution activity over the last 12 weeks"
+          >
+            {githubActivity.contributionActivity.map((level, index) => (
+              <span
+                className={`profile-contribution-day level-${level}`}
+                key={`${index}-${level}`}
+                title={`${level} contribution${level === 1 ? "" : "s"}`}
+              />
+            ))}
+          </div>
+          <div className="profile-contribution-legend">
+            <span>Less</span>
+            {[0, 1, 2, 3, 4].map((level) => (
+              <span
+                className={`profile-contribution-day level-${level}`}
+                key={level}
+              />
+            ))}
+            <span>More</span>
+          </div>
+        </div>
+        <div className="profile-github-lists">
+          <div>
+            <h3>Recent repositories</h3>
+            {githubActivity.recentProjects.map((project) => (
+              <div className="profile-github-list-item" key={project.name}>
+                <strong>{project.name}</strong>
+                <span>{project.language} · {project.updated}</span>
+              </div>
+            ))}
+          </div>
+          <div>
+            <h3>Development activity</h3>
+            {githubActivity.recentActivity.map((activity) => (
+              <div className="profile-github-list-item" key={activity.title}>
+                <strong>{activity.title}</strong>
+                <span>{activity.kind} · {activity.date}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <EditableProfileCollection
+        eyebrow="Beyond the classroom"
+        title="Extra-curricular Activities"
+        addLabel="Add Activity"
+        fields={[
+          { key: "title", label: "Club, volunteering, or event", required: true },
+          { key: "role", label: "Role" },
+          {
+            key: "category",
+            label: "Category",
+            type: "select",
+            options: ["Club", "Volunteering", "Event", "Leadership"],
+          },
+          { key: "period", label: "Participation period" },
+          { key: "description", label: "Contribution", type: "textarea", wide: true },
+        ]}
+        initialRecords={extracurricularActivitiesData}
+        emptyText="Add clubs, volunteering, events, or leadership activities."
+        renderRecord={(activity) => (
+          <>
+            <div className="profile-record-topline">
+              <span className="profile-record-kind">{activity.category}</span>
+            </div>
+            <h3>{activity.title}</h3>
+            <p className="profile-record-meta">{activity.role} · {activity.period}</p>
+            <p className="profile-record-description">{activity.description}</p>
+          </>
+        )}
+      />
+
+      <section
+        className="profile-information profile-extra-section"
+        aria-labelledby="documents-title"
+      >
+        <div className="profile-information-heading">
+          <div>
+            <p className="profile-information-eyebrow">Secure records</p>
+            <h2 id="documents-title">Documents &amp; Verification</h2>
+          </div>
+          <span className="profile-documents-note">Demo upload · local session only</span>
+        </div>
+        <div className="profile-documents-grid">
+          {documents.map((document) => (
+            <article className="profile-document-card" key={document.id}>
+              <div className="profile-document-icon" aria-hidden="true">PDF</div>
+              <div className="profile-document-copy">
+                <h3>{document.name}</h3>
+                <p>{document.fileName}</p>
+                <small>{document.updated}</small>
+              </div>
+              <span
+                className={`profile-status-badge status-${document.verificationStatus.toLowerCase()}`}
+              >
+                {document.verificationStatus}
+              </span>
+              <div className="profile-document-actions">
+                <button
+                  type="button"
+                  onClick={() => setPreviewDocument(document)}
+                >
+                  Preview
+                </button>
+                <label className="profile-document-upload">
+                  Upload replacement
+                  <input
+                    type="file"
+                    accept=".pdf,.png,.jpg,.jpeg"
+                    aria-label={`Upload replacement ${document.name}`}
+                    onChange={(event) =>
+                      uploadDocument(document.id, event.target.files?.[0])
+                    }
+                  />
+                </label>
+              </div>
+            </article>
+          ))}
+        </div>
+        {previewDocument && (
+          <div
+            className="profile-preview-backdrop"
+            role="presentation"
+            onClick={() => setPreviewDocument(null)}
+          >
+            <div
+              className="profile-preview-dialog"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="document-preview-title"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="profile-information-heading">
+                <div>
+                  <p className="profile-information-eyebrow">Document preview</p>
+                  <h2 id="document-preview-title">{previewDocument.name}</h2>
+                </div>
+                <button
+                  className="profile-information-action is-secondary"
+                  type="button"
+                  onClick={() => setPreviewDocument(null)}
+                >
+                  Close
+                </button>
+              </div>
+              <div className="profile-preview-paper">
+                <span className="profile-document-icon" aria-hidden="true">PDF</span>
+                <strong>{previewDocument.fileName}</strong>
+                <p>Preview is a mock display. Uploaded files are not stored or transmitted.</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section
+        className="profile-information profile-extra-section"
+        aria-labelledby="additional-details-title"
+      >
+        <form onSubmit={saveAdditionalProfile}>
+          <div className="profile-information-heading">
+            <div>
+              <p className="profile-information-eyebrow">A little more about you</p>
+              <h2 id="additional-details-title">Additional Profile Details</h2>
+            </div>
+            {!isEditingAdditional ? (
+              <button
+                className="profile-information-action"
+                type="button"
+                onClick={startEditingAdditional}
+              >
+                Edit Details
+              </button>
+            ) : (
+              <div className="profile-information-actions">
+                <button className="profile-information-action" type="submit">
+                  Save Changes
+                </button>
+                <button
+                  className="profile-information-action is-secondary"
+                  type="button"
+                  onClick={cancelAdditionalEdit}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
+          {isEditingAdditional ? (
+            <div className="profile-additional-grid">
+              <label className="profile-information-field">
+                <span className="profile-information-label">Interests (comma separated)</span>
+                <input
+                  className="profile-information-control"
+                  name="interests"
+                  value={additionalDraft.interests}
+                  onChange={handleAdditionalChange}
+                />
+              </label>
+              <label className="profile-information-field">
+                <span className="profile-information-label">Languages (comma separated)</span>
+                <input
+                  className="profile-information-control"
+                  name="languages"
+                  value={additionalDraft.languages}
+                  onChange={handleAdditionalChange}
+                />
+              </label>
+              <label className="profile-information-field profile-additional-wide">
+                <span className="profile-information-label">Career goals</span>
+                <textarea
+                  className="profile-information-control"
+                  name="careerGoals"
+                  rows="3"
+                  value={additionalDraft.careerGoals}
+                  onChange={handleAdditionalChange}
+                />
+              </label>
+              <label className="profile-information-field">
+                <span className="profile-information-label">Portfolio URL</span>
+                <input
+                  className="profile-information-control"
+                  name="portfolioUrl"
+                  type="url"
+                  value={additionalDraft.portfolioUrl}
+                  onChange={handleAdditionalChange}
+                />
+              </label>
+              <label className="profile-information-field">
+                <span className="profile-information-label">LinkedIn URL</span>
+                <input
+                  className="profile-information-control"
+                  name="linkedInUrl"
+                  type="url"
+                  value={additionalDraft.linkedInUrl}
+                  onChange={handleAdditionalChange}
+                />
+              </label>
+              <label className="profile-information-field">
+                <span className="profile-information-label">Profile visibility</span>
+                <select
+                  className="profile-information-control"
+                  name="visibility"
+                  value={additionalDraft.visibility}
+                  onChange={handleAdditionalChange}
+                >
+                  <option>Public</option>
+                  <option>Society members</option>
+                  <option>Private</option>
+                </select>
+              </label>
+            </div>
+          ) : (
+            <div className="profile-additional-grid">
+              <div className="profile-additional-item profile-additional-wide">
+                <span className="profile-information-label">Career goals</span>
+                <p>{additionalProfile.careerGoals}</p>
+              </div>
+              <div className="profile-additional-item">
+                <span className="profile-information-label">Interests</span>
+                <div className="profile-project-technologies">
+                  {additionalProfile.interests.map((interest) => (
+                    <span className="profile-project-technology" key={interest}>
+                      {interest}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="profile-additional-item">
+                <span className="profile-information-label">Languages</span>
+                <div className="profile-project-technologies">
+                  {additionalProfile.languages.map((language) => (
+                    <span className="profile-project-technology" key={language}>
+                      {language}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="profile-additional-item">
+                <span className="profile-information-label">Portfolio</span>
+                <a href={additionalProfile.portfolioUrl} target="_blank" rel="noreferrer">
+                  {additionalProfile.portfolioUrl}
+                </a>
+              </div>
+              <div className="profile-additional-item">
+                <span className="profile-information-label">LinkedIn</span>
+                <a href={additionalProfile.linkedInUrl} target="_blank" rel="noreferrer">
+                  {additionalProfile.linkedInUrl}
+                </a>
+              </div>
+              <div className="profile-additional-item">
+                <span className="profile-information-label">Profile visibility</span>
+                <span className="profile-status-badge status-verified">
+                  {additionalProfile.visibility}
+                </span>
+              </div>
+            </div>
+          )}
+        </form>
+      </section>
+
+      <section
+        className="profile-summary-card"
+        aria-labelledby="profile-summary-title"
+      >
+        <div className="profile-summary-main">
+          <p className="profile-information-eyebrow">Your SocietySelect profile</p>
+          <h2 id="profile-summary-title">{profileSummaryData.profileOwner}</h2>
+          <p>{profileSummaryData.headline}</p>
+          <div className="profile-summary-highlights">
+            <span>{academicInformation.college}</span>
+            <span>{studentData.societyRole}</span>
+            <span>{projects.length} projects</span>
+            <span>{achievementsData.length} achievements listed</span>
+          </div>
+        </div>
+        <div className="profile-summary-completion">
+          <span>Profile completion</span>
+          <strong>{profileCompletionData.percentage}%</strong>
+          <div className="profile-completion-track" role="progressbar" aria-label="Profile completion summary" aria-valuemin="0" aria-valuemax="100" aria-valuenow={profileCompletionData.percentage}>
+            <span className="profile-completion-fill" />
+          </div>
+          <small>Last updated {lastUpdated}</small>
         </div>
       </section>
     </main>
