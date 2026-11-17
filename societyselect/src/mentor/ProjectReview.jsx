@@ -94,7 +94,7 @@ function ProjectReview() {
                     <td>
                       <button
                         className="project-review-action"
-                        onClick={() => navigateTo(`/mentor/project-review/${project.id}`)}
+                       onClick={() => navigateTo(`/mentor/project-review/${project.id}`)}
                       >
                         <Eye size={17} />
                         View

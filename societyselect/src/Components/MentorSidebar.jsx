@@ -19,11 +19,7 @@ const menuItems = [
     icon: ClipboardCheck,
     href: "/mentor/projects",
   },
-  {
-    label: "Projects",
-    icon: FolderKanban,
-    href: "/mentor",
-  },
+  
   {
     label: "Attendance",
     icon: CalendarDays,
