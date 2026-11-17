@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 import { societiesData } from "../../data/societiesData";
-import { studentData } from "../../data/studentProfileData";
+import {
+  academicInformationData,
+  studentData,
+} from "../../data/studentProfileData";
 import "../../styles/SocietyApplication.css";
 
 const formatDeadline = (deadline) =>
@@ -23,7 +26,199 @@ const availablePositionCount = (society) =>
     0,
   );
 
-const SocietyDetailsView = ({ society, onBack }) => {
+const createEmptyApplicationForm = (society) => ({
+  position: society.details?.availablePositions?.[0]?.title ?? "",
+  motivation: "",
+  relevantSkills: "",
+  githubUrl: "",
+  portfolioUrl: "",
+  confirmed: false,
+});
+
+const SocietyApplicationForm = ({ society, formData, onChange, onBack, onSubmit }) => {
+  const positions = society.details?.availablePositions ?? [];
+  const yearAndSemester = [
+    academicInformationData.academicYear ?? studentData.academicYear,
+    academicInformationData.currentSemester,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const studentFields = [
+    { label: "Full Name", value: studentData.name },
+    { label: "Student Number", value: studentData.studentId },
+    {
+      label: "Branch",
+      value: academicInformationData.branch ?? studentData.branch,
+    },
+    { label: "Year and Semester", value: yearAndSemester },
+    {
+      label: "Current CGPA",
+      value: academicInformationData.currentCgpa
+        ? `${academicInformationData.currentCgpa} / 10`
+        : "",
+    },
+  ];
+
+  const handleChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    onChange((previous) => ({
+      ...previous,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const renderStudentField = ({ label, value }) => (
+    <label className="society-application-field" key={label}>
+      <span>{label}</span>
+      <input
+        type="text"
+        value={value ?? ""}
+        placeholder="Not provided in profile"
+        readOnly
+        aria-readonly="true"
+      />
+    </label>
+  );
+
+  return (
+    <div className="society-listing-content society-application-content">
+      <nav className="society-breadcrumbs" aria-label="Breadcrumb">
+        <a href="/student/dashboard">Dashboard</a>
+        <span aria-hidden="true">/</span>
+        <button type="button" onClick={onBack}>
+          Society Applications
+        </button>
+        <span aria-hidden="true">/</span>
+        <span>{society.name}</span>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Apply</span>
+      </nav>
+
+      <header className="society-application-intro">
+        <h1>
+          Apply to <em>{society.name}</em>
+        </h1>
+        <p>
+          Closing {formatDeadline(society.deadline)}
+          {daysUntilDeadline(society.deadline) >= 0 &&
+            ` · ${daysUntilDeadline(society.deadline)} days left`}
+        </p>
+      </header>
+
+      <aside className="society-eligibility-notice society-application-eligibility">
+        <p>
+          <strong>Eligibility</strong>
+          <span>
+            — {society.details?.eligibility?.criteria ?? "Eligibility information is not provided."}
+          </span>
+        </p>
+      </aside>
+
+      <form className="society-application-form" onSubmit={onSubmit} noValidate>
+        <h2 className="society-application-section-title">Student Details</h2>
+        <p className="society-application-demo-note">
+          Student details are shown from the current demonstration profile. Please verify them before submitting.
+        </p>
+
+        <div className="society-application-grid society-application-student-grid">
+          {studentFields.map(renderStudentField)}
+
+          <label className="society-application-field">
+            <span>Position Applying For</span>
+            <select
+              name="position"
+              value={formData.position}
+              onChange={handleChange}
+              disabled={positions.length === 0}
+            >
+              {positions.length === 0 ? (
+                <option value="">No positions available</option>
+              ) : (
+                positions.map((position) => (
+                  <option value={position.title} key={position.title}>
+                    {position.title}
+                  </option>
+                ))
+              )}
+            </select>
+          </label>
+        </div>
+
+        <div className="society-application-fields">
+          <label className="society-application-field society-application-field-wide">
+            <span>Why do you want to join?</span>
+            <textarea
+              name="motivation"
+              rows="5"
+              value={formData.motivation}
+              onChange={handleChange}
+            />
+          </label>
+
+          <label className="society-application-field society-application-field-wide">
+            <span>Relevant Skills and Experience</span>
+            <textarea
+              name="relevantSkills"
+              rows="5"
+              value={formData.relevantSkills}
+              onChange={handleChange}
+            />
+          </label>
+
+          <div className="society-application-grid society-application-link-grid">
+            <label className="society-application-field">
+              <span>GitHub Profile URL</span>
+              <input
+                type="text"
+                inputMode="url"
+                name="githubUrl"
+                value={formData.githubUrl}
+                onChange={handleChange}
+                placeholder="https://github.com/username"
+              />
+            </label>
+            <label className="society-application-field">
+              <span>Portfolio URL <em>(Optional)</em></span>
+              <input
+                type="text"
+                inputMode="url"
+                name="portfolioUrl"
+                value={formData.portfolioUrl}
+                onChange={handleChange}
+                placeholder="https://"
+              />
+            </label>
+          </div>
+
+          <label className="society-application-confirmation">
+            <input
+              type="checkbox"
+              name="confirmed"
+              checked={formData.confirmed}
+              onChange={handleChange}
+            />
+            <span>I confirm that the information provided is accurate.</span>
+          </label>
+
+          <div className="society-application-actions">
+            <button
+              className="society-secondary-button"
+              type="button"
+              onClick={onBack}
+            >
+              Back to Details
+            </button>
+            <button className="society-primary-button" type="submit">
+              Submit Application
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+const SocietyDetailsView = ({ society, onBack, onApply }) => {
   const daysRemaining = daysUntilDeadline(society.deadline);
   const details = society.details ?? {};
   const positions = details.availablePositions ?? [];
@@ -236,13 +431,27 @@ const SocietyDetailsView = ({ society, onBack }) => {
           </section>
         )}
 
-        <button
-          className="society-back-button society-details-back-bottom"
-          type="button"
-          onClick={onBack}
-        >
-          <span aria-hidden="true">←</span> Back to Society Applications
-        </button>
+        <div className="society-details-actions">
+          <button
+            className="society-back-button society-details-back-bottom"
+            type="button"
+            onClick={onBack}
+          >
+            <span aria-hidden="true">←</span> Back to Society Applications
+          </button>
+          <button
+            className="society-primary-button society-details-apply-button"
+            type="button"
+            disabled={!society.isOpen || society.applicationStatus !== "Not Applied"}
+            onClick={onApply}
+          >
+            {society.applicationStatus !== "Not Applied"
+              ? "Application Started"
+              : !society.isOpen
+                ? "Applications Closed"
+                : <>Apply Now <span aria-hidden="true">→</span></>}
+          </button>
+        </div>
       </section>
     </div>
   );
@@ -253,7 +462,16 @@ const SocietyApplication = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("deadline");
+  const [activeView, setActiveView] = useState("listing");
   const [selectedSociety, setSelectedSociety] = useState(null);
+  const [applicationForm, setApplicationForm] = useState({
+    position: "",
+    motivation: "",
+    relevantSkills: "",
+    githubUrl: "",
+    portfolioUrl: "",
+    confirmed: false,
+  });
   const [notice, setNotice] = useState("");
 
   const openSocieties = societiesData.filter((society) => society.isOpen);
@@ -298,9 +516,25 @@ const SocietyApplication = () => {
   }, [activeFilter, searchQuery, sortOrder]);
 
   const closeMenu = () => setIsMenuOpen(false);
+  const openSocietyDetails = (society) => {
+    setSelectedSociety(society);
+    setActiveView("details");
+  };
+  const openApplication = (society) => {
+    if (!society.isOpen || society.applicationStatus !== "Not Applied") return;
+    setSelectedSociety(society);
+    setApplicationForm(createEmptyApplicationForm(society));
+    setActiveView("application");
+  };
+  const handleApplicationSubmit = (event) => {
+    event.preventDefault();
+    setNotice(
+      "Application validation and submission will be added in the next step. Your entries have not been submitted.",
+    );
+  };
 
   return (
-    <main className={`society-listing-page${selectedSociety ? " is-viewing-details" : ""}`}>
+    <main className={`society-listing-page${activeView !== "listing" ? " is-viewing-details" : ""}`}>
       <header className="society-navbar">
         <a
           className="society-navbar-brand"
@@ -356,10 +590,22 @@ const SocietyApplication = () => {
         </button>
       </header>
 
-      {selectedSociety ? (
+      {activeView === "application" && selectedSociety ? (
+        <SocietyApplicationForm
+          society={selectedSociety}
+          formData={applicationForm}
+          onChange={setApplicationForm}
+          onBack={() => setActiveView("details")}
+          onSubmit={handleApplicationSubmit}
+        />
+      ) : activeView === "details" && selectedSociety ? (
         <SocietyDetailsView
           society={selectedSociety}
-          onBack={() => setSelectedSociety(null)}
+          onBack={() => {
+            setSelectedSociety(null);
+            setActiveView("listing");
+          }}
+          onApply={() => openApplication(selectedSociety)}
         />
       ) : (
       <div className="society-listing-content">
@@ -495,19 +741,21 @@ const SocietyApplication = () => {
                     <button
                       className="society-secondary-button"
                       type="button"
-                      onClick={() => setSelectedSociety(society)}
+                      onClick={() => openSocietyDetails(society)}
                     >
                       View Details
                     </button>
                     <button
                       className={`society-primary-button${society.applicationStatus !== "Not Applied" ? " is-applied" : ""}`}
                       type="button"
-                      disabled={society.applicationStatus !== "Not Applied"}
-                      onClick={() =>
-                        setNotice("The application form will be available in the next step.")
-                      }
+                      disabled={!society.isOpen || society.applicationStatus !== "Not Applied"}
+                      onClick={() => openApplication(society)}
                     >
-                      {society.applicationStatus !== "Not Applied" ? "Applied ✓" : <>Apply Now <span aria-hidden="true">→</span></>}
+                      {society.applicationStatus !== "Not Applied"
+                        ? `${society.applicationStatus} ✓`
+                        : !society.isOpen
+                          ? "Applications Closed"
+                          : <>Apply Now <span aria-hidden="true">→</span></>}
                     </button>
                   </div>
                 </div>
@@ -529,10 +777,7 @@ const SocietyApplication = () => {
         <div
           className="society-dialog-backdrop"
           role="presentation"
-          onClick={() => {
-            setSelectedSociety(null);
-            setNotice("");
-          }}
+          onClick={() => setNotice("")}
         >
           <section
             className="society-dialog"
@@ -545,10 +790,7 @@ const SocietyApplication = () => {
               className="society-dialog-close"
               type="button"
               aria-label="Close dialog"
-              onClick={() => {
-                setSelectedSociety(null);
-                setNotice("");
-              }}
+              onClick={() => setNotice("")}
             >
               ×
             </button>

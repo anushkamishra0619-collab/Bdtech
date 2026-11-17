@@ -1859,3 +1859,242 @@
     letter-spacing: 0.1em;
   }
 }
+
+.society-application-content {
+  max-width: 1440px;
+  animation: society-content-in 320ms ease both;
+}
+
+.society-application-intro {
+  padding: 28px 0 20px;
+}
+
+.society-application-intro h1 {
+  color: var(--society-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 5vw, 64px);
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+.society-application-intro h1 em {
+  font-weight: 400;
+}
+
+.society-application-intro > p {
+  margin-top: 8px;
+  color: #728493;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 17px;
+}
+
+.society-application-eligibility {
+  margin: 0 0 28px;
+}
+
+.society-application-form {
+  margin: 0 0 72px;
+  padding: 34px 36px;
+  border: 1px solid #dce7ec;
+  border-radius: 30px;
+  background: #fff;
+  animation: society-card-in 380ms ease both;
+}
+
+.society-application-section-title {
+  margin-bottom: 10px;
+  color: #263d4c;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.society-application-demo-note {
+  margin-bottom: 28px;
+  color: #8a7953;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.society-application-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 25px;
+}
+
+.society-application-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.society-application-field > span {
+  color: #8092a0;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.society-application-field > span em {
+  font-style: normal;
+}
+
+.society-application-field input,
+.society-application-field select,
+.society-application-field textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #d6e3e9;
+  border-radius: 14px;
+  outline: none;
+  background: #fff;
+  color: #344f5f;
+  font: inherit;
+  font-size: 14px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.society-application-field input,
+.society-application-field select {
+  min-height: 50px;
+  padding: 0 15px;
+}
+
+.society-application-field input[readonly] {
+  border-color: #dce7ec;
+  background: #edf4f6;
+  color: #3f5d6c;
+  cursor: default;
+}
+
+.society-application-field input::placeholder,
+.society-application-field textarea::placeholder {
+  color: #a4b1b8;
+}
+
+.society-application-field select:disabled {
+  color: #8999a2;
+  background: #f4f7f8;
+  cursor: not-allowed;
+}
+
+.society-application-field textarea {
+  min-height: 132px;
+  padding: 13px 15px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.society-application-field input:focus,
+.society-application-field select:focus,
+.society-application-field textarea:focus {
+  border-color: #6d9fb1;
+  box-shadow: 0 0 0 3px rgb(109 159 177 / 14%);
+}
+
+.society-application-fields {
+  display: grid;
+  gap: 30px;
+  margin-top: 34px;
+}
+
+.society-application-field-wide {
+  grid-column: 1 / -1;
+}
+
+.society-application-link-grid {
+  width: 100%;
+}
+
+.society-application-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  color: #5d7380;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.society-application-confirmation input {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  margin: 1px 0 0;
+  accent-color: #4d7c96;
+}
+
+.society-application-actions,
+.society-details-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.society-application-actions {
+  margin-top: 2px;
+}
+
+.society-application-actions button {
+  min-height: 43px;
+}
+
+.society-details-actions {
+  flex-wrap: wrap;
+}
+
+.society-details-apply-button {
+  margin-top: 24px;
+}
+
+.society-details-apply-button:disabled {
+  border-color: #dce7ec;
+  background: #f3f6f7;
+  color: #95a3aa;
+  cursor: not-allowed;
+}
+
+@media (max-width: 760px) {
+  .society-application-form {
+    padding: 26px 24px;
+    border-radius: 24px;
+  }
+}
+
+@media (max-width: 520px) {
+  .society-application-intro {
+    padding-top: 24px;
+  }
+
+  .society-application-intro h1 {
+    font-size: 42px;
+  }
+
+  .society-application-grid {
+    grid-template-columns: 1fr;
+    row-gap: 20px;
+  }
+
+  .society-application-form {
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+
+  .society-application-fields {
+    gap: 24px;
+    margin-top: 28px;
+  }
+
+  .society-application-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .society-application-actions button {
+    width: 100%;
+  }
+}
