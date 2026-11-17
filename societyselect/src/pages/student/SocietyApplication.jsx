@@ -17,8 +17,17 @@ const daysUntilDeadline = (deadline) => {
   return Math.ceil((closingDate - today) / (1000 * 60 * 60 * 24));
 };
 
+const availablePositionCount = (society) =>
+  (society.details?.availablePositions ?? []).reduce(
+    (total, position) => total + (position.openings ?? 0),
+    0,
+  );
+
 const SocietyDetailsView = ({ society, onBack }) => {
   const daysRemaining = daysUntilDeadline(society.deadline);
+  const details = society.details ?? {};
+  const positions = details.availablePositions ?? [];
+  const skills = details.requiredSkills ?? [];
 
   return (
     <div className="society-listing-content society-details-content">
@@ -46,18 +55,28 @@ const SocietyDetailsView = ({ society, onBack }) => {
             {society.category}
           </span>
           <span className="society-card-initial" aria-hidden="true">
-            {society.name.charAt(0)}
+            {society.initials}
           </span>
         </div>
         <h1 id="society-details-title">{society.name}</h1>
         <p>{society.description}</p>
       </section>
 
+      {details.dataStatus && (
+        <aside className="society-demo-notice">
+          <strong>{details.dataStatus}</strong>
+          <span>
+            Society details are for demonstration only; confirm official information
+            with the college before applying.
+          </span>
+        </aside>
+      )}
+
       <section className="society-details-panel" aria-label={`${society.name} details`}>
         <div className="society-details-facts">
           <div className="society-details-fact">
             <span className="society-field-label">Available positions</span>
-            <strong>{society.positionsAvailable} open · {society.positions.length} roles</strong>
+            <strong>{availablePositionCount(society)} open · {positions.length} roles</strong>
           </div>
           <div className="society-details-fact">
             <span className="society-field-label">Application deadline</span>
@@ -70,35 +89,152 @@ const SocietyDetailsView = ({ society, onBack }) => {
               </em>
             </strong>
           </div>
-          <div className="society-details-fact">
-            <span className="society-field-label">Eligibility</span>
-            <strong className="society-eligible">
-              ✓ Eligible · {society.eligibility} only
-            </strong>
-          </div>
+          {details.eligibility && (
+            <div className="society-details-fact">
+              <span className="society-field-label">Eligibility</span>
+              <strong className="society-eligible">
+                {details.eligibility.year}
+                <em>{details.eligibility.criteria}</em>
+              </strong>
+            </div>
+          )}
           <div className="society-details-fact">
             <span className="society-field-label">Application status</span>
             <strong>{society.applicationStatus}</strong>
           </div>
         </div>
 
-        <div className="society-details-section">
-          <h2>Available roles</h2>
-          <div className="society-details-roles">
-            {society.positions.map((position) => (
-              <span key={position}>{position}</span>
-            ))}
-          </div>
-        </div>
+        {details.about && (
+          <section className="society-details-section">
+            <h2>About the society</h2>
+            <p className="society-details-copy">{details.about}</p>
+          </section>
+        )}
 
-        <div className="society-details-section">
-          <h2>Skills</h2>
-          <div className="society-skill-tags">
-            {society.skills.map((skill) => (
-              <span key={skill}>{skill}</span>
-            ))}
-          </div>
-        </div>
+        {details.objectives?.length > 0 && (
+          <section className="society-details-section">
+            <h2>Objectives</h2>
+            <ul className="society-details-list">
+              {details.objectives.map((objective) => (
+                <li key={objective}>{objective}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {details.domains?.length > 0 && (
+          <section className="society-details-section">
+            <h2>Domains</h2>
+            <div className="society-details-roles">
+              {details.domains.map((domain) => (
+                <span key={domain}>{domain}</span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {positions.length > 0 && (
+          <section className="society-details-section">
+            <h2>Available roles</h2>
+            <div className="society-details-role-list">
+              {positions.map((position) => (
+                <article key={position.title} className="society-details-role">
+                  <div>
+                    <h3>{position.title}</h3>
+                    {position.description && <p>{position.description}</p>}
+                  </div>
+                  {position.openings != null && (
+                    <span>
+                      {position.openings} {position.openings === 1 ? "opening" : "openings"}
+                    </span>
+                  )}
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {skills.length > 0 && (
+          <section className="society-details-section">
+            <h2>Required skills</h2>
+            <div className="society-skill-tags">
+              {skills.map((skill) => (
+                <span key={skill}>{skill}</span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {details.facultyCoordinator && (
+          <section className="society-details-section">
+            <h2>Faculty coordinator</h2>
+            <p className="society-details-copy">
+              {details.facultyCoordinator.name}
+              {details.facultyCoordinator.title && ` · ${details.facultyCoordinator.title}`}
+            </p>
+          </section>
+        )}
+
+        {details.contactInfo && (
+          <section className="society-details-section">
+            <h2>Contact information</h2>
+            <div className="society-details-contact">
+              {details.contactInfo.email && (
+                <a href={`mailto:${details.contactInfo.email}`}>
+                  {details.contactInfo.email}
+                </a>
+              )}
+              {details.contactInfo.phone && <span>{details.contactInfo.phone}</span>}
+            </div>
+          </section>
+        )}
+
+        {details.socialLinks?.length > 0 && (
+          <section className="society-details-section">
+            <h2>Social media</h2>
+            <div className="society-details-roles">
+              {details.socialLinks.map((link) => (
+                <a
+                  className="society-details-social-link"
+                  href={link.url}
+                  key={link.label}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {details.activities?.length > 0 && (
+          <section className="society-details-section">
+            <h2>Activities</h2>
+            <ul className="society-details-list">
+              {details.activities.map((activity, index) => (
+                <li key={activity.title ?? activity.name ?? index}>
+                  {activity.title ?? activity.name ?? activity}
+                  {activity.description && ` — ${activity.description}`}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {details.achievements?.length > 0 && (
+          <section className="society-details-section">
+            <h2>Activities and achievements</h2>
+            <ul className="society-details-list">
+              {details.achievements.map((achievement, index) => (
+                <li key={achievement.title ?? achievement.name ?? index}>
+                  {achievement.title ?? achievement.name ?? achievement}
+                  {achievement.description && ` — ${achievement.description}`}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <button
           className="society-back-button society-details-back-bottom"
@@ -145,8 +281,8 @@ const SocietyApplication = () => {
           society.name,
           society.description,
           society.category,
-          ...society.skills,
-          ...society.positions,
+          ...(society.details?.requiredSkills ?? []),
+          ...(society.details?.availablePositions ?? []).map((position) => position.title),
         ]
           .join(" ")
           .toLowerCase()
@@ -155,7 +291,7 @@ const SocietyApplication = () => {
       .sort((first, second) => {
         if (sortOrder === "name") return first.name.localeCompare(second.name);
         if (sortOrder === "positions") {
-          return second.positions.length - first.positions.length;
+          return availablePositionCount(second) - availablePositionCount(first);
         }
         return first.deadline.localeCompare(second.deadline);
       });
@@ -316,7 +452,7 @@ const SocietyApplication = () => {
                 <div className="society-card-content">
                   <div className="society-card-heading">
                     <span className="society-card-initial" aria-hidden="true">
-                      {society.name.charAt(0)}
+                      {society.initials}
                     </span>
                     <span className={`society-category-label ${society.category.toLowerCase()}`}>
                       {society.category}
@@ -327,7 +463,7 @@ const SocietyApplication = () => {
                   <div className="society-card-skills">
                     <span className="society-field-label">Skills</span>
                     <div className="society-skill-tags">
-                      {society.skills.map((skill) => (
+                      {(society.details?.requiredSkills ?? []).map((skill) => (
                         <span key={skill}>{skill}</span>
                       ))}
                     </div>
@@ -335,7 +471,9 @@ const SocietyApplication = () => {
                   <div className="society-card-facts">
                     <div>
                       <span className="society-field-label">Available positions</span>
-                      <strong>{society.positionsAvailable} open · {society.positions.length} roles</strong>
+                      <strong>
+                        {availablePositionCount(society)} open · {society.details?.availablePositions?.length ?? 0} roles
+                      </strong>
                     </div>
                     <div>
                       <span className="society-field-label">Application deadline</span>
@@ -346,7 +484,11 @@ const SocietyApplication = () => {
                     </div>
                     <div>
                       <span className="society-field-label">Eligibility</span>
-                      <strong className="society-eligible">✓ Eligible · {society.eligibility} only</strong>
+                      <strong className="society-eligible">
+                        {society.details?.eligibility?.year
+                          ? `✓ Eligible · ${society.details.eligibility.year} only`
+                          : "Eligibility details unavailable"}
+                      </strong>
                     </div>
                   </div>
                   <div className="society-card-actions">
