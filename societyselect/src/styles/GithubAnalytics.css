@@ -1,0 +1,568 @@
+.github-analytics-page {
+  --github-ink: #1d2b49;
+  --github-muted: #71809e;
+  --github-light-muted: #8997b2;
+  --github-blue: #2858e8;
+  --github-line: #dce5f7;
+  --github-tint: #eaf0ff;
+  min-height: 100vh;
+  color: var(--github-ink);
+  background: #f5f7ff;
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+}
+
+.github-analytics-navbar {
+  height: 71px;
+  border-bottom: 1px solid #e1e7f2;
+  background: #fff;
+}
+
+.github-analytics-navbar-inner {
+  display: flex;
+  width: min(100% - 70px, 1200px);
+  height: 100%;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.github-analytics-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  color: var(--github-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+.github-analytics-brand-ai {
+  font-size: 23px;
+}
+
+.github-analytics-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.github-analytics-nav-label {
+  padding: 12px 14px;
+  border-radius: 20px;
+  background: #eaf0ff;
+  color: var(--github-blue);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.github-analytics-notifications {
+  position: relative;
+  display: grid;
+  width: 26px;
+  height: 30px;
+  place-items: center;
+  color: var(--github-ink);
+}
+
+.github-analytics-notifications svg {
+  width: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.github-analytics-notifications::after {
+  position: absolute;
+  top: 3px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e74b58;
+  content: "";
+}
+
+.github-analytics-user-avatar {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 50%;
+  background: #2859df;
+  color: #fff;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 22px;
+}
+
+.github-analytics-content {
+  width: min(100% - 70px, 1200px);
+  margin: 0 auto;
+  padding: 30px 0 46px;
+}
+
+.github-analytics-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--github-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.github-analytics-breadcrumb a:hover {
+  color: var(--github-blue);
+}
+
+.github-analytics-breadcrumb > span:nth-child(2) {
+  color: #9aa6bc;
+}
+
+.github-analytics-intro {
+  margin-top: 12px;
+}
+
+.github-analytics-title-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.github-analytics-title-row h1 {
+  margin: 0;
+  color: var(--github-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(48px, 6.5vw, 68px);
+  font-weight: 400;
+  letter-spacing: -1.5px;
+  line-height: 1;
+}
+
+.github-analytics-title-row h1 em {
+  color: var(--github-blue);
+  font-weight: 400;
+}
+
+.github-analytics-demo-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 3px 14px;
+  border-radius: 20px;
+  background: #fff5df;
+  color: #bc7c13;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.github-analytics-demo-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c8861d;
+}
+
+.github-analytics-description {
+  max-width: 740px;
+  margin: 18px 0 20px;
+  color: var(--github-muted);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.github-analytics-actions {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  gap: 13px;
+  flex-wrap: wrap;
+}
+
+.github-analytics-sync-button,
+.github-analytics-profile-button {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 23px;
+  border: 1px solid var(--github-line);
+  border-radius: 13px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.github-analytics-sync-button {
+  background: #fff;
+  color: var(--github-ink);
+  cursor: pointer;
+}
+
+.github-analytics-sync-button:hover {
+  border-color: #b7c8f4;
+  background: #fbfcff;
+}
+
+.github-analytics-sync-button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.github-analytics-sync-demo {
+  color: var(--github-muted);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.github-analytics-profile-button {
+  border-color: var(--github-ink);
+  background: var(--github-ink);
+  color: #fff;
+}
+
+.github-analytics-profile-button:hover {
+  transform: translateY(-1px);
+  background: #293c62;
+}
+
+.github-analytics-profile-button span {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.github-analytics-sync-message {
+  color: #148d56;
+  font-size: 12px;
+}
+
+.github-profile-overview {
+  margin-top: 26px;
+  padding: 25px 24px 27px;
+  border: 1px solid var(--github-line);
+  border-radius: 21px;
+  background: #fff;
+}
+
+.github-profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 21px;
+}
+
+.github-profile-avatar-wrap {
+  position: relative;
+  display: grid;
+  flex: 0 0 128px;
+  width: 128px;
+  height: 128px;
+  place-items: center;
+  border: 1px solid #dfe7fa;
+  border-radius: 50%;
+}
+
+.github-profile-avatar {
+  display: grid;
+  width: 116px;
+  height: 116px;
+  place-items: center;
+  border: 1px solid #d9e3fa;
+  border-radius: 50%;
+  background: #eaf0ff;
+  color: var(--github-blue);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 53px;
+}
+
+.github-profile-online-indicator {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  width: 17px;
+  height: 17px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #19a25b;
+}
+
+.github-profile-details {
+  min-width: 0;
+  flex: 1;
+}
+
+.github-profile-name-row {
+  display: flex;
+  min-height: 47px;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.github-profile-name-row h2 {
+  margin: 0;
+  color: var(--github-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 39px;
+  font-weight: 400;
+  letter-spacing: -0.6px;
+  line-height: 1;
+}
+
+.github-profile-username {
+  margin-top: 7px;
+  color: var(--github-muted);
+  font-size: 14px;
+}
+
+.github-profile-username:hover {
+  color: var(--github-blue);
+}
+
+.github-profile-affiliation {
+  margin: 3px 0 0 4px;
+  padding: 5px 15px;
+  border-radius: 18px;
+  background: #e7f7ee;
+  color: #13964f;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.github-profile-academics,
+.github-profile-bio {
+  margin: 7px 0 0;
+  color: var(--github-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.github-profile-bio {
+  max-width: 760px;
+  margin-top: 9px;
+  color: #33415e;
+  font-size: 15px;
+}
+
+.github-profile-meta {
+  display: flex;
+  margin: 12px 0 0;
+  padding: 0;
+  gap: 24px;
+  flex-wrap: wrap;
+  list-style: none;
+  color: var(--github-light-muted);
+  font-size: 13px;
+}
+
+.github-profile-metrics {
+  display: grid;
+  width: min(100%, 675px);
+  margin: 29px 0 0 6px;
+  padding: 0;
+  gap: 15px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.github-profile-metric {
+  display: flex;
+  min-height: 100px;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+  border-radius: 17px;
+  background: #eaf0ff;
+  text-align: center;
+}
+
+.github-profile-metric dt {
+  margin-top: 6px;
+  color: var(--github-light-muted);
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.github-profile-metric dd {
+  margin: 0;
+  color: var(--github-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 34px;
+  line-height: 1;
+}
+
+@media (max-width: 800px) {
+  .github-analytics-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .github-analytics-demo-badge {
+    margin-top: 0;
+  }
+
+  .github-profile-identity {
+    align-items: flex-start;
+  }
+
+  .github-profile-name-row h2 {
+    font-size: 35px;
+  }
+}
+
+@media (max-width: 600px) {
+  .github-analytics-navbar-inner,
+  .github-analytics-content {
+    width: calc(100% - 36px);
+  }
+
+  .github-analytics-navbar {
+    height: 64px;
+  }
+
+  .github-analytics-brand {
+    font-size: 25px;
+  }
+
+  .github-analytics-brand-ai {
+    font-size: 19px;
+  }
+
+  .github-analytics-nav-actions {
+    gap: 10px;
+  }
+
+  .github-analytics-nav-label {
+    padding: 9px 10px;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+
+  .github-analytics-user-avatar {
+    width: 35px;
+    height: 35px;
+    font-size: 19px;
+  }
+
+  .github-analytics-content {
+    padding-top: 22px;
+  }
+
+  .github-analytics-title-row h1 {
+    font-size: 50px;
+  }
+
+  .github-analytics-description {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+
+  .github-analytics-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .github-analytics-sync-button,
+  .github-analytics-profile-button {
+    min-height: 48px;
+    padding: 0 14px;
+    font-size: 11px;
+  }
+
+  .github-analytics-sync-message {
+    min-height: 14px;
+  }
+
+  .github-profile-overview {
+    margin-top: 18px;
+    padding: 20px 16px;
+  }
+
+  .github-profile-identity {
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .github-profile-avatar-wrap {
+    flex-basis: 110px;
+    width: 110px;
+    height: 110px;
+  }
+
+  .github-profile-avatar {
+    width: 98px;
+    height: 98px;
+    font-size: 46px;
+  }
+
+  .github-profile-name-row {
+    justify-content: center;
+  }
+
+  .github-profile-name-row h2 {
+    font-size: 34px;
+  }
+
+  .github-profile-affiliation {
+    margin-left: 0;
+  }
+
+  .github-profile-meta {
+    justify-content: center;
+    gap: 8px 16px;
+  }
+
+  .github-profile-metrics {
+    width: 100%;
+    margin: 22px 0 0;
+    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .github-profile-metric {
+    min-height: 90px;
+  }
+}
+
+@media (max-width: 380px) {
+  .github-analytics-navbar-inner,
+  .github-analytics-content {
+    width: calc(100% - 28px);
+  }
+
+  .github-analytics-brand {
+    font-size: 22px;
+  }
+
+  .github-analytics-nav-label {
+    padding: 8px;
+    font-size: 8px;
+  }
+
+  .github-analytics-notifications {
+    width: 21px;
+  }
+}
