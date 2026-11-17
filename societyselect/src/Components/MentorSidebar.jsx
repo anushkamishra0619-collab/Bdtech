@@ -1,4 +1,14 @@
-import {GraduationCap,LayoutDashboard,Users,ClipboardCheck,FolderKanban,CalendarDays,MessageSquare,Settings,LogOut,Building2,} from "lucide-react";
+import {
+  Building2,
+  LayoutDashboard,
+  Users,
+  ClipboardCheck,
+  FolderKanban,
+  CalendarDays,
+  MessageSquare,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import "./MentorSidebar.css";
 const menuItems = [
   {

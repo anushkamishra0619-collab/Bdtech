@@ -44,6 +44,20 @@ const splitList = (value) =>
     .map((item) => item.trim())
     .filter(Boolean);
 
+const isHttpUrl = (value) => {
+  try {
+    const url = new URL(value);
+    return (
+      ["http:", "https:"].includes(url.protocol) &&
+      Boolean(url.hostname) &&
+      !url.username &&
+      !url.password
+    );
+  } catch {
+    return false;
+  }
+};
+
 const makeSocietyId = (name, societies) => {
   const baseId = name
     .toLowerCase()
@@ -141,29 +155,38 @@ const MentorSocietyManagement = () => {
   const [accessError, setAccessError] = useState("");
   const [mentorRole, setMentorRole] = useState("");
   const [societies, setSocieties] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [editingSocietyId, setEditingSocietyId] = useState(null);
   const [form, setForm] = useState(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    try {
-      const user = JSON.parse(window.localStorage.getItem("user") ?? "null");
-      const role = String(user?.role ?? "").toUpperCase();
-      const hasSession = Boolean(window.localStorage.getItem("accessToken"));
-      setMentorRole(role);
-      setAuthorized(hasSession && ["MENTOR", "ADMIN"].includes(role));
-      if (!hasSession || !["MENTOR", "ADMIN"].includes(role)) {
-        setAccessError("Sign in with an authorized mentor or admin account to manage societies.");
+    const verifyAccess = () => {
+      try {
+        const user = JSON.parse(window.localStorage.getItem("user") ?? "null");
+        const role = String(user?.role ?? "").toUpperCase();
+        const hasSession = Boolean(window.localStorage.getItem("accessToken"));
+        setMentorRole(role);
+        setAuthorized(hasSession && ["MENTOR", "ADMIN"].includes(role));
+        if (!hasSession || !["MENTOR", "ADMIN"].includes(role)) {
+          setAccessError("Sign in with an authorized mentor or admin account to manage societies.");
+        } else {
+          setAccessError("");
+        }
+      } catch (authError) {
+        setAuthorized(false);
+        setAccessError(
+          authError instanceof Error
+            ? "Your local sign-in session could not be verified."
+            : "Sign in with an authorized mentor or admin account to manage societies.",
+        );
       }
-    } catch (authError) {
-      setAuthorized(false);
-      setAccessError(
-        authError instanceof Error
-          ? "Your local sign-in session could not be verified."
-          : "Sign in with an authorized mentor or admin account to manage societies.",
-      );
-    }
+    };
+
+    verifyAccess();
+    window.addEventListener("storage", verifyAccess);
+    return () => window.removeEventListener("storage", verifyAccess);
   }, []);
 
   useEffect(() => {
@@ -173,12 +196,14 @@ const MentorSocietyManagement = () => {
       try {
         setSocieties(getSocieties());
         setError("");
+        setIsLoading(false);
       } catch (loadError) {
         setError(
           loadError instanceof Error
             ? loadError.message
             : "Society information could not be loaded.",
         );
+        setIsLoading(false);
       }
     };
 
@@ -219,6 +244,27 @@ const MentorSocietyManagement = () => {
 
     if (!form.name.trim() || !form.description.trim() || !form.deadline) {
       setError("Society name, description, and application deadline are required.");
+      return;
+    }
+
+    const positionTitles = form.availablePositions
+      .map((position) => position.title.trim().toLowerCase())
+      .filter(Boolean);
+    if (new Set(positionTitles).size !== positionTitles.length) {
+      setError("Position titles must be unique within a society.");
+      return;
+    }
+
+    const invalidSocialLink = form.socialLinks
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .some((line) => {
+        const [label, ...urlParts] = line.split("|");
+        return !label.trim() || !isHttpUrl(urlParts.join("|").trim());
+      });
+    if (invalidSocialLink) {
+      setError("Enter social links as a label and valid http or https URL separated by |.");
       return;
     }
 
@@ -575,7 +621,9 @@ const MentorSocietyManagement = () => {
             </form>
           )}
 
-          {societies.length === 0 ? (
+          {isLoading ? (
+            <p className="mentor-society-empty">Loading societies...</p>
+          ) : societies.length === 0 ? (
             <p className="mentor-society-empty">No society records are available.</p>
           ) : (
             <div className="mentor-society-grid">

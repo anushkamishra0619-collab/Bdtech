@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getApplications } from "../../data/applicationService";
+import { studentData } from "../../data/studentProfileData";
 import "../../styles/SocietyApplication.css";
 
 const formatSubmissionDate = (date) => {
@@ -15,7 +16,12 @@ const ApplicationTracking = () => {
 
   useEffect(() => {
     try {
-      setApplications(getApplications());
+      setApplications(
+        getApplications().filter(
+          (application) =>
+            application.student.studentNumber === studentData.studentId,
+        ),
+      );
     } catch (error) {
       setLoadError(
         error instanceof Error ? error.message : "Applications could not be loaded.",

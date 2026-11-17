@@ -87,8 +87,8 @@ export const validateApplication = ({ society, student, formData }) => {
 export const hasDuplicateApplication = (applications, societyId, studentNumber) =>
   applications.some(
     (application) =>
-      application.societyId === societyId &&
-      application.student?.studentNumber === studentNumber,
+      application?.societyId === societyId &&
+      application?.student?.studentNumber === studentNumber,
   );
 
 export const getApplications = () => {
@@ -102,8 +102,31 @@ export const getApplications = () => {
     throw new Error("Saved application data is unreadable. Clear the local application data and try again.");
   }
 
-  if (!Array.isArray(applications)) {
+  if (
+    !Array.isArray(applications) ||
+    applications.some(
+      (application) =>
+        !application ||
+        typeof application.applicationId !== "string" ||
+        typeof application.societyId !== "string" ||
+        typeof application.societyName !== "string" ||
+        typeof application.position !== "string" ||
+        typeof application.status !== "string" ||
+        typeof application.submittedAt !== "string" ||
+        !application.student ||
+        typeof application.student.fullName !== "string" ||
+        typeof application.student.studentNumber !== "string" ||
+        !application.responses ||
+        typeof application.responses !== "object",
+    )
+  ) {
     throw new Error("Saved application data has an invalid format.");
+  }
+  if (
+    new Set(applications.map((application) => application.applicationId)).size !==
+    applications.length
+  ) {
+    throw new Error("Saved application data contains duplicate IDs.");
   }
 
   return applications;
@@ -119,6 +142,9 @@ export const saveApplication = (application) => {
     )
   ) {
     throw new Error("You have already submitted an application to this society.");
+  }
+  if (applications.some((item) => item.applicationId === application.applicationId)) {
+    throw new Error("An application with this ID already exists. Please submit again.");
   }
 
   const updatedApplications = [application, ...applications];

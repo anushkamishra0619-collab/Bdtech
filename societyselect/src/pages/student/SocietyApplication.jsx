@@ -37,7 +37,7 @@ const availablePositionCount = (society) =>
     0,
   );
 
-const createEmptyApplicationForm = (society) => ({
+const createEmptyApplicationForm = () => ({
   position: "",
   motivation: "",
   relevantSkills: "",
@@ -408,7 +408,7 @@ const SocietyDetailsView = ({
           )}
           <div className="society-details-fact">
             <span className="society-field-label">Application status</span>
-            <strong>{society.applicationStatus}</strong>
+            <strong>{applicationStatus}</strong>
           </div>
         </div>
 
@@ -565,6 +565,8 @@ const SocietyDetailsView = ({
           >
             {hasApplication
               ? `${applicationStatus} ✓`
+              : society.isActive === false
+                ? "Society Inactive"
               : !positions.length
                 ? "No Positions Available"
               : !society.isOpen
@@ -641,6 +643,10 @@ const SocietyApplication = () => {
 
   const activeSocieties = societies.filter((society) => society.isActive !== false);
   const openSocieties = activeSocieties.filter((society) => society.isOpen);
+  const currentStudentApplications = applications.filter(
+    (application) =>
+      application.student?.studentNumber === studentDetails.studentNumber,
+  );
   const myApplications = new Set([
     ...societies
     .filter(
@@ -649,13 +655,13 @@ const SocietyApplication = () => {
         society.applicationStatus !== "Not Applied",
     )
       .map((society) => society.id),
-    ...applications.map((application) => application.societyId),
+    ...currentStudentApplications.map((application) => application.societyId),
   ]).size;
   const inReview = new Set([
     ...societies
       .filter((society) => society.applicationStatus === "In Review")
       .map((society) => society.id),
-    ...applications
+    ...currentStudentApplications
       .filter((application) => application.status === "In Review")
       .map((application) => application.societyId),
   ]).size;
@@ -704,10 +710,6 @@ const SocietyApplication = () => {
       setNotice("This society is currently inactive.");
       return;
     }
-    if (society.isActive === false) {
-      setNotice("This society is currently inactive.");
-      return;
-    }
     if (!society.isOpen) {
       setNotice("Applications for this society are closed.");
       return;
@@ -717,14 +719,18 @@ const SocietyApplication = () => {
       return;
     }
     if (
-      society.applicationStatus !== "Not Applied" ||
+      getCurrentApplicationStatus(
+        society,
+        applications,
+        studentDetails.studentNumber,
+      ) !== "Not Applied" ||
       hasDuplicateApplication(applications, society.id, studentDetails.studentNumber)
     ) {
       setNotice("An application for this society has already been recorded.");
       return;
     }
     setSelectedSociety(society);
-    setApplicationForm(createEmptyApplicationForm(society));
+    setApplicationForm(createEmptyApplicationForm());
     setFieldErrors({});
     setSubmitAttempted(false);
     setSubmissionError("");
@@ -749,9 +755,36 @@ const SocietyApplication = () => {
     event.preventDefault();
     setSubmitAttempted(true);
     if (!selectedSociety) return;
+    setSubmissionError("");
 
+    let latestSociety;
+    try {
+      latestSociety = getSocieties().find(
+        (society) => society.id === selectedSociety.id,
+      );
+    } catch (error) {
+      setSubmissionError(
+        error instanceof Error ? error.message : "Society information could not be checked.",
+      );
+      return;
+    }
+
+    if (!latestSociety) {
+      setSubmissionError("This society is no longer available.");
+      return;
+    }
+    if (latestSociety.isActive === false || !latestSociety.isOpen) {
+      setSubmissionError("This society is not accepting applications.");
+      return;
+    }
+    if (!latestSociety.details?.availablePositions?.length) {
+      setSubmissionError("There are no positions available for this society.");
+      return;
+    }
+
+    setSelectedSociety(latestSociety);
     const errors = validateApplication({
-      society: selectedSociety,
+      society: latestSociety,
       student: studentDetails,
       formData: applicationForm,
     });
@@ -759,7 +792,7 @@ const SocietyApplication = () => {
     if (Object.keys(errors).length > 0) return;
 
     const application = createApplicationRecord({
-      society: selectedSociety,
+      society: latestSociety,
       student: studentDetails,
       formData: applicationForm,
     });
@@ -896,10 +929,10 @@ const SocietyApplication = () => {
             <span>Open Societies</span><strong>{openSocieties.length}</strong>
           </article>
           <article className="society-stat-card">
-            <span>My Applications</span><strong>{myApplications.length}</strong>
+            <span>My Applications</span><strong>{myApplications}</strong>
           </article>
           <article className="society-stat-card">
-            <span>In Review</span><strong>{inReview.length}</strong>
+            <span>In Review</span><strong>{inReview}</strong>
           </article>
           <article className="society-stat-card">
             <span>Closing This Week</span><strong>{closingThisWeek.length}</strong>
