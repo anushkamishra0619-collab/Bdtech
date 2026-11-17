@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   githubContributionData,
   githubAnalyticsStats,
+  githubLanguageDistribution,
   githubProfileData,
 } from "../../data/GithubData";
 import "../../styles/GithubAnalytics.css";
@@ -103,12 +104,30 @@ const formatContributionDate = (date) =>
     timeZone: "UTC",
   });
 
+const getDonutSegments = (languages) => {
+  const circumference = 2 * Math.PI * 62;
+  let offset = 0;
+
+  return languages.map((language) => {
+    const segmentLength = (circumference * language.percentage) / 100;
+    const segment = {
+      ...language,
+      circumference,
+      segmentLength,
+      offset,
+    };
+    offset += segmentLength;
+    return segment;
+  });
+};
+
 const GitHubAnalytics = () => {
   const [syncMessage, setSyncMessage] = useState("");
   const [selectedContributionYear, setSelectedContributionYear] = useState("2026");
   const [hoveredContribution, setHoveredContribution] = useState(null);
   const { profile, metrics, demoMode } = githubProfileData;
   const selectedContributionData = githubContributionData[selectedContributionYear];
+  const languageSegments = getDonutSegments(githubLanguageDistribution.languages);
   const contributionWeeks = getContributionWeeks(selectedContributionData.days);
   const monthMarkers = contributionWeeks.reduce((markers, week, weekIndex) => {
     const firstOfMonth = week.find(
@@ -445,6 +464,95 @@ const GitHubAnalytics = () => {
               ))}
               <span>More</span>
             </div>
+          </div>
+        </section>
+
+        <section
+          className="github-language-card"
+          aria-labelledby="github-language-title"
+        >
+          <div className="github-language-header">
+            <div>
+              <h2 id="github-language-title">Language distribution</h2>
+              <p>{githubLanguageDistribution.subtitle}</p>
+            </div>
+            <span className="github-language-count">
+              {githubLanguageDistribution.languageCount} languages
+            </span>
+          </div>
+
+          <div className="github-language-content">
+            <div className="github-language-donut-wrap">
+              <svg
+                className="github-language-donut"
+                viewBox="0 0 160 160"
+                role="img"
+                aria-label={`Language usage across ${githubLanguageDistribution.totalLinesOfCode.toLocaleString()} lines of code`}
+              >
+                <circle
+                  className="github-language-donut-track"
+                  cx="80"
+                  cy="80"
+                  r="62"
+                />
+                {languageSegments.map((segment) => (
+                  <circle
+                    className="github-language-donut-segment"
+                    cx="80"
+                    cy="80"
+                    r="62"
+                    key={segment.name}
+                    stroke={segment.color}
+                    strokeDasharray={`${segment.segmentLength} ${
+                      segment.circumference - segment.segmentLength
+                    }`}
+                    strokeDashoffset={-segment.offset}
+                    transform="rotate(-90 80 80)"
+                  />
+                ))}
+              </svg>
+              <div className="github-language-donut-center" aria-hidden="true">
+                <strong>
+                  {Math.round(githubLanguageDistribution.totalLinesOfCode / 1000)}k
+                </strong>
+                <span>Lines of code</span>
+              </div>
+            </div>
+
+            <ul className="github-language-list" aria-label="Language breakdown">
+              {githubLanguageDistribution.languages.map((language) => (
+                <li className="github-language-item" key={language.name}>
+                  <div className="github-language-item-heading">
+                    <span className="github-language-name">
+                      <span
+                        className="github-language-color"
+                        style={{ backgroundColor: language.color }}
+                        aria-hidden="true"
+                      />
+                      {language.name}
+                    </span>
+                    <span className="github-language-repositories">
+                      {language.percentage}% · {language.repositoryCount} repos
+                    </span>
+                  </div>
+                  <div
+                    className="github-language-progress"
+                    role="meter"
+                    aria-label={`${language.name} share`}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={language.percentage}
+                  >
+                    <span
+                      style={{
+                        width: `${language.percentage}%`,
+                        backgroundColor: language.color,
+                      }}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
         {hoveredContribution && (

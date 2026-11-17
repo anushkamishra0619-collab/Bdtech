@@ -188,3 +188,17 @@ export const githubContributionData = {
       .sort((left, right) => left.date.localeCompare(right.date)),
   },
 };
+
+export const githubLanguageDistribution = {
+  totalLinesOfCode: 148000,
+  languageCount: 8,
+  repositoryCount: 34,
+  subtitle: "Cumulative byte-weight across 34 public repositories.",
+  languages: [
+    { name: "TypeScript", percentage: 38.5, repositoryCount: 16, color: "#2858e8" },
+    { name: "Python", percentage: 26.2, repositoryCount: 10, color: "#61d887" },
+    { name: "Rust", percentage: 14.8, repositoryCount: 4, color: "#e96d23" },
+    { name: "Go", percentage: 12, repositoryCount: 3, color: "#17a9c7" },
+    { name: "C++", percentage: 8.5, repositoryCount: 1, color: "#aeb9ce" },
+  ],
+};
