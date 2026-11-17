@@ -18,6 +18,7 @@ import LandingPage from "./LandingPage.jsx";
 import LeaveRequest from "./pages/student/LeaveRequest";
 import AssignedStudents from "./mentor/AssignedStudents";
 import MentorDashboard from "./mentor/MentorDashboard";
+import MentorSocietyManagement from "./mentor/MentorSocietyManagement";
 import MyAttendance from "./pages/student/MyAttendance";
 import MyPerformance from "./pages/student/MyPerformance";
 import MyTasks from "./pages/student/MyTasks";
@@ -95,6 +96,7 @@ function App() {
         <Route path="/forgot" element={<LegacyRoutes />} />
         <Route path="/mentor" element={<LegacyRoutes />} />
         <Route path="/mentor/students" element={<AssignedStudents />} />
+        <Route path="/mentor/societies" element={<MentorSocietyManagement />} />
         <Route path="/createproject" element={<LegacyRoutes />} />
         <Route path="/student" element={<StudentDashboard />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />

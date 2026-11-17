@@ -1,4 +1,4 @@
-import {GraduationCap,LayoutDashboard,Users,ClipboardCheck,FolderKanban,CalendarDays,MessageSquare,Settings,LogOut,} from "lucide-react";
+import {GraduationCap,LayoutDashboard,Users,ClipboardCheck,FolderKanban,CalendarDays,MessageSquare,Settings,LogOut,Building2,} from "lucide-react";
 import "./MentorSidebar.css";
 const menuItems = [
   {
@@ -10,6 +10,11 @@ const menuItems = [
     label: "My Students",
     icon: Users,
     href: "/mentor/students",
+  },
+  {
+    label: "Society Management",
+    icon: Building2,
+    href: "/mentor/societies",
   },
   {
     label: "Task Reviews",

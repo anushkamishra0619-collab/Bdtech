@@ -1,4 +1,4 @@
-import { Users, ClipboardCheck, FolderKanban, CalendarDays, ArrowUpRight, Clock, CheckCircle2, CircleAlert, BookOpen, ChevronRight, ChevronsRight } from "lucide-react";
+import { Users, ClipboardCheck, FolderKanban, CalendarDays, ArrowUpRight, Clock, CheckCircle2, CircleAlert, BookOpen, ChevronRight, ChevronsRight, Building2 } from "lucide-react";
 
 import MentorSidebar from "../Components/MentorSidebar";
 import "./MentorDashboard.css";
@@ -109,6 +109,12 @@ const quickActions = [
     description: "View and manage assigned students",
     icon: Users,
     link: "/mentor/students",
+  },
+  {
+    title: "Manage Societies",
+    description: "Update society profiles and recruitment",
+    icon: Building2,
+    link: "/mentor/societies",
   },
   {
     title: "Review Submissions",

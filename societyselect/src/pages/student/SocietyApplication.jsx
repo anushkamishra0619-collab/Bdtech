@@ -11,6 +11,10 @@ import {
   saveApplication,
   validateApplication,
 } from "../../data/applicationService";
+import {
+  getSocieties,
+  SOCIETIES_STORAGE_KEY,
+} from "../../data/societyService";
 import "../../styles/SocietyApplication.css";
 
 const formatDeadline = (deadline) =>
@@ -34,7 +38,7 @@ const availablePositionCount = (society) =>
   );
 
 const createEmptyApplicationForm = (society) => ({
-  position: society.details?.availablePositions?.[0]?.title ?? "",
+  position: "",
   motivation: "",
   relevantSkills: "",
   githubUrl: "",
@@ -62,7 +66,7 @@ const getCurrentApplicationStatus = (society, applications, studentNumber) =>
     (application) =>
       application.societyId === society.id &&
       application.student?.studentNumber === studentNumber,
-  )?.status ?? society.applicationStatus;
+  )?.status ?? society.applicationStatus ?? "Not Applied";
 
 const SocietyApplicationForm = ({
   society,
@@ -207,11 +211,14 @@ const SocietyApplicationForm = ({
                 {positions.length === 0 ? (
                   <option value="">No positions available</option>
                 ) : (
-                  positions.map((position) => (
-                    <option value={position.title} key={position.title}>
-                      {position.title}
-                    </option>
-                  ))
+                    <>
+                      <option value="">Select a position</option>
+                      {positions.map((position) => (
+                        <option value={position.title} key={position.title}>
+                          {position.title}
+                        </option>
+                      ))}
+                    </>
                 )}
               </select>
               {renderError("position")}
@@ -390,7 +397,7 @@ const SocietyDetailsView = ({
               </em>
             </strong>
           </div>
-          {details.eligibility && (
+          {(details.eligibility?.year || details.eligibility?.criteria) && (
             <div className="society-details-fact">
               <span className="society-field-label">Eligibility</span>
               <strong className="society-eligible">
@@ -548,11 +555,18 @@ const SocietyDetailsView = ({
           <button
             className="society-primary-button society-details-apply-button"
             type="button"
-            disabled={!society.isOpen || hasApplication}
+            disabled={
+              society.isActive === false ||
+              !society.isOpen ||
+              !positions.length ||
+              hasApplication
+            }
             onClick={onApply}
           >
             {hasApplication
               ? `${applicationStatus} ✓`
+              : !positions.length
+                ? "No Positions Available"
               : !society.isOpen
                 ? "Applications Closed"
                 : <>Apply Now <span aria-hidden="true">→</span></>}
@@ -570,6 +584,8 @@ const SocietyApplication = () => {
   const [sortOrder, setSortOrder] = useState("deadline");
   const [activeView, setActiveView] = useState("listing");
   const [selectedSociety, setSelectedSociety] = useState(null);
+  const [societies, setSocieties] = useState(societiesData);
+  const [societyDataError, setSocietyDataError] = useState("");
   const [applications, setApplications] = useState([]);
   const [storageError, setStorageError] = useState("");
   const [applicationForm, setApplicationForm] = useState({
@@ -597,15 +613,46 @@ const SocietyApplication = () => {
     }
   }, []);
 
-  const openSocieties = societiesData.filter((society) => society.isOpen);
+  useEffect(() => {
+    const loadSocieties = () => {
+      try {
+        const updatedSocieties = getSocieties();
+        setSocieties(updatedSocieties);
+        setSocietyDataError("");
+        setSelectedSociety((current) =>
+          current
+            ? updatedSocieties.find((society) => society.id === current.id) ?? current
+            : current,
+        );
+      } catch (error) {
+        setSocietyDataError(
+          error instanceof Error ? error.message : "Society information could not be loaded.",
+        );
+      }
+    };
+
+    loadSocieties();
+    const handleSocietyStorageChange = (event) => {
+      if (!event.key || event.key === SOCIETIES_STORAGE_KEY) loadSocieties();
+    };
+    window.addEventListener("storage", handleSocietyStorageChange);
+    return () => window.removeEventListener("storage", handleSocietyStorageChange);
+  }, []);
+
+  const activeSocieties = societies.filter((society) => society.isActive !== false);
+  const openSocieties = activeSocieties.filter((society) => society.isOpen);
   const myApplications = new Set([
-    ...societiesData
-      .filter((society) => society.applicationStatus !== "Not Applied")
+    ...societies
+    .filter(
+      (society) =>
+        society.applicationStatus &&
+        society.applicationStatus !== "Not Applied",
+    )
       .map((society) => society.id),
     ...applications.map((application) => application.societyId),
   ]).size;
   const inReview = new Set([
-    ...societiesData
+    ...societies
       .filter((society) => society.applicationStatus === "In Review")
       .map((society) => society.id),
     ...applications
@@ -619,10 +666,11 @@ const SocietyApplication = () => {
 
   const visibleSocieties = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
-    return societiesData
+    return societies
       .filter(
         (society) =>
-          activeFilter === "All" || society.category === activeFilter,
+          society.isActive !== false &&
+          (activeFilter === "All" || society.category === activeFilter),
       )
       .filter((society) => {
         if (!normalizedQuery) return true;
@@ -644,7 +692,7 @@ const SocietyApplication = () => {
         }
         return first.deadline.localeCompare(second.deadline);
       });
-  }, [activeFilter, searchQuery, sortOrder]);
+  }, [activeFilter, searchQuery, sortOrder, societies]);
 
   const closeMenu = () => setIsMenuOpen(false);
   const openSocietyDetails = (society) => {
@@ -652,8 +700,20 @@ const SocietyApplication = () => {
     setActiveView("details");
   };
   const openApplication = (society) => {
+    if (society.isActive === false) {
+      setNotice("This society is currently inactive.");
+      return;
+    }
+    if (society.isActive === false) {
+      setNotice("This society is currently inactive.");
+      return;
+    }
     if (!society.isOpen) {
       setNotice("Applications for this society are closed.");
+      return;
+    }
+    if (!society.details?.availablePositions?.length) {
+      setNotice("There are no positions available for this society.");
       return;
     }
     if (
@@ -783,6 +843,11 @@ const SocietyApplication = () => {
       {storageError && (
         <p className="society-application-submit-error society-application-storage-error" role="alert">
           {storageError}
+        </p>
+      )}
+      {societyDataError && (
+        <p className="society-application-submit-error society-application-storage-error" role="alert">
+          {societyDataError}
         </p>
       )}
 
@@ -951,6 +1016,7 @@ const SocietyApplication = () => {
                       type="button"
                       disabled={
                         !society.isOpen ||
+                        !society.details?.availablePositions?.length ||
                         getCurrentApplicationStatus(society, applications, studentDetails.studentNumber) !== "Not Applied"
                       }
                       onClick={() => openApplication(society)}
