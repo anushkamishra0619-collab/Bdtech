@@ -5,11 +5,61 @@ import {
   githubCommitVelocity,
   githubLanguageDistribution,
   githubProfileData,
+  githubRecentActivities,
 } from "../../data/GithubData";
 import "../../styles/GithubAnalytics.css";
 
 const contributionYears = ["2026", "2025", "2024", "All Time"];
 const weekdayLabels = ["", "Mon", "", "Wed", "", "Fri", ""];
+
+const GitHubActivityIcon = ({ type }) => {
+  const iconContent = {
+    Commit: (
+      <>
+        <path d="M3 12h5m8 0h5" />
+        <circle cx="12" cy="12" r="3" />
+      </>
+    ),
+    "Pull Request": (
+      <>
+        <path d="M7 5v14m10-14v10" />
+        <circle cx="7" cy="5" r="2" />
+        <circle cx="17" cy="19" r="2" />
+        <circle cx="17" cy="9" r="2" />
+      </>
+    ),
+    Issue: (
+      <>
+        <circle cx="12" cy="12" r="8.5" />
+        <path d="M12 8v5m0 3h.01" />
+      </>
+    ),
+    Merge: (
+      <>
+        <path d="M7 5v14m10-14v4c0 3-2 5-5 5h-1" />
+        <circle cx="7" cy="5" r="2" />
+        <circle cx="7" cy="19" r="2" />
+        <circle cx="17" cy="5" r="2" />
+      </>
+    ),
+  }[type];
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      {iconContent}
+    </svg>
+  );
+};
+
+const formatActivityTimestamp = (timestamp) =>
+  new Date(timestamp).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "UTC",
+  });
 
 const GitHubStatIcon = ({ type }) => {
   const iconContent = {
@@ -748,6 +798,54 @@ const GitHubAnalytics = () => {
               Trend
             </span>
           </div>
+        </section>
+        <section
+          className="github-telemetry-card"
+          aria-labelledby="github-telemetry-title"
+        >
+          <div className="github-telemetry-header">
+            <div>
+              <h2 id="github-telemetry-title">Recent telemetry feed</h2>
+              <p>Recent activity across your GitHub repositories.</p>
+            </div>
+            <span className="github-telemetry-demo-badge">DEMO DATA</span>
+          </div>
+
+          <ol className="github-telemetry-list">
+            {githubRecentActivities.map((activity) => (
+              <li
+                className={`github-telemetry-item github-telemetry-item-${activity.type
+                  .toLowerCase()
+                  .replace(" ", "-")}`}
+                key={activity.id}
+              >
+                <span className="github-telemetry-icon">
+                  <GitHubActivityIcon type={activity.type} />
+                </span>
+                <div className="github-telemetry-main">
+                  <div className="github-telemetry-title-row">
+                    <h3>{activity.title}</h3>
+                    <time
+                      className="github-telemetry-time"
+                      dateTime={activity.timestamp}
+                    >
+                      {formatActivityTimestamp(activity.timestamp)}
+                    </time>
+                  </div>
+                  <p>{activity.description}</p>
+                  <div className="github-telemetry-meta">
+                    <span className="github-telemetry-repository">
+                      <svg viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M3 2.5h10v11H3zM6 2.5v11" />
+                      </svg>
+                      {activity.repository}
+                    </span>
+                    <span className="github-telemetry-type">{activity.type}</span>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
         </section>
         {hoveredVelocityPoint && (
           <div

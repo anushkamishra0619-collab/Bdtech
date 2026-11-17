@@ -260,3 +260,46 @@ export const githubCommitVelocity = {
     ],
   },
 };
+
+export const githubRecentActivities = [
+  {
+    id: "activity-001",
+    type: "Commit",
+    title: "Pushed 3 commits to main",
+    description: "Refined dashboard metrics and improved responsive chart behavior.",
+    repository: "societyselect-web",
+    timestamp: "2026-11-17T13:24:00Z",
+  },
+  {
+    id: "activity-002",
+    type: "Pull Request",
+    title: "Opened a pull request",
+    description: "Added accessible labels and keyboard support to analytics charts.",
+    repository: "societyselect-web",
+    timestamp: "2026-11-17T10:42:00Z",
+  },
+  {
+    id: "activity-003",
+    type: "Issue",
+    title: "Closed an issue",
+    description: "Resolved a mobile layout overflow in the activity dashboard.",
+    repository: "campus-connect",
+    timestamp: "2026-11-16T16:18:00Z",
+  },
+  {
+    id: "activity-004",
+    type: "Merge",
+    title: "Merged a pull request",
+    description: "Merged the student profile improvements into the development branch.",
+    repository: "societyselect-web",
+    timestamp: "2026-11-16T12:06:00Z",
+  },
+  {
+    id: "activity-005",
+    type: "Commit",
+    title: "Committed 5 changes",
+    description: "Updated application form validation and its inline feedback states.",
+    repository: "society-apply",
+    timestamp: "2026-11-15T18:35:00Z",
+  },
+];

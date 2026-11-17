@@ -1455,3 +1455,243 @@ button.github-contribution-cell:focus-visible {
     font-size: 11px;
   }
 }
+
+.github-telemetry-card {
+  margin-top: 22px;
+  padding: 28px 30px 12px;
+  border: 1px solid var(--github-line);
+  border-radius: 21px;
+  background: #fff;
+}
+
+.github-telemetry-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.github-telemetry-header h2 {
+  margin: 0;
+  color: var(--github-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.github-telemetry-header p {
+  margin: 4px 0 0;
+  color: var(--github-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.github-telemetry-demo-badge {
+  flex: 0 0 auto;
+  margin-top: 3px;
+  padding: 7px 11px;
+  border: 1px solid #e1e8f7;
+  border-radius: 20px;
+  background: #f5f7fc;
+  color: var(--github-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.github-telemetry-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.github-telemetry-item {
+  display: grid;
+  position: relative;
+  padding: 19px 0;
+  align-items: start;
+  gap: 15px;
+  grid-template-columns: 42px minmax(0, 1fr);
+  border-top: 1px solid #edf1f8;
+}
+
+.github-telemetry-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid #dfe8ff;
+  border-radius: 13px;
+  background: #f0f4ff;
+  color: var(--github-blue);
+}
+
+.github-telemetry-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.github-telemetry-item-pull-request .github-telemetry-icon {
+  border-color: #e8defc;
+  background: #f6f1ff;
+  color: #8251d4;
+}
+
+.github-telemetry-item-issue .github-telemetry-icon {
+  border-color: #f7e5cd;
+  background: #fff8ed;
+  color: #cd7c18;
+}
+
+.github-telemetry-item-merge .github-telemetry-icon {
+  border-color: #d7eee3;
+  background: #effaf4;
+  color: #27945b;
+}
+
+.github-telemetry-main {
+  min-width: 0;
+}
+
+.github-telemetry-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.github-telemetry-title-row h3 {
+  min-width: 0;
+  margin: 0;
+  color: #273654;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.github-telemetry-time {
+  flex: 0 0 auto;
+  color: var(--github-light-muted);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.github-telemetry-main > p {
+  margin: 3px 0 9px;
+  color: var(--github-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.github-telemetry-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.github-telemetry-repository {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #526484;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.github-telemetry-repository svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.4;
+}
+
+.github-telemetry-type {
+  padding: 4px 9px;
+  border-radius: 12px;
+  background: #edf2ff;
+  color: #4968ba;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.github-telemetry-item-pull-request .github-telemetry-type {
+  background: #f3edff;
+  color: #7042bc;
+}
+
+.github-telemetry-item-issue .github-telemetry-type {
+  background: #fff4e5;
+  color: #a9630a;
+}
+
+.github-telemetry-item-merge .github-telemetry-type {
+  background: #eaf8f0;
+  color: #227a4b;
+}
+
+@media (max-width: 600px) {
+  .github-telemetry-card {
+    margin-top: 18px;
+    padding: 20px 16px 8px;
+  }
+
+  .github-telemetry-header h2 {
+    font-size: 27px;
+  }
+
+  .github-telemetry-header p {
+    font-size: 13px;
+  }
+
+  .github-telemetry-demo-badge {
+    padding: 6px 8px;
+    font-size: 9px;
+  }
+
+  .github-telemetry-item {
+    padding: 15px 0;
+    gap: 11px;
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
+  .github-telemetry-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 11px;
+  }
+
+  .github-telemetry-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .github-telemetry-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .github-telemetry-title-row h3 {
+    font-size: 13px;
+  }
+
+  .github-telemetry-time {
+    font-size: 10px;
+  }
+
+  .github-telemetry-main > p {
+    font-size: 12px;
+  }
+}
