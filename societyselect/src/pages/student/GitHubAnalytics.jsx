@@ -1,6 +1,55 @@
 import { useState } from "react";
-import { githubProfileData } from "../../data/GithubData";
+import {
+  githubAnalyticsStats,
+  githubProfileData,
+} from "../../data/GithubData";
 import "../../styles/GithubAnalytics.css";
+
+const GitHubStatIcon = ({ type }) => {
+  const iconContent = {
+    activity: <path d="M3 12h4l3-9 4 18 3-9h4" />,
+    commits: (
+      <>
+        <path d="M3 12h5m8 0h5" />
+        <circle cx="12" cy="12" r="3" />
+      </>
+    ),
+    repositories: <path d="M5 3h14v18H5z" />,
+    pullRequests: (
+      <>
+        <path d="M6 5v10m12-6v10M6 15a3 3 0 1 0 3 3m6-9a3 3 0 1 0 3-3" />
+      </>
+    ),
+    issues: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="m8 12 3 3 5-6" />
+      </>
+    ),
+    stars: <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z" />,
+  }[type];
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      {iconContent}
+    </svg>
+  );
+};
+
+const getSparklinePoints = (values) => {
+  const width = 240;
+  const height = 28;
+  const minimum = Math.min(...values);
+  const range = Math.max(...values) - minimum || 1;
+
+  return values
+    .map((value, index) => {
+      const x = (index / Math.max(values.length - 1, 1)) * width;
+      const y = height - ((value - minimum) / range) * (height - 5) - 2;
+      return `${x},${y}`;
+    })
+    .join(" ");
+};
 
 const GitHubAnalytics = () => {
   const [syncMessage, setSyncMessage] = useState("");
@@ -131,6 +180,56 @@ const GitHubAnalytics = () => {
               </div>
             ))}
           </dl>
+        </section>
+
+        <section className="github-statistics-grid" aria-label="GitHub statistics">
+          {githubAnalyticsStats.map((stat) => {
+            const sparklinePoints = getSparklinePoints(stat.sparkline);
+
+            return (
+              <article
+                className={`github-stat-card github-stat-card--${stat.tone}`}
+                key={stat.id}
+              >
+                <div className="github-stat-card-heading">
+                  <h2>{stat.label}</h2>
+                  <span className="github-stat-icon">
+                    <GitHubStatIcon type={stat.icon} />
+                  </span>
+                </div>
+                <p className="github-stat-value">{stat.value}</p>
+                {stat.trend ? (
+                  <p className="github-stat-trend">{stat.trend}</p>
+                ) : (
+                  <p className="github-stat-context">{stat.context}</p>
+                )}
+                <svg
+                  className="github-stat-sparkline"
+                  viewBox="0 0 240 34"
+                  preserveAspectRatio="none"
+                  role="img"
+                  aria-label={`${stat.label} recent trend`}
+                >
+                  <defs>
+                    <linearGradient id={`github-stat-fill-${stat.id}`} x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stopColor="currentColor" stopOpacity=".16" />
+                      <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <polygon
+                    className="github-stat-sparkline-fill"
+                    points={`0,34 ${sparklinePoints} 240,34`}
+                    fill={`url(#github-stat-fill-${stat.id})`}
+                  />
+                  <polyline
+                    className="github-stat-sparkline-line"
+                    points={sparklinePoints}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </svg>
+              </article>
+            );
+          })}
         </section>
       </main>
     </div>
