@@ -1,592 +1,315 @@
 
-/* =========================================
-   MAIN LAYOUT
-========================================= */
+/* STUDENT DETAILS PAGE */
 
 .student-details-layout {
-  display: flex;
   width: 100%;
   min-height: 100vh;
   background: #f5f9fb;
-  color: #294b59;
-  font-family: "Roboto", sans-serif;
-  overflow-x: hidden;
-}
-
-.student-details-layout > *:first-child {
-  flex-shrink: 0;
 }
 
 .student-details-page {
   margin-left: 260px;
   width: calc(100% - 260px);
   min-height: 100vh;
-  min-width: 0;
-  padding: 30px 32px;
+  padding: 30px;
   box-sizing: border-box;
-  overflow-x: hidden;
+  background: #f5f9fb;
 }
-
-/* =========================================
-   TOP NAVIGATION
-========================================= */
 
 .student-details-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  width: 100%;
+  margin-bottom: 25px;
 }
 
 .student-back-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 9px;
-  border: 1px solid #dce9ee;
-  background: #ffffff;
-  color: #315c6b;
-  padding: 10px 16px;
+  gap: 8px;
+  border: 1px solid #e5edf1;
+  background: white;
+  color: #527d8c;
   border-radius: 9px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 10px 15px;
   cursor: pointer;
-  transition: 0.2s ease;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .student-back-btn:hover {
-  background: #eaf4f8;
-  border-color: #73aabd;
-  transform: translateY(-1px);
+  background: #eaf3f8;
 }
 
 .student-profile-label {
-  color: #73aabd;
-  font-size: 11px;
-  font-weight: 700;
+  color: #83a6b4;
+  font-size: 10px;
   letter-spacing: 2px;
+  font-weight: 700;
 }
 
-/* =========================================
-   MAIN RESUME CONTAINER
-========================================= */
+/* PROFILE CARD */
 
-.student-resume {
-  display: grid;
-  grid-template-columns: minmax(220px, 290px) minmax(0, 1fr);
+.student-social-profile-card {
   width: 100%;
-  max-width: 1150px;
+  max-width: 850px;
   margin: 0 auto;
-  background: #ffffff;
-  border: 1px solid #e3edf1;
-  border-radius: 18px;
+  background: #294b59;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 12px 35px rgba(49, 92, 107, 0.07);
-  box-sizing: border-box;
+  box-shadow: 7px 5px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* =========================================
-   LEFT PROFILE SIDEBAR
-========================================= */
+/* USER HEADER */
 
-.student-resume-sidebar {
-  min-width: 0;
-  background: #edf5f8;
-  padding: 32px 25px;
-  border-right: 1px solid #e0ebef;
-  box-sizing: border-box;
+.student-social-card-header {
+  min-height: 105px;
+  padding: 22px 25px;
+  background: #b7d6e4;
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
 
-.student-profile-image {
-  width: 100%;
-  height: 235px;
-  border-radius: 13px;
-  overflow: hidden;
-  background: linear-gradient(145deg, #b7d6e4, #73aabd);
+.student-social-avatar {
+  width: 65px;
+  height: 65px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #315c6b;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 23px;
+  overflow: hidden;
+  font-size: 21px;
+  font-weight: 700;
 }
 
-.student-profile-image img {
+.student-social-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.student-profile-image span {
-  color: #ffffff;
-  font-family: "Playfair Display", serif;
-  font-size: 75px;
-  font-weight: 700;
-}
-
-.student-profile-name {
-  margin-bottom: 27px;
-}
-
-.student-small-label {
-  display: block;
-  color: #73aabd;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 1.8px;
-  margin-bottom: 8px;
-}
-
-.student-profile-name h1 {
+.student-social-user-info h3 {
   color: #294b59;
-  font-family: "Playfair Display", serif;
-  font-size: 27px;
-  line-height: 1.25;
-  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 7px;
+}
+
+.student-social-user-info p {
+  color: #527d8c;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* DESCRIPTION */
+
+.student-social-description {
+  margin: 14px;
+  padding: 24px;
+  background: #3c6473;
+  border-radius: 9px;
+  color: #eaf3f8;
+}
+
+.social-description-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.social-description-heading h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.social-about-text {
+  font-size: 13px;
+  color: #d7e8ee;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.social-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 15px 0;
+  font-size: 12px;
+  color: #eaf3f8;
   overflow-wrap: anywhere;
 }
 
-.student-status {
-  display: inline-block;
-  padding: 6px 13px;
+.social-detail-item svg {
+  flex-shrink: 0;
+  color: #b7d6e4;
+}
+
+.social-description-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.17);
+  margin: 22px 0;
+}
+
+/* SKILLS, PROJECTS AND ACHIEVEMENTS */
+
+.social-extra-details h4 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #ffffff;
+  font-size: 14px;
+  margin: 0 0 15px;
+}
+
+.social-extra-details h4 svg {
+  color: #b7d6e4;
+}
+
+.social-extra-details > p {
+  font-size: 12px;
+  color: #c5dbe3;
+}
+
+.social-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.social-detail-tags span {
+  background: rgba(183, 214, 228, 0.17);
+  border: 1px solid rgba(183, 214, 228, 0.25);
+  color: #eaf3f8;
+  padding: 7px 12px;
   border-radius: 20px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.student-status.active {
-  color: #237b60;
-  background: #e0f3eb;
-}
-
-.student-status.pending {
-  color: #a66b25;
-  background: #fff1dc;
-}
-
-/* =========================================
-   SIDEBAR SECTIONS
-========================================= */
-
-.student-side-section {
-  margin-top: 27px;
-}
-
-.student-side-section h3 {
-  color: #315c6b;
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-  margin: 0 0 17px;
-  padding-bottom: 9px;
-  border-bottom: 2px solid #b7d6e4;
 }
 
-.student-contact-item,
-.student-social-item {
+.social-project-item {
+  padding: 13px 15px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+}
+
+.social-project-item strong {
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.social-project-item p {
+  color: #c5dbe3;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.social-achievement-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin-bottom: 14px;
-  color: #527d8c;
+  margin: 13px 0;
+  color: #eaf3f8;
   font-size: 12px;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-  min-width: 0;
+  line-height: 1.5;
 }
 
-.student-contact-item svg,
-.student-social-item svg {
+.social-achievement-item svg {
+  color: #b7d6e4;
   flex-shrink: 0;
-  color: #73aabd;
-  margin-top: 2px;
 }
 
-.student-social-item a {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #315c6b;
-  text-decoration: none;
+/* STATUS */
+
+.student-social-description .student-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 10px;
   font-weight: 600;
-  overflow-wrap: anywhere;
+  text-transform: capitalize;
+  background: #e8f5ed;
+  color: #438b5d;
 }
 
-.student-social-item a:hover {
-  color: #73aabd;
-}
+/* SOCIAL LINKS */
 
-.student-social-item span {
-  color: #8299a2;
-}
-
-/* =========================================
-   TECHNICAL SKILLS
-========================================= */
-
-.student-skill-category {
-  margin-bottom: 17px;
-}
-
-.student-skill-category > span {
-  display: block;
-  color: #527d8c;
-  font-size: 11px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-/* =========================================
-   RIGHT CONTENT
-========================================= */
-
-.student-resume-content {
-  padding: 38px 38px 25px;
-  min-width: 0;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.student-content-section {
-  margin-bottom: 31px;
-  min-width: 0;
-}
-
-.student-section-heading {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  margin-bottom: 17px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #e7eef1;
-}
-
-.student-section-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: #eaf4f8;
-  color: #527d8c;
+.student-social-links {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  gap: 30px;
+  padding: 20px;
+  margin: 0 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.student-section-heading h2 {
-  color: #315c6b;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 1.3px;
-  margin: 0;
-}
-
-/* =========================================
-   ABOUT SECTION
-========================================= */
-
-.student-about-section > p {
-  color: #718994;
-  font-size: 13px;
-  line-height: 1.8;
-  margin: 0;
-}
-
-/* =========================================
-   ACADEMIC TIMELINE
-========================================= */
-
-.student-timeline-item {
-  display: grid;
-  grid-template-columns: 105px minmax(0, 1fr);
-  gap: 15px;
-  position: relative;
-  padding: 4px 0 8px;
-}
-
-.student-timeline-date {
-  color: #73aabd;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.7px;
-  padding-top: 4px;
-}
-
-.student-timeline-description {
-  border-left: 2px solid #b7d6e4;
-  padding-left: 17px;
-  min-width: 0;
-}
-
-.student-timeline-description h3 {
-  color: #315c6b;
-  font-size: 14px;
-  font-weight: 700;
-  margin: 0 0 7px;
-  overflow-wrap: anywhere;
-}
-
-.student-timeline-description p,
-.student-timeline-description span {
-  display: block;
-  color: #8299a2;
-  font-size: 12px;
-  margin: 0 0 7px;
-  line-height: 1.6;
-}
-
-/* =========================================
-   DETAILS AND SKILL TAGS
-========================================= */
-
-.student-detail-block {
-  margin-bottom: 18px;
-  min-width: 0;
-}
-
-.student-detail-block h3 {
-  color: #527d8c;
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.student-tags {
+.student-social-links a {
+  color: #b7d6e4;
+  font-size: 24px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  max-width: 100%;
-}
-
-.student-tag {
-  display: inline-flex;
   align-items: center;
-  padding: 7px 12px;
-  border-radius: 7px;
-  background: #edf5f8;
-  color: #315c6b;
-  border: 1px solid #dcebf0;
-  font-size: 11px;
-  font-weight: 600;
-  transition: 0.2s ease;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
 }
 
-.student-tag:hover {
-  background: #315c6b;
+.student-social-links a:hover {
   color: #ffffff;
-  border-color: #315c6b;
-  transform: translateY(-2px);
+  transform: translateY(-5px);
 }
 
-.student-empty-text {
-  color: #a0afb5;
-  font-size: 12px;
-  font-style: italic;
-  margin: 0;
-}
-
-/* =========================================
-   PROJECTS
-========================================= */
-
-.student-project-item {
-  padding: 15px 17px;
-  margin-bottom: 12px;
-  background: #f5f9fb;
-  border: 1px solid #e5eef2;
-  border-radius: 10px;
-  transition: 0.2s ease;
-  min-width: 0;
-}
-
-.student-project-item:hover {
-  border-color: #b7d6e4;
-  transform: translateY(-2px);
-}
-
-.student-project-item h3 {
-  color: #315c6b;
-  font-size: 13px;
-  margin: 0 0 8px;
-}
-
-.student-project-item p {
-  color: #718994;
-  font-size: 12px;
-  line-height: 1.7;
-  margin: 0 0 12px;
-}
-
-/* =========================================
-   ACHIEVEMENTS
-========================================= */
-
-.student-achievement-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.student-achievement-item {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  color: #527d8c;
-  font-size: 12px;
-}
-
-.student-achievement-item svg {
-  color: #73aabd;
-  flex-shrink: 0;
-}
-
-/* =========================================
-   FOOTER
-========================================= */
-
-.student-resume-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  border-top: 1px solid #e7eef1;
-  padding-top: 18px;
-  color: #9aadb5;
-  font-size: 10px;
-}
-
-/* =========================================
-   NOT FOUND
-========================================= */
+/* NOT FOUND */
 
 .student-not-found {
-  min-height: 350px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #527d8c;
-  background: #ffffff;
-  border: 1px solid #e3edf1;
-  border-radius: 15px;
+  background: white;
+  padding: 50px;
   text-align: center;
-  padding: 30px;
+  border-radius: 15px;
+  color: #527d8c;
 }
 
-.student-not-found h2 {
-  color: #315c6b;
-  font-family: "Playfair Display", serif;
-  margin: 15px 0 5px;
-}
-
-.student-not-found p {
-  color: #8299a2;
-  font-size: 13px;
-}
-
-/* =========================================
-   RESPONSIVE - TABLET
-========================================= */
-
-@media (max-width: 1000px) {
-  .student-details-page {
-    padding: 24px 20px;
-  }
-
-  .student-resume {
-    grid-template-columns: minmax(200px, 250px) minmax(0, 1fr);
-  }
-
-  .student-resume-sidebar {
-    padding: 25px 18px;
-  }
-
-  .student-resume-content {
-    padding: 30px 22px;
-  }
-}
-
-/* =========================================
-   RESPONSIVE - SIDEBAR WIDTH
-========================================= */
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
   .student-details-page {
     margin-left: 220px;
     width: calc(100% - 220px);
+    padding: 22px;
   }
 }
-
-/* =========================================
-   RESPONSIVE - MOBILE
-========================================= */
-
-@media (max-width: 720px) {
-  .student-details-page {
-    padding: 16px;
-  }
-
-  .student-resume {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .student-resume-sidebar {
-    border-right: none;
-    border-bottom: 1px solid #e0ebef;
-    padding: 25px;
-  }
-
-  .student-profile-image {
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 20px;
-  }
-
-  .student-profile-name {
-    text-align: center;
-  }
-
-  .student-resume-content {
-    padding: 25px 20px;
-  }
-
-  .student-details-topbar {
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .student-profile-label {
-    font-size: 9px;
-    padding-top: 12px;
-  }
-}
-
-/* =========================================
-   SMALL MOBILE
-========================================= */
 
 @media (max-width: 600px) {
   .student-details-page {
     margin-left: 70px;
     width: calc(100% - 70px);
-    padding: 12px;
-  }
-}
-
-@media (max-width: 420px) {
-  .student-timeline-item {
-    grid-template-columns: 75px minmax(0, 1fr);
-    gap: 8px;
+    padding: 18px 12px;
   }
 
-  .student-profile-name h1 {
-    font-size: 23px;
+  .student-social-card-header {
+    padding: 16px;
   }
 
-  .student-section-heading h2 {
-    font-size: 11px;
+  .student-social-description {
+    padding: 17px;
   }
 
-  .student-resume-content {
-    padding: 22px 15px;
+  .student-social-user-info h3 {
+    font-size: 17px;
+  }
+
+  .student-details-topbar {
+    gap: 10px;
+  }
+
+  .student-profile-label {
+    font-size: 8px;
   }
 }

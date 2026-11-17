@@ -14,7 +14,6 @@ export const studentData = [
     status: "Active",
     phone: "+91 8737009351",
     profilePicture: "",
-    college: "Ajay kumar Garg Engineering College, Ghaziabad",
     department: "Computer Science & Engineering",
     year: "2nd Year (Batch 2025-2029)",
     rollNumber: "2500270100076",
@@ -32,7 +31,7 @@ export const studentData = [
       {
         name: "Society Recruitment Portal",
         description:"Full-stack web application automating candidate applications, online quiz evaluations, and mentor review workflows with transparent scoring.",
-        technologies: ["React.js", "Node.js", "MongoDB", "Tailwind CSS"],
+        technologies: ["React.js","Tailwind CSS"],
       },
     ],
     achievements: [
