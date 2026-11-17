@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   githubContributionData,
   githubAnalyticsStats,
+  githubCommitVelocity,
   githubLanguageDistribution,
   githubProfileData,
 } from "../../data/GithubData";
@@ -104,6 +105,24 @@ const formatContributionDate = (date) =>
     timeZone: "UTC",
   });
 
+const getSmoothLinePath = (points) => {
+  if (points.length < 2) return "";
+
+  let path = `M ${points[0].x} ${points[0].y}`;
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const previous = points[Math.max(0, index - 1)];
+    const current = points[index];
+    const next = points[index + 1];
+    const following = points[Math.min(points.length - 1, index + 2)];
+    const controlOneX = current.x + (next.x - previous.x) / 6;
+    const controlOneY = current.y + (next.y - previous.y) / 6;
+    const controlTwoX = next.x - (following.x - current.x) / 6;
+    const controlTwoY = next.y - (following.y - current.y) / 6;
+    path += ` C ${controlOneX} ${controlOneY}, ${controlTwoX} ${controlTwoY}, ${next.x} ${next.y}`;
+  }
+  return path;
+};
+
 const getDonutSegments = (languages) => {
   const circumference = 2 * Math.PI * 62;
   let offset = 0;
@@ -125,9 +144,39 @@ const GitHubAnalytics = () => {
   const [syncMessage, setSyncMessage] = useState("");
   const [selectedContributionYear, setSelectedContributionYear] = useState("2026");
   const [hoveredContribution, setHoveredContribution] = useState(null);
+  const [selectedVelocityRange, setSelectedVelocityRange] = useState("Weekly");
+  const [hoveredVelocityPoint, setHoveredVelocityPoint] = useState(null);
   const { profile, metrics, demoMode } = githubProfileData;
   const selectedContributionData = githubContributionData[selectedContributionYear];
   const languageSegments = getDonutSegments(githubLanguageDistribution.languages);
+  const velocitySeries = githubCommitVelocity[selectedVelocityRange];
+  const velocityPlot = {
+    width: 880,
+    left: 52,
+    right: 12,
+    top: 24,
+    bottom: 270,
+  };
+  const velocityPlotWidth = velocityPlot.width - velocityPlot.left - velocityPlot.right;
+  const velocityStep = velocityPlotWidth / velocitySeries.points.length;
+  const velocityPoints = velocitySeries.points.map((point, index) => {
+    const x = velocityPlot.left + velocityStep * (index + 0.5);
+    const y =
+      velocityPlot.bottom -
+      (point.value / velocitySeries.axisMax) * (velocityPlot.bottom - velocityPlot.top);
+    return {
+      ...point,
+      index,
+      x,
+      y,
+      barX: x - Math.min(40, velocityStep * 0.6) / 2,
+      barWidth: Math.min(40, velocityStep * 0.6),
+      barY: y,
+      barHeight: velocityPlot.bottom - y,
+      isHighlighted: velocitySeries.highlightIndices.includes(index),
+    };
+  });
+  const velocityLinePath = getSmoothLinePath(velocityPoints);
   const contributionWeeks = getContributionWeeks(selectedContributionData.days);
   const monthMarkers = contributionWeeks.reduce((markers, week, weekIndex) => {
     const firstOfMonth = week.find(
@@ -157,6 +206,17 @@ const GitHubAnalytics = () => {
       } on ${formatContributionDate(day.date)}`,
       left: Math.max(8, Math.min(event.clientX + 12, window.innerWidth - 220)),
       top: Math.max(8, event.clientY - 38),
+    });
+  };
+
+  const showVelocityTooltip = (event, point) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX || bounds.left + bounds.width / 2;
+    const y = event.clientY || bounds.top;
+    setHoveredVelocityPoint({
+      text: `${point.label}: ${point.value} commits`,
+      left: Math.max(8, Math.min(x + 12, window.innerWidth - 220)),
+      top: Math.max(8, y - 38),
     });
   };
 
@@ -555,6 +615,152 @@ const GitHubAnalytics = () => {
             </ul>
           </div>
         </section>
+
+        <section
+          className="github-velocity-card"
+          aria-labelledby="github-velocity-title"
+        >
+          <div className="github-velocity-header">
+            <div>
+              <h2 id="github-velocity-title">{velocitySeries.title}</h2>
+              <p>{velocitySeries.subtitle}</p>
+            </div>
+            <div className="github-velocity-range-selector" role="group" aria-label="Commit time range">
+              {Object.keys(githubCommitVelocity).map((range) => (
+                <button
+                  type="button"
+                  className={range === selectedVelocityRange ? "is-selected" : undefined}
+                  aria-pressed={range === selectedVelocityRange}
+                  key={range}
+                  onClick={() => {
+                    setSelectedVelocityRange(range);
+                    setHoveredVelocityPoint(null);
+                  }}
+                >
+                  {range}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="github-velocity-chart-scroll">
+            <svg
+              className="github-velocity-chart"
+              viewBox="0 0 880 350"
+              role="img"
+              aria-label={`${velocitySeries.title} bar chart with trend line`}
+            >
+              {velocitySeries.ticks.map((tick) => {
+                const y =
+                  velocityPlot.bottom -
+                  (tick / velocitySeries.axisMax) *
+                    (velocityPlot.bottom - velocityPlot.top);
+                return (
+                  <g className="github-velocity-axis-tick" key={tick}>
+                    <line
+                      x1={velocityPlot.left}
+                      x2={velocityPlot.width - velocityPlot.right}
+                      y1={y}
+                      y2={y}
+                    />
+                    <text x={velocityPlot.left - 10} y={y + 4} textAnchor="end">
+                      {tick}
+                    </text>
+                  </g>
+                );
+              })}
+
+              {velocityPoints.map((point) => (
+                <g
+                  className="github-velocity-data-point"
+                  key={point.label}
+                  tabIndex={0}
+                  aria-label={`${point.label}: ${point.value} commits`}
+                  onMouseEnter={(event) => showVelocityTooltip(event, point)}
+                  onMouseLeave={() => setHoveredVelocityPoint(null)}
+                  onFocus={(event) => showVelocityTooltip(event, point)}
+                  onBlur={() => setHoveredVelocityPoint(null)}
+                >
+                  <title>{`${point.label}: ${point.value} commits`}</title>
+                  <rect
+                    x={point.barX}
+                    y={point.barY}
+                    width={point.barWidth}
+                    height={point.barHeight}
+                    rx="5"
+                    className={
+                      point.isHighlighted
+                        ? "github-velocity-bar is-highlighted"
+                        : "github-velocity-bar"
+                    }
+                  />
+                </g>
+              ))}
+
+              <path
+                className="github-velocity-trend-line"
+                d={velocityLinePath}
+                aria-hidden="true"
+              />
+
+              {velocityPoints.map((point) =>
+                point.isHighlighted ? (
+                  <g className="github-velocity-highlight" key={`highlight-${point.label}`}>
+                    <text x={point.x} y={point.y - 14} textAnchor="middle">
+                      {point.value}
+                    </text>
+                    <circle cx={point.x} cy={point.y} r="6" />
+                  </g>
+                ) : null,
+              )}
+
+              {velocityPoints.map((point) =>
+                point.axisLabel ? (
+                  <text
+                    className={
+                      point.isHighlighted
+                        ? "github-velocity-axis-label is-highlighted"
+                        : "github-velocity-axis-label"
+                    }
+                    key={`axis-${point.label}`}
+                    x={point.x}
+                    y="301"
+                    textAnchor="middle"
+                  >
+                    {point.axisLabel}
+                  </text>
+                ) : null,
+              )}
+            </svg>
+          </div>
+
+          <div className="github-velocity-legend" aria-label="Chart legend">
+            <span>
+              <i className="github-velocity-legend-bar" aria-hidden="true" />
+              Commits
+            </span>
+            <span>
+              <i className="github-velocity-legend-bar is-highlighted" aria-hidden="true" />
+              Peak / current
+            </span>
+            <span>
+              <i className="github-velocity-legend-line" aria-hidden="true" />
+              Trend
+            </span>
+          </div>
+        </section>
+        {hoveredVelocityPoint && (
+          <div
+            className="github-velocity-tooltip"
+            role="tooltip"
+            style={{
+              left: `${hoveredVelocityPoint.left}px`,
+              top: `${hoveredVelocityPoint.top}px`,
+            }}
+          >
+            {hoveredVelocityPoint.text}
+          </div>
+        )}
         {hoveredContribution && (
           <div
             className="github-contribution-tooltip"

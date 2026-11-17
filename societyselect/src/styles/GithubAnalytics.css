@@ -1212,3 +1212,246 @@ button.github-contribution-cell:focus-visible {
     font-size: 12px;
   }
 }
+
+.github-velocity-card {
+  margin-top: 22px;
+  padding: 28px 30px 24px;
+  border: 1px solid var(--github-line);
+  border-radius: 21px;
+  background: #fff;
+}
+
+.github-velocity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.github-velocity-header h2 {
+  margin: 0;
+  color: var(--github-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.github-velocity-header p {
+  margin: 4px 0 0;
+  color: var(--github-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.github-velocity-range-selector {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #eaf0ff;
+}
+
+.github-velocity-range-selector button {
+  min-width: 80px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--github-muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.github-velocity-range-selector button:hover {
+  color: var(--github-blue);
+}
+
+.github-velocity-range-selector button.is-selected {
+  background: #fff;
+  box-shadow: 0 2px 5px rgb(34 56 98 / 12%);
+  color: var(--github-blue);
+}
+
+.github-velocity-chart-scroll {
+  width: 100%;
+  min-width: 0;
+  margin-top: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-color: #aeb8ce #f0f3fa;
+  scrollbar-width: thin;
+}
+
+.github-velocity-chart {
+  display: block;
+  width: 100%;
+  min-width: 720px;
+  height: auto;
+  overflow: visible;
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+}
+
+.github-velocity-axis-tick line {
+  stroke: #e3eaf7;
+  stroke-width: 1;
+}
+
+.github-velocity-axis-tick text,
+.github-velocity-axis-label {
+  fill: var(--github-light-muted);
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+  font-size: 12px;
+}
+
+.github-velocity-bar {
+  fill: #dce7fb;
+  transition: fill 150ms ease;
+}
+
+.github-velocity-bar.is-highlighted {
+  fill: var(--github-blue);
+}
+
+.github-velocity-data-point {
+  cursor: pointer;
+  outline: none;
+}
+
+.github-velocity-data-point:focus-visible .github-velocity-bar {
+  stroke: #172f83;
+  stroke-width: 2;
+}
+
+.github-velocity-trend-line {
+  fill: none;
+  stroke: var(--github-blue);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+  pointer-events: none;
+}
+
+.github-velocity-highlight {
+  pointer-events: none;
+}
+
+.github-velocity-highlight text {
+  fill: var(--github-blue);
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+  font-size: 13px;
+}
+
+.github-velocity-highlight circle {
+  fill: #fff;
+  stroke: var(--github-blue);
+  stroke-width: 2.5;
+}
+
+.github-velocity-axis-label.is-highlighted {
+  fill: var(--github-blue);
+}
+
+.github-velocity-legend {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 5px;
+  color: var(--github-muted);
+  font-size: 13px;
+}
+
+.github-velocity-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.github-velocity-legend-bar {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border-radius: 4px;
+  background: #dce7fb;
+}
+
+.github-velocity-legend-bar.is-highlighted {
+  background: var(--github-blue);
+}
+
+.github-velocity-legend-line {
+  display: inline-block;
+  width: 19px;
+  height: 0;
+  border-top: 2px solid var(--github-blue);
+}
+
+.github-velocity-tooltip {
+  position: fixed;
+  z-index: 20;
+  max-width: min(220px, calc(100vw - 16px));
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: #17233c;
+  box-shadow: 0 4px 12px rgb(21 34 61 / 20%);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+@media (max-width: 800px) {
+  .github-velocity-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 13px;
+  }
+}
+
+@media (max-width: 600px) {
+  .github-velocity-card {
+    margin-top: 18px;
+    padding: 20px 16px 20px;
+  }
+
+  .github-velocity-header h2 {
+    font-size: 27px;
+  }
+
+  .github-velocity-header p {
+    font-size: 13px;
+  }
+
+  .github-velocity-range-selector {
+    width: 100%;
+  }
+
+  .github-velocity-range-selector button {
+    min-width: 0;
+    flex: 1 1 33.333%;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+
+  .github-velocity-chart-scroll {
+    margin-top: 12px;
+  }
+
+  .github-velocity-chart {
+    min-width: 700px;
+  }
+
+  .github-velocity-legend {
+    gap: 13px;
+    flex-wrap: wrap;
+    font-size: 11px;
+  }
+}
