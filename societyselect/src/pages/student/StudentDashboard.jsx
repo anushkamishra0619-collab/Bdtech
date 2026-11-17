@@ -176,13 +176,13 @@ const StudentDashboard = () => {
             Dashboard
           </a>
           <a
-            href="/student/application-tracking"
-            className={`nav-link${activeNav === "Applications" ? " active" : ""}`}
-            data-nav="Applications"
+            href="/student/application"
+            className={`nav-link${activeNav === "Society Applications" ? " active" : ""}`}
+            data-nav="Society Applications"
             onMouseEnter={(event) => moveNavIndicator(event.currentTarget)}
-            onClick={() => handleNavClick("Applications")}
+            onClick={() => handleNavClick("Society Applications")}
           >
-            Applications
+            Society Applications
           </a>
           <a
             href="/student/performance"
