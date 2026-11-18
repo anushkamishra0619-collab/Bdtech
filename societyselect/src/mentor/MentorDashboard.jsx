@@ -1,47 +1,63 @@
-import {Users,ClipboardCheck,FolderKanban,CalendarDays,ArrowUpRight,Clock,CheckCircle2,CircleAlert,BookOpen,ChevronRight,} from "lucide-react";
-
+import {Users,ClipboardCheck,FolderKanban,CalendarDays,ArrowUpRight,Clock,CheckCircle2,CircleAlert,BookOpen,ChevronRight,ChevronsRight,} from "lucide-react";
 import MentorSidebar from "../Components/MentorSidebar";
+import { navigateTo } from "../utils/navigation";
 import "./MentorDashboard.css";
+function TextMorphHeading() {
+  const words = ["Guide.", "Inspire.", "Empower."];
+
+  return (
+    <h2 className="mentor-morph-heading">
+      {words.map((word, index) => (
+        <span
+          key={word}
+          style={{animationDelay: `${index * 2}s`,}}
+        >
+          {word}
+        </span>
+      ))}
+    </h2>
+  );
+}
 
 const stats = [
   {
     title: "Assigned Students",
     value: "03",
     icon: Users,
+    link: "/mentor/students",
   },
   {
     title: "Pending Reviews",
     value: "02",
     icon: ClipboardCheck,
+    link: "/mentor/tasks",
   },
   {
     title: "Active Projects",
     value: "01",
     icon: FolderKanban,
+    link: "/mentor/projects",
   },
 ];
 
 const students = [
   {
+    id: 1,
     name: "Gargi Yadav",
     initials: "GY",
     society: "A Society",
-    progress: 85,
-    status: "On Track",
   },
   {
-    name: "priya Tiwari",
-    initials: "PV",
+    id: 2,
+    name: "Priya Tiwari",
+    initials: "PT",
     society: "A Society",
-    progress: 65,
-    status: "On Track",
   },
   {
+    id: 3,
     name: "Aastha",
     initials: "AS",
     society: "A Society",
-    progress: 42,
-    status: "Needs Attention",
   },
 ];
 
@@ -86,7 +102,7 @@ const reviews = [
 
 const quickActions = [
   {
-    title: "Manage Students",
+    title: "My Students",
     description: "View and manage assigned students",
     icon: Users,
     link: "/mentor/students",
@@ -113,6 +129,11 @@ const quickActions = [
 
 function MentorDashboard() {
   const mentorName = "Aastha Sharma";
+  const handleNav = (e, url) => {
+    e.preventDefault();
+    navigateTo(url);
+  };
+
   return (
     <div className="mentor-dashboard">
       <MentorSidebar />
@@ -120,13 +141,9 @@ function MentorDashboard() {
         <header className="mentor-header">
           <div className="mentor-header-text">
             <h1>Mentor Dashboard</h1>
-            <p className="mentor-subtitle">
-              Welcome back, {mentorName}. Here's an overview of your students
-              and activities.
-            </p>
           </div>
           <div className="mentor-header-right">
-           <div className="mentor-header-user">
+            <div className="mentor-header-user">
               <div className="mentor-header-avatar">AM</div>
               <div>
                 <h3>{mentorName}</h3>
@@ -134,37 +151,74 @@ function MentorDashboard() {
             </div>
           </div>
         </header>
+
         <section className="mentor-welcome-banner">
+          <div className="mentor-banner-arrows top-left">
+            <ChevronsRight size={50} />
+            <ChevronsRight size={50} />
+            <ChevronsRight size={50} />
+          </div>
+
           <div className="mentor-welcome-text">
             <span className="mentor-eyebrow">YOUR IMPACT MATTERS</span>
-            <h2>Guide. Inspire. Empower.</h2>
+            <TextMorphHeading />
             <p>
               Every student has potential. Your guidance helps transform
               that potential into meaningful achievements.
             </p>
-            <a href="/mentor/students" className="mentor-primary-btn">
+            <a
+              href="/mentor/students"
+              className="mentor-primary-btn"
+              onClick={(e) => handleNav(e, "/mentor/students")}
+            >
               Explore Students
             </a>
           </div>
+
+          <div className="mentor-banner-arrows bottom-right">
+            <ChevronsRight size={50} />
+            <ChevronsRight size={50} />
+            <ChevronsRight size={50} />
+          </div>
         </section>
+
         <section className="mentor-stats-grid">
           {stats.map((stat) => {
             const Icon = stat.icon;
+
             return (
-              <article className="mentor-stat-card" key={stat.title}>
+              <article
+                className={`mentor-stat-card ${
+                  stat.link ? "mentor-stat-card-clickable" : ""
+                }`}
+                key={stat.title}
+                onClick={() => stat.link && navigateTo(stat.link)}
+                title={stat.link ? `Go to ${stat.title}` : undefined}
+              >
                 <div className="mentor-stat-top">
                   <div className="mentor-stat-icon">
-                    <Icon size={21} />
+                    <Icon size={24} />
                   </div>
                 </div>
-                <h3>{stat.title}</h3>
-                <h2>{stat.value}</h2>
+
+                <div className="mentor-stat-content">
+                  <div className="mentor-stat-header">
+                    <h3>{stat.title}</h3>
+                    <div className="mentor-stat-dots">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+
+                  <h2>{stat.value}</h2>
+                </div>
               </article>
             );
           })}
         </section>
-        <section className="mentor-middle-grid">
 
+        <section className="mentor-middle-grid">
           <div className="mentor-panel">
             <div className="mentor-panel-heading">
               <div>
@@ -173,13 +227,22 @@ function MentorDashboard() {
                 </span>
                 <h2>Student Progress</h2>
               </div>
-              <a href="/mentor/students" className="mentor-view-all">
+              <a
+                href="/mentor/students"
+                className="mentor-view-all"
+                onClick={(e) => handleNav(e, "/mentor/students")}
+              >
                 View all <ChevronRight size={16} />
               </a>
             </div>
             <div className="mentor-student-list">
               {students.map((student) => (
-                <div className="mentor-student-row" key={student.name}>
+                <div
+                  className="mentor-student-row clickable"
+                  key={student.name}
+                  onClick={() => navigateTo(`/mentor/students/${student.id}`)}
+                  title={`View details for ${student.name}`}
+                >
                   <div className="mentor-student-avatar">
                     {student.initials}
                   </div>
@@ -217,6 +280,7 @@ function MentorDashboard() {
               ))}
             </div>
           </div>
+
           <div className="mentor-panel mentor-schedule-panel">
             <div className="mentor-panel-heading">
               <div>
@@ -249,7 +313,11 @@ function MentorDashboard() {
               ))}
             </div>
 
-            <a href="/mentor/attendance" className="mentor-schedule-link">
+            <a
+              href="/mentor/attendance"
+              className="mentor-schedule-link"
+              onClick={(e) => handleNav(e, "/mentor/attendance")}
+            >
               View full schedule <ArrowUpRight size={16} />
             </a>
           </div>
@@ -282,16 +350,22 @@ function MentorDashboard() {
                     href="/mentor/tasks"
                     className="mentor-review-action"
                     aria-label={`Review ${review.title}`}
+                    onClick={(e) => handleNav(e, "/mentor/tasks")}
                   >
                     <ArrowUpRight size={18} />
                   </a>
                 </div>
               ))}
             </div>
-            <a href="/mentor/tasks" className="mentor-all-reviews">
+            <a
+              href="/mentor/tasks"
+              className="mentor-all-reviews"
+              onClick={(e) => handleNav(e, "/mentor/tasks")}
+            >
               View all submissions <ChevronRight size={16} />
             </a>
           </div>
+
           <div className="mentor-panel mentor-quick-panel">
             <div className="mentor-panel-heading">
               <div>
@@ -309,6 +383,7 @@ function MentorDashboard() {
                     href={action.link}
                     className="mentor-quick-action"
                     key={action.title}
+                    onClick={(e) => handleNav(e, action.link)}
                   >
                     <div className="mentor-quick-icon">
                       <Icon size={20} />
@@ -329,11 +404,11 @@ function MentorDashboard() {
             </div>
           </div>
         </section>
+
         <footer className="mentor-footer">
           <p>© 2026 SocietySelect. All rights reserved.</p>
           <p>Empowering student growth, one step at a time.</p>
         </footer>
-
       </main>
     </div>
   );
