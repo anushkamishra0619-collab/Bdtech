@@ -6,6 +6,7 @@ import {
   githubLanguageDistribution,
   githubProfileData,
   githubRecentActivities,
+  githubTopRepositories,
 } from "../../data/GithubData";
 import "../../styles/GithubAnalytics.css";
 
@@ -60,6 +61,21 @@ const formatActivityTimestamp = (timestamp) =>
     minute: "2-digit",
     timeZone: "UTC",
   });
+
+const formatRepositoryUpdatedAt = (timestamp) => {
+  const updatedDate = new Date(timestamp);
+  const now = new Date();
+  const updatedDay = Date.UTC(
+    updatedDate.getUTCFullYear(),
+    updatedDate.getUTCMonth(),
+    updatedDate.getUTCDate(),
+  );
+  const currentDay = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const daysAgo = Math.max(0, Math.floor((currentDay - updatedDay) / 86400000));
+  if (daysAgo === 0) return "Updated today";
+  if (daysAgo === 1) return "Updated yesterday";
+  return `Updated ${daysAgo}d ago`;
+};
 
 const GitHubStatIcon = ({ type }) => {
   const iconContent = {
@@ -196,6 +212,10 @@ const GitHubAnalytics = () => {
   const [hoveredContribution, setHoveredContribution] = useState(null);
   const [selectedVelocityRange, setSelectedVelocityRange] = useState("Weekly");
   const [hoveredVelocityPoint, setHoveredVelocityPoint] = useState(null);
+  const [repositorySearch, setRepositorySearch] = useState("");
+  const [repositoryLanguage, setRepositoryLanguage] = useState("All languages");
+  const [repositorySort, setRepositorySort] = useState("stars");
+  const [visibleRepositoryCount, setVisibleRepositoryCount] = useState(4);
   const { profile, metrics, demoMode } = githubProfileData;
   const selectedContributionData = githubContributionData[selectedContributionYear];
   const languageSegments = getDonutSegments(githubLanguageDistribution.languages);
@@ -227,6 +247,38 @@ const GitHubAnalytics = () => {
     };
   });
   const velocityLinePath = getSmoothLinePath(velocityPoints);
+  const repositoryLanguages = [
+    "All languages",
+    ...new Set(githubTopRepositories.map((repository) => repository.language)),
+  ];
+  const filteredRepositories = githubTopRepositories
+    .filter((repository) => {
+      const searchTerm = repositorySearch.trim().toLowerCase();
+      const matchesSearch =
+        !searchTerm ||
+        [
+          repository.name,
+          repository.description,
+          repository.language,
+          ...repository.topics,
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(searchTerm);
+      const matchesLanguage =
+        repositoryLanguage === "All languages" ||
+        repository.language === repositoryLanguage;
+      return matchesSearch && matchesLanguage;
+    })
+    .sort((left, right) => {
+      if (repositorySort === "updated") {
+        return new Date(right.updatedAt) - new Date(left.updatedAt);
+      }
+      if (repositorySort === "name") {
+        return left.name.localeCompare(right.name);
+      }
+      return right.stars - left.stars;
+    });
   const contributionWeeks = getContributionWeeks(selectedContributionData.days);
   const monthMarkers = contributionWeeks.reduce((markers, week, weekIndex) => {
     const firstOfMonth = week.find(
@@ -846,6 +898,171 @@ const GitHubAnalytics = () => {
               </li>
             ))}
           </ol>
+        </section>
+        <section
+          className="github-repositories-section"
+          aria-labelledby="github-repositories-heading"
+        >
+          <div className="github-repositories-heading">
+            <h2 id="github-repositories-heading">
+              Top repositories <span>&amp; open-source projects</span>
+            </h2>
+            <p>
+              {githubTopRepositories.length} public repositories (demonstration list).
+            </p>
+          </div>
+
+          <div className="github-repository-controls">
+            <label className="github-repository-search">
+              <span className="github-visually-hidden">Search repositories</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <circle cx="8.5" cy="8.5" r="5.5" />
+                <path d="m13 13 4 4" />
+              </svg>
+              <input
+                type="search"
+                placeholder="Search repositories..."
+                value={repositorySearch}
+                onChange={(event) => {
+                  setRepositorySearch(event.target.value);
+                  setVisibleRepositoryCount(4);
+                }}
+              />
+            </label>
+
+            <label className="github-repository-select">
+              <span className="github-visually-hidden">Filter by language</span>
+              <select
+                value={repositoryLanguage}
+                onChange={(event) => {
+                  setRepositoryLanguage(event.target.value);
+                  setVisibleRepositoryCount(4);
+                }}
+              >
+                {repositoryLanguages.map((language) => (
+                  <option key={language} value={language}>
+                    {language}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="github-repository-select github-repository-sort">
+              <span className="github-visually-hidden">Sort repositories</span>
+              <select
+                value={repositorySort}
+                onChange={(event) => {
+                  setRepositorySort(event.target.value);
+                  setVisibleRepositoryCount(4);
+                }}
+              >
+                <option value="stars">Sort by: Most stars</option>
+                <option value="updated">Sort by: Recently updated</option>
+                <option value="name">Sort by: Name</option>
+              </select>
+            </label>
+          </div>
+
+          {filteredRepositories.length > 0 ? (
+            <>
+              <div className="github-repository-grid">
+                {filteredRepositories
+                  .slice(0, visibleRepositoryCount)
+                  .map((repository) => (
+                    <article
+                      className="github-repository-card"
+                      key={repository.id}
+                    >
+                      <div className="github-repository-card-heading">
+                        <div className="github-repository-name-wrap">
+                          <svg
+                            className="github-repository-icon"
+                            viewBox="0 0 20 20"
+                            aria-hidden="true"
+                          >
+                            <path d="M3 2.5h14v15H3zM6.5 2.5v15" />
+                          </svg>
+                          <h3>{repository.name}</h3>
+                        </div>
+                        <div className="github-repository-badges">
+                          <span className="github-repository-public">Public</span>
+                          {repository.featured && (
+                            <span className="github-repository-featured">
+                              Featured
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="github-repository-description">
+                        {repository.description}
+                      </p>
+
+                      <ul className="github-repository-topics" aria-label="Topics">
+                        {repository.topics.map((topic) => (
+                          <li key={topic}>{topic}</li>
+                        ))}
+                      </ul>
+
+                      <div className="github-repository-metrics">
+                        <span className="github-repository-language">
+                          <i
+                            style={{ backgroundColor: repository.languageColor }}
+                            aria-hidden="true"
+                          />
+                          {repository.language}
+                        </span>
+                        <span className="github-repository-count">
+                          <span aria-hidden="true">☆</span> {repository.stars}
+                          <span className="github-visually-hidden"> stars</span>
+                        </span>
+                        <span className="github-repository-count">
+                          <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M4 3v10m8-10v4c0 3-2 5-5 5H6" />
+                            <circle cx="4" cy="3" r="1.5" />
+                            <circle cx="4" cy="13" r="1.5" />
+                            <circle cx="12" cy="3" r="1.5" />
+                          </svg>
+                          {repository.forks}
+                          <span className="github-visually-hidden"> forks</span>
+                        </span>
+                      </div>
+
+                      <time
+                        className="github-repository-updated"
+                        dateTime={repository.updatedAt}
+                      >
+                        {formatRepositoryUpdatedAt(repository.updatedAt)}
+                      </time>
+                    </article>
+                  ))}
+              </div>
+              <div className="github-repository-footer">
+                <span>
+                  Showing {Math.min(visibleRepositoryCount, filteredRepositories.length)} of{" "}
+                  {filteredRepositories.length} repositories
+                </span>
+                {visibleRepositoryCount < filteredRepositories.length && (
+                  <button
+                    className="github-repository-load-more"
+                    type="button"
+                    onClick={() =>
+                      setVisibleRepositoryCount((count) => count + 4)
+                    }
+                  >
+                    Load More Repositories
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M8 3v10m-4-4 4 4 4-4" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="github-repository-empty" role="status">
+              No repositories match your search and language filter.
+            </div>
+          )}
         </section>
         {hoveredVelocityPoint && (
           <div
