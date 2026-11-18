@@ -6,12 +6,8 @@ import {
   FaEyeSlash,
   FaLock,
 } from "react-icons/fa";
+import { apiRequest } from "../utils/api.js";
 import "./ForgotPassword.css";
-
-const API_BASE = (
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD ? "" : "http://localhost:5000")
-).replace(/\/$/, "");
 
 const ForgotPassword = () => {
   // Steps: 1 = Request OTP, 2 = Verify OTP, 3 = New Password, 4 = Success
@@ -31,13 +27,6 @@ const ForgotPassword = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
 
-  const extractError = (data, fallback) => {
-    if (data?.errors && Array.isArray(data.errors) && data.errors.length > 0) {
-      return data.errors[0].message;
-    }
-    return data?.message || fallback;
-  };
-
   // STEP 1: Send Reset OTP
   const handleSendOtp = async (e) => {
     if (e) e.preventDefault();
@@ -52,16 +41,11 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/api/auth/forgot-password`, {
+      const data = await apiRequest("/api/auth/forgot-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: cleanEmail, role }),
+        body: { email: cleanEmail, role },
+        auth: false,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(extractError(data, "Failed to send reset OTP"));
-      }
 
       setStep(2);
       setInfoMsg(data.message || "Reset OTP sent to your email!");
@@ -80,19 +64,14 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/api/auth/verify-reset-otp`, {
+      const data = await apiRequest("/api/auth/verify-reset-otp", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           email: email.trim().toLowerCase(),
           otp: otp.trim(),
-        }),
+        },
+        auth: false,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(extractError(data, "Invalid OTP"));
-      }
 
       setResetToken(data.resetToken);
       setStep(3);
@@ -117,22 +96,17 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/api/auth/reset-password`, {
+      await apiRequest("/api/auth/reset-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           email: email.trim().toLowerCase(),
           role,
           resetToken,
           password,
           confirmPassword,
-        }),
+        },
+        auth: false,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(extractError(data, "Failed to reset password"));
-      }
 
       setStep(4);
     } catch (err) {

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import {
   FiSearch,
   FiPlus,
@@ -16,6 +16,7 @@ import {
 } from "react-icons/fi";
 import MotivationBanner from "./ui/MotivationBanner.jsx";
 import MentorSidebar from "./MentorSidebar";
+import { apiRequest } from "../utils/api.js";
 import "./Interviewpage.css";
 
 const CRITERIA = [
@@ -35,42 +36,58 @@ const EMPTY_SCORES = {
 const DECISIONS = ["Shortlisted", "Rejected", "On Hold", "Further Evaluation Required"];
 const FILTERS = ["All", "Scheduled", "Completed", "Not Scheduled"];
 
-const createMeetingLink = (candidateName) => {
-  const roomId =
-    typeof crypto !== "undefined" && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  const candidateSlug = candidateName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-  return `https://meet.jit.si/SocietySelect-${candidateSlug}-${roomId}`;
+const decisionLabels = {
+  SHORTLISTED: "Shortlisted",
+  REJECTED: "Rejected",
+  ON_HOLD: "On Hold",
+  FURTHER_EVALUATION: "Further Evaluation Required",
 };
 
-// Sample data. Replace with an API call once FastAPI is ready.
-const initialCandidates = [
-  { id: 1, name: "Aarav Sharma", branch: "CSE · 2nd Yr", exam: 82, date: "15 Nov, 10:00 AM", mode: "Online", status: "Scheduled" },
-  { id: 2, name: "Riya Verma", branch: "IT · 2nd Yr", exam: 76, date: "15 Nov, 11:30 AM", mode: "Offline", status: "Scheduled" },
-  {
-    id: 3, name: "Kabir Singh", branch: "CSE · 3rd Yr", exam: 88,
-    date: "13 Nov, 04:00 PM", mode: "Online", status: "Completed",
-    evaluation: {
-      scores: { communication: 8, technical: 9, confidence: 7, problemSolving: 8 },
-      feedback: "Strong DSA fundamentals, explains approach clearly.",
-      decision: "Shortlist",
-      total: 80,
-    },
-  },
-  {
-    id: 4, name: "Neha Gupta", branch: "ECE · 2nd Yr", exam: 71,
-    date: "13 Nov, 05:00 PM", mode: "Offline", status: "Completed",
-    evaluation: {
-      scores: { communication: 7, technical: 6, confidence: 8, problemSolving: 7 },
-      feedback: "Good UI sense, needs more depth in JavaScript.",
-      decision: "Hold",
-      total: 70,
-    },
-  },
-  { id: 5, name: "Arjun Patel", branch: "CSE · 2nd Yr", exam: 79, date: "Not set", mode: "-", status: "Not Scheduled" },
-  { id: 6, name: "Sneha Rao", branch: "IT · 3rd Yr", exam: 84, date: "Not set", mode: "-", status: "Not Scheduled" },
-];
+const decisionValues = Object.fromEntries(
+  Object.entries(decisionLabels).map(([value, label]) => [label, value])
+);
+
+const mapCandidate = (candidate) => {
+  const interview = candidate.interview || {};
+  const scores = Object.fromEntries(
+    CRITERIA.map(({ key }) => [key, interview.scores?.[key] ?? 5])
+  );
+  const status = {
+    COMPLETED: "Completed",
+    SCHEDULED: "Scheduled",
+    NOT_SCHEDULED: "Not Scheduled",
+  }[candidate.interviewStatus] || "Not Scheduled";
+
+  return {
+    id: String(candidate.applicationId),
+    name: candidate.fullName,
+    branch: [candidate.branch, candidate.year].filter(Boolean).join(" · ") || "Branch not set",
+    exam: candidate.taskAverageScore,
+    date: interview.scheduledAt ? new Date(interview.scheduledAt).toLocaleString() : "Not set",
+    mode: interview.mode ? interview.mode[0] + interview.mode.slice(1).toLowerCase() : "-",
+    status,
+    interviewer: interview.panelistName || "",
+    meetingLink: interview.meetLinkOrVenue || "",
+    notificationsSent: Boolean(interview.notificationsSent),
+    participantsJoined: Boolean(interview.participantsJoined),
+    interviewConducted: Boolean(interview.interviewConducted),
+    interviewNotes: interview.interviewNotes || "",
+    evaluation: interview.score !== null && interview.score !== undefined && interview.decision
+      ? {
+          scores,
+          feedback: interview.feedback || "",
+          decision: decisionLabels[interview.decision] || interview.decision,
+          total: interview.score,
+        }
+      : undefined,
+    resultPublished: Boolean(interview.resultPublished),
+  };
+};
+
+const fetchCandidates = async () => {
+  const data = await apiRequest("/api/interviews");
+  return (data.candidates || []).map(mapCandidate);
+};
 
 const initials = (name) =>
   name
@@ -79,12 +96,15 @@ const initials = (name) =>
     .join("");
 
 const Interviewpage = () => {
-  const [candidates, setCandidates] = useState(initialCandidates);
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState("");
+  const [savingAction, setSavingAction] = useState(false);
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
 
   // Evaluation panel state
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState("");
   const [scores, setScores] = useState(EMPTY_SCORES);
   const [feedback, setFeedback] = useState("");
   const [decision, setDecision] = useState("");
@@ -109,6 +129,39 @@ const Interviewpage = () => {
   const [callCandidateId, setCallCandidateId] = useState("");
   const localVideoRef = useRef(null);
   const cameraRequestRef = useRef(0);
+
+  const loadCandidates = useCallback(async () => {
+    setLoading(true);
+    setApiError("");
+    try {
+      setCandidates(await fetchCandidates());
+    } catch (error) {
+      setApiError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    fetchCandidates()
+      .then((data) => {
+        if (active) {
+          setCandidates(data);
+          setApiError("");
+        }
+      })
+      .catch((error) => {
+        if (active) setApiError(error.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => () => {
     cameraRequestRef.current += 1;
@@ -203,7 +256,7 @@ const Interviewpage = () => {
   );
 
   const statCards = [
-    { label: "Shortlisted", value: stats.total, icon: <FiUsers /> },
+    { label: "Candidates", value: stats.total, icon: <FiUsers /> },
     { label: "Scheduled", value: stats.scheduled, icon: <FiCalendar /> },
     { label: "Completed", value: stats.completed, icon: <FiCheckCircle /> },
     { label: "Not scheduled", value: stats.unscheduled, icon: <FiClock /> },
@@ -226,11 +279,7 @@ const Interviewpage = () => {
     setSelectedId(c.id);
     setScores(c.evaluation?.scores || EMPTY_SCORES);
     setFeedback(c.evaluation?.feedback || "");
-    const savedDecision = c.evaluation?.decision || "";
-    setDecision(
-      { Shortlist: "Shortlisted", Hold: "On Hold", Reject: "Rejected" }[savedDecision]
-        || savedDecision
-    );
+    setDecision(c.evaluation?.decision || "");
     setInterviewNotes(c.interviewNotes || c.evaluation?.feedback || "");
     setCallCandidateId(String(c.id));
   };
@@ -240,72 +289,87 @@ const Interviewpage = () => {
     setShowModal(true);
   };
 
-  const saveEvaluation = () => {
+  const saveEvaluation = async () => {
     if (
       !selected
       || (!selected.interviewConducted && selected.status !== "Completed")
       || !decision
     ) return;
-    // TODO: send to FastAPI here, e.g. POST /api/interviews/:id/evaluation
-    setCandidates((list) =>
-      list.map((c) =>
-        c.id === selected.id
-          ? {
-              ...c,
-              status: "Completed",
-              evaluation: { scores, feedback, decision, total },
-              resultPublished: false,
-            }
-          : c
-      )
-    );
-    setWorkflowNotice("Evaluation saved. Publish the result to complete the workflow.");
+    setSavingAction(true);
+    setApiError("");
+    try {
+      await apiRequest(`/api/interviews/${encodeURIComponent(selected.id)}/evaluate`, {
+        method: "PATCH",
+        body: {
+          scores,
+          feedback,
+          interviewNotes: interviewNotes.trim(),
+          decision: decisionValues[decision],
+        },
+      });
+      await loadCandidates();
+      setWorkflowNotice("Evaluation saved. Publish the result to complete the workflow.");
+    } catch (error) {
+      setApiError(error.message);
+    } finally {
+      setSavingAction(false);
+    }
   };
 
-  const markNotificationsSent = () => {
-    if (!workflowCandidate) return;
-    setCandidates((list) =>
-      list.map((candidate) =>
-        candidate.id === workflowCandidate.id
-          ? { ...candidate, notificationsSent: true }
-          : candidate
-      )
-    );
-    setWorkflowNotice("Notification marked sent. Send the copied details to both participants outside this app.");
+  const updateWorkflow = async (candidate, body, notice) => {
+    if (!candidate) return;
+    setSavingAction(true);
+    setApiError("");
+    try {
+      await apiRequest(`/api/interviews/${encodeURIComponent(candidate.id)}/workflow`, {
+        method: "PATCH",
+        body,
+      });
+      await loadCandidates();
+      setWorkflowNotice(notice);
+    } catch (error) {
+      setApiError(error.message);
+    } finally {
+      setSavingAction(false);
+    }
   };
 
-  const markParticipantsJoined = () => {
-    if (!workflowCandidate) return;
-    setCandidates((list) =>
-      list.map((candidate) =>
-        candidate.id === workflowCandidate.id
-          ? { ...candidate, participantsJoined: true }
-          : candidate
-      )
-    );
-    setWorkflowNotice("Both participants marked as joined.");
-  };
+  const markNotificationsSent = () => updateWorkflow(
+    workflowCandidate,
+    { notificationsSent: true },
+    "Notification marked sent. Send the copied details to both participants outside this app."
+  );
+
+  const markParticipantsJoined = () => updateWorkflow(
+    workflowCandidate,
+    { participantsJoined: true },
+    "Both participants marked as joined."
+  );
 
   const markInterviewConducted = () => {
     if (!selected || !interviewNotes.trim() || !selected.participantsJoined) return;
-    setCandidates((list) =>
-      list.map((candidate) =>
-        candidate.id === selected.id
-          ? { ...candidate, interviewConducted: true, interviewNotes: interviewNotes.trim() }
-          : candidate
-      )
+    return updateWorkflow(
+      selected,
+      { interviewConducted: true, interviewNotes: interviewNotes.trim() },
+      "Interview notes saved and interview marked as conducted."
     );
-    setWorkflowNotice("Interview notes saved and interview marked as conducted.");
   };
 
-  const publishResult = () => {
+  const publishResult = async () => {
     if (!selected?.evaluation) return;
-    setCandidates((list) =>
-      list.map((candidate) =>
-        candidate.id === selected.id ? { ...candidate, resultPublished: true } : candidate
-      )
-    );
-    setWorkflowNotice(`Result published: ${selected.evaluation.decision}.`);
+    setSavingAction(true);
+    setApiError("");
+    try {
+      await apiRequest(`/api/interviews/${encodeURIComponent(selected.id)}/publish`, {
+        method: "PATCH",
+      });
+      await loadCandidates();
+      setWorkflowNotice(`Result published: ${selected.evaluation.decision}.`);
+    } catch (error) {
+      setApiError(error.message);
+    } finally {
+      setSavingAction(false);
+    }
   };
 
   const copyInterviewDetails = async () => {
@@ -330,40 +394,36 @@ const Interviewpage = () => {
     }
   };
 
-  const saveSchedule = (e) => {
+  const saveSchedule = async (e) => {
     e.preventDefault();
-    const id = Number(schedule.id);
-    const candidate = candidates.find((item) => item.id === id);
-    if (!candidate) return;
-    const meetingLink = schedule.mode === "Online" ? createMeetingLink(candidate.name) : "";
-    setCandidates((list) =>
-      list.map((c) =>
-        c.id === id
-          ? {
-              ...c,
-              status: "Scheduled",
-              date: `${schedule.date}, ${schedule.time}`,
-              mode: schedule.mode,
-              interviewer: schedule.interviewer.trim(),
-              meetingLink,
-              notificationsSent: false,
-              participantsJoined: false,
-              interviewConducted: false,
-              interviewNotes: "",
-              evaluation: undefined,
-              resultPublished: false,
-            }
-          : c
-      )
-    );
-    setCallCandidateId(String(id));
-    setSelectedId(id);
+    if (!schedule.id) return;
+    setSavingAction(true);
+    setApiError("");
+    try {
+      await apiRequest(`/api/interviews/${encodeURIComponent(schedule.id)}/schedule`, {
+        method: "PATCH",
+        body: {
+          scheduledAt: new Date(`${schedule.date}T${schedule.time}`).toISOString(),
+          mode: schedule.mode.toUpperCase(),
+          panelistName: schedule.interviewer.trim(),
+          meetLinkOrVenue: "",
+          instructions: "",
+        },
+      });
+      await loadCandidates();
+      setCallCandidateId(schedule.id);
+      setSelectedId(schedule.id);
+      setShowModal(false);
+      setWorkflowNotice("Interview scheduled. Share the details with the student and mentor.");
+    } catch (error) {
+      setApiError(error.message);
+    } finally {
+      setSavingAction(false);
+    }
     setScores(EMPTY_SCORES);
     setFeedback("");
     setDecision("");
     setInterviewNotes("");
-    setWorkflowNotice("Interview scheduled. Share the details with the student and mentor.");
-    setShowModal(false);
   };
 
   const workflowCandidate =
@@ -387,6 +447,8 @@ const Interviewpage = () => {
         </button>
       </header>
 
+      {apiError && <p className="im-camera-error" role="alert">{apiError}</p>}
+      {loading && <p aria-live="polite">Loading interview candidates...</p>}
       <MotivationBanner />
 
       {/* Stat cards */}
@@ -429,7 +491,7 @@ const Interviewpage = () => {
             </div>
           </div>
 
-          {visible.length === 0 && <p className="im-none">No candidates found.</p>}
+          {!loading && visible.length === 0 && <p className="im-none">No candidates found.</p>}
 
           {visible.map((c) => (
             <div key={c.id} className={`im-row ${selectedId === c.id ? "selected" : ""}`}>
@@ -525,14 +587,14 @@ const Interviewpage = () => {
                 <button
                   type="button"
                   onClick={markNotificationsSent}
-                  disabled={Boolean(workflowCandidate.notificationsSent)}
+                  disabled={savingAction || Boolean(workflowCandidate.notificationsSent)}
                 >
                   {workflowCandidate.notificationsSent ? "Details marked sent" : "Mark notifications sent"}
                 </button>
                 <button
                   type="button"
                   onClick={markParticipantsJoined}
-                  disabled={!workflowCandidate.notificationsSent || Boolean(workflowCandidate.participantsJoined)}
+                  disabled={savingAction || !workflowCandidate.notificationsSent || Boolean(workflowCandidate.participantsJoined)}
                 >
                   {workflowCandidate.participantsJoined ? "Participants joined" : "Confirm both participants joined"}
                 </button>
@@ -624,7 +686,7 @@ const Interviewpage = () => {
                 <div>
                   <h2 className="im-eval-name">{selected.name}</h2>
                   <p className="im-eval-meta">
-                    {selected.branch} · Exam {selected.exam}/100
+                    {selected.branch} · Task average {selected.exam ?? "—"}
                   </p>
                 </div>
                 <div className="im-total">
@@ -648,7 +710,7 @@ const Interviewpage = () => {
                   type="button"
                   className="im-save"
                   onClick={markInterviewConducted}
-                  disabled={!selected.participantsJoined || !interviewNotes.trim()}
+                  disabled={savingAction || !selected.participantsJoined || !interviewNotes.trim()}
                 >
                   Mark interview conducted
                 </button>
@@ -696,6 +758,8 @@ const Interviewpage = () => {
                 className="im-save"
                 onClick={saveEvaluation}
                 disabled={
+                  savingAction
+                  ||
                   !decision
                   || (!selected.interviewConducted && selected.status !== "Completed")
                 }
@@ -707,13 +771,13 @@ const Interviewpage = () => {
                   type="button"
                   className="im-save im-publish"
                   onClick={publishResult}
-                  disabled={Boolean(selected.resultPublished)}
+                  disabled={savingAction || Boolean(selected.resultPublished)}
                 >
                   {selected.resultPublished ? "Result published" : "Publish interview result"}
                 </button>
               )}
               <p className="im-note">
-                Results are recorded in this demo page; student delivery requires backend integration.
+                Publishing saves the result and updates the student&apos;s recruitment status.
               </p>
             </div>
           )}
@@ -792,8 +856,8 @@ const Interviewpage = () => {
               />
             </div>
 
-            <button type="submit" className="im-primary im-full">
-              Confirm schedule
+            <button type="submit" className="im-primary im-full" disabled={savingAction}>
+              {savingAction ? "Saving..." : "Confirm schedule"}
             </button>
           </form>
         </div>
