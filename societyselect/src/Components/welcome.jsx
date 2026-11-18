@@ -10,9 +10,13 @@ import {
 } from "react-icons/fa";
 import "./welcome.css";
 
-const API_BASE =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/auth";
-const GOOGLE_CLIENT_ID = "524622286901-nn6dac26l3k4th6p4a2t3kl3jq5vblov.apps.googleusercontent.com";
+const API_BASE = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? "" : "http://localhost:5000")
+).replace(/\/$/, "");
+
+const GOOGLE_CLIENT_ID =
+  "524622286901-nn6dac26l3k4th6p4a2t3kl3jq5vblov.apps.googleusercontent.com";
 
 export default function LoginPage({ initialMode = "login" }) {
   const [isSignup, setIsSignup] = useState(initialMode === "signup");
@@ -147,7 +151,7 @@ export default function LoginPage({ initialMode = "login" }) {
     try {
       setLoading(true);
       const endpoint = isResend ? "resend-otp" : "send-otp";
-      const res = await fetch(`${API_BASE}/${endpoint}`, {
+      const res = await fetch(`${API_BASE}/api/auth/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -174,7 +178,7 @@ export default function LoginPage({ initialMode = "login" }) {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/verify-otp`, {
+      const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -234,7 +238,7 @@ export default function LoginPage({ initialMode = "login" }) {
       setLoading(true);
 
       if (pendingGoogleToken) {
-        const res = await fetch(`${API_BASE}/google`, {
+        const res = await fetch(`${API_BASE}/api/auth/google`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -275,7 +279,7 @@ export default function LoginPage({ initialMode = "login" }) {
         return;
       }
 
-      const res = await fetch(`${API_BASE}/signup`, {
+      const res = await fetch(`${API_BASE}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -327,7 +331,7 @@ export default function LoginPage({ initialMode = "login" }) {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/login`, {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -361,7 +365,7 @@ export default function LoginPage({ initialMode = "login" }) {
     try {
       setLoading(true);
       setErrorMsg("");
-      const res = await fetch(`${API_BASE}/google`, {
+      const res = await fetch(`${API_BASE}/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -512,7 +516,7 @@ export default function LoginPage({ initialMode = "login" }) {
               <option value="STUDENT">Student</option>
               <option value="MENTOR">Mentor</option>
             </select>
-            <a href="#forgot" className="forgot-link">
+            <a href="/forgot-password" className="forgot-link">
               Forgot your password?
             </a>
             <button className="auth-button" type="submit" disabled={loading}>
@@ -806,7 +810,7 @@ export default function LoginPage({ initialMode = "login" }) {
                   </select>
                 </>
               )}
-              
+
               <label htmlFor="profile-domain">Domain</label>
               <input
                 id="profile-domain"

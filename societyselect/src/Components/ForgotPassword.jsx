@@ -8,9 +8,10 @@ import {
 } from "react-icons/fa";
 import "./ForgotPassword.css";
 
-const API_BASE = import.meta.env.PROD
-  ? "/api/auth"
-  : import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/auth";
+const API_BASE = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? "" : "http://localhost:5000")
+).replace(/\/$/, "");
 
 const ForgotPassword = () => {
   // Steps: 1 = Request OTP, 2 = Verify OTP, 3 = New Password, 4 = Success
@@ -51,7 +52,7 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/forgot-password`, {
+      const res = await fetch(`${API_BASE}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: cleanEmail, role }),
@@ -79,7 +80,7 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/verify-reset-otp`, {
+      const res = await fetch(`${API_BASE}/api/auth/verify-reset-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -116,7 +117,7 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/reset-password`, {
+      const res = await fetch(`${API_BASE}/api/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
