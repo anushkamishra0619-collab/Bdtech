@@ -57,6 +57,12 @@ function MentorSidebar() {
 
   const isItemActive = (href) => {
     const { path, hash } = locationState;
+    if (
+      href === "/mentor/interviews" &&
+      (path === "/interviewpage" || hash === "interviewpage")
+    ) {
+      return true;
+    }
     if (href === "/mentor") {
       return (
         (path === "/mentor" || hash === "mentor") &&

@@ -13,10 +13,9 @@ import {
   FiMic,
   FiMicOff,
   FiPhoneOff,
-  FiHome,
-  FiGrid,
 } from "react-icons/fi";
 import MotivationBanner from "./ui/MotivationBanner.jsx";
+import MentorSidebar from "./MentorSidebar";
 import "./Interviewpage.css";
 
 const CRITERIA = [
@@ -169,10 +168,6 @@ const Interviewpage = () => {
     setCameraError("");
     setIsMuted(false);
     setIsCameraOn(true);
-  };
-
-  const scrollToSection = (sectionId) => {
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
   };
 
   const toggleMicrophone = () => {
@@ -377,66 +372,7 @@ const Interviewpage = () => {
   return (
     <div className="im-page">
       <div className="im-app-shell">
-        <aside className="im-sidebar">
-          <div className="im-sidebar-brand">
-            <span className="im-sidebar-mark"><FiGrid /></span>
-            <div>
-              <h2>SocietySelect</h2>
-              <span>INTERVIEW PORTAL</span>
-            </div>
-          </div>
-
-          <div className="im-sidebar-workspace">
-            <span>WORKSPACE</span>
-            <strong>Recruitment Team</strong>
-            <small>Interview management</small>
-          </div>
-
-          <div className="im-sidebar-section">
-            <p className="im-sidebar-label">MAIN MENU</p>
-            <nav className="im-sidebar-nav" aria-label="Page navigation">
-              <a className="im-sidebar-link" href="/">
-                <FiHome />
-                <span>Home</span>
-              </a>
-              <a className="im-sidebar-link" href="/mentor">
-                <FiGrid />
-                <span>Mentor Dashboard</span>
-              </a>
-              <a className="im-sidebar-link" href="/student">
-                <FiUsers />
-                <span>Student Dashboard</span>
-              </a>
-              <button
-                type="button"
-                className="im-sidebar-link active"
-                onClick={() => scrollToSection("candidate-list")}
-              >
-                <FiUsers />
-                <span>Candidates</span>
-              </button>
-              <button
-                type="button"
-                className="im-sidebar-link"
-                onClick={() => scrollToSection("student-scores")}
-              >
-                <FiCheckCircle />
-                <span>Student Scores</span>
-              </button>
-            </nav>
-          </div>
-
-          <div className="im-sidebar-departments">
-            <p className="im-sidebar-label">BRANCHES</p>
-            <span><i className="im-department-dot cse-aiml" />CSE-AIML</span>
-            <span><i className="im-department-dot cse-ds" />CSE-DS</span>
-            <span><i className="im-department-dot csit" />CSIT</span>
-            <span><i className="im-department-dot cse" />CSE</span>
-            <span><i className="im-department-dot it" />IT</span>
-            <span><i className="im-department-dot ece" />ECE</span>
-          </div>
-
-        </aside>
+        <MentorSidebar />
 
         <main className="im-main-content">
 

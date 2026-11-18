@@ -21,7 +21,12 @@ function App() {
 
     if (path === "/login" || hash === "login") return "login";
     if (path === "/forgot" || hash === "forgot") return "forgot";
-    if (path === "/interviewpage" || hash === "interviewpage") {
+    if (
+      path === "/interviewpage" ||
+      path === "/mentor/interviews" ||
+      hash === "interviewpage" ||
+      hash === "mentor/interviews"
+    ) {
       return "interviewpage";
     }
 
