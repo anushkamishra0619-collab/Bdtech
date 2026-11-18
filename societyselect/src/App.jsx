@@ -21,6 +21,9 @@ function App() {
 
     if (path === "/login" || hash === "login") return "login";
     if (path === "/forgot" || hash === "forgot") return "forgot";
+    if (path === "/interviewpage" || hash === "interviewpage") {
+      return "interviewpage";
+    }
 
     // Student Details route: /mentor/students/:id or #mentor/students/:id
     if (
