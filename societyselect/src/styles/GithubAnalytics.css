@@ -2187,8 +2187,7 @@ button.github-contribution-cell:focus-visible {
   stroke-width: 1.7;
 }
 
-.github-report-export-copy h2,
-.github-academic-notice h2 {
+.github-report-export-copy h2 {
   margin: 0;
   color: var(--github-ink);
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
@@ -2197,8 +2196,7 @@ button.github-contribution-cell:focus-visible {
   line-height: 1.2;
 }
 
-.github-report-export-copy p,
-.github-academic-notice p {
+.github-report-export-copy p {
   margin: 5px 0 0;
   color: var(--github-muted);
   font-size: 13px;
@@ -2269,51 +2267,6 @@ button.github-contribution-cell:focus-visible {
   display: none;
 }
 
-.github-academic-notice {
-  display: flex;
-  margin-top: 18px;
-  padding: 19px 23px;
-  align-items: flex-start;
-  gap: 14px;
-  border: 1px solid #f1dfb8;
-  border-radius: 17px;
-  background: #fffaf0;
-}
-
-.github-academic-notice-icon {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  place-items: center;
-  border-radius: 11px;
-  background: #fff0ce;
-  color: #ad7417;
-}
-
-.github-academic-notice-icon svg {
-  width: 19px;
-  height: 19px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.6;
-}
-
-.github-academic-notice h2 {
-  color: #75551b;
-  font-family: "Montserrat", "Segoe UI", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.github-academic-notice p {
-  margin-top: 4px;
-  color: #8b744b;
-  font-size: 12px;
-}
-
 .github-analytics-footer {
   border-top: 1px solid #dce5f7;
   background: #fff;
@@ -2368,18 +2321,5 @@ button.github-contribution-cell:focus-visible {
     flex-direction: column;
     gap: 1px;
     font-size: 11px;
-  }
-}
-
-@media (max-width: 400px) {
-  .github-academic-notice {
-    padding: 16px 14px;
-    gap: 10px;
-  }
-
-  .github-academic-notice-icon {
-    width: 30px;
-    height: 30px;
-    flex-basis: 30px;
   }
 }

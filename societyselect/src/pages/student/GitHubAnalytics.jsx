@@ -1195,25 +1195,6 @@ const GitHubAnalytics = () => {
           </p>
         </section>
 
-        <aside
-          className="github-academic-notice"
-          aria-labelledby="github-academic-notice-title"
-        >
-          <span className="github-academic-notice-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 3 4.5 6v5.5c0 4.5 3.2 7.8 7.5 9.5 4.3-1.7 7.5-5 7.5-9.5V6L12 3Z" />
-              <path d="m9 12 2 2 4-4" />
-            </svg>
-          </span>
-          <div>
-            <h2 id="github-academic-notice-title">Academic Verification Notice</h2>
-            <p>
-              This page and exported report use demonstration data and are not
-              connected to a live GitHub account. Mentors should independently
-              verify GitHub activity before using it for academic review.
-            </p>
-          </div>
-        </aside>
         {hoveredVelocityPoint && (
           <div
             className="github-velocity-tooltip"
