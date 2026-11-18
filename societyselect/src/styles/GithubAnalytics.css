@@ -2145,3 +2145,241 @@ button.github-contribution-cell:focus-visible {
     width: 100%;
   }
 }
+
+.github-report-export {
+  display: grid;
+  position: relative;
+  margin-top: 24px;
+  padding: 26px 30px;
+  align-items: center;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  border: 1px solid var(--github-line);
+  border-radius: 21px;
+  background: #fff;
+}
+
+.github-report-export-copy {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.github-report-export-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  place-items: center;
+  border-radius: 14px;
+  background: #eaf0ff;
+  color: var(--github-blue);
+}
+
+.github-report-export-icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.github-report-export-copy h2,
+.github-academic-notice h2 {
+  margin: 0;
+  color: var(--github-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.github-report-export-copy p,
+.github-academic-notice p {
+  margin: 5px 0 0;
+  color: var(--github-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.github-report-demo-note {
+  display: inline-block;
+  margin-top: 7px;
+  color: var(--github-light-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.github-report-export-button {
+  display: inline-flex;
+  min-height: 46px;
+  padding: 0 18px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid #1d2b49;
+  border-radius: 12px;
+  background: #1d2b49;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+.github-report-export-button:hover {
+  transform: translateY(-1px);
+  border-color: var(--github-blue);
+  background: var(--github-blue);
+}
+
+.github-report-export-button:focus-visible {
+  outline: 3px solid rgb(40 88 232 / 25%);
+  outline-offset: 3px;
+}
+
+.github-report-export-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.github-report-export-status {
+  position: absolute;
+  right: 30px;
+  bottom: 6px;
+  margin: 0;
+  color: #17834c;
+  font-size: 11px;
+}
+
+.github-report-export-status:empty {
+  display: none;
+}
+
+.github-academic-notice {
+  display: flex;
+  margin-top: 18px;
+  padding: 19px 23px;
+  align-items: flex-start;
+  gap: 14px;
+  border: 1px solid #f1dfb8;
+  border-radius: 17px;
+  background: #fffaf0;
+}
+
+.github-academic-notice-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 11px;
+  background: #fff0ce;
+  color: #ad7417;
+}
+
+.github-academic-notice-icon svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.github-academic-notice h2 {
+  color: #75551b;
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.github-academic-notice p {
+  margin-top: 4px;
+  color: #8b744b;
+  font-size: 12px;
+}
+
+.github-analytics-footer {
+  border-top: 1px solid #dce5f7;
+  background: #fff;
+}
+
+.github-analytics-footer-inner {
+  display: flex;
+  width: min(100% - 70px, 1200px);
+  min-height: 64px;
+  margin: 0 auto;
+  align-items: center;
+  gap: 11px;
+  color: var(--github-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.github-analytics-footer-brand {
+  color: var(--github-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  white-space: nowrap;
+}
+
+.github-analytics-footer-brand span {
+  font-size: 17px;
+}
+
+@media (max-width: 700px) {
+  .github-report-export {
+    padding: 21px 19px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .github-report-export-copy h2 {
+    font-size: 26px;
+  }
+
+  .github-report-export-button {
+    width: 100%;
+  }
+
+  .github-report-export-status {
+    position: static;
+    margin: -10px 0 0;
+  }
+
+  .github-analytics-footer-inner {
+    width: min(100% - 36px, 1200px);
+    padding: 13px 0;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 400px) {
+  .github-academic-notice {
+    padding: 16px 14px;
+    gap: 10px;
+  }
+
+  .github-academic-notice-icon {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+}

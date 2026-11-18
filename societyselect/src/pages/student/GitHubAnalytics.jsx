@@ -77,6 +77,79 @@ const formatRepositoryUpdatedAt = (timestamp) => {
   return `Updated ${daysAgo}d ago`;
 };
 
+const createGitHubReportCsv = (contributionYear, velocityRange) => {
+  const { profile, metrics } = githubProfileData;
+  const contributionSummary = githubContributionData[contributionYear];
+  const velocity = githubCommitVelocity[velocityRange];
+  const rows = [
+    ["SocietySelect AI GitHub Analytics Report"],
+    ["Generated at (UTC)", new Date().toISOString()],
+    ["Data source", "Demonstration data only - not live GitHub data"],
+    [],
+    ["GitHub profile"],
+    ["Name", profile.name],
+    ["Username", profile.username],
+    ["Department", profile.department],
+    ["Academic year", profile.year],
+    ["Institution", profile.college],
+    [],
+    ["Profile metrics"],
+    ["Metric", "Value"],
+    ...metrics.map(({ label, value }) => [label, value]),
+    [],
+    ["Analytics overview"],
+    ["Metric", "Value"],
+    ...githubAnalyticsStats.map(({ label, value }) => [label, value]),
+    [],
+    [`Contribution summary (${contributionYear})`],
+    ["Total contributions", contributionSummary.totalContributions],
+    ["Current streak (days)", contributionSummary.currentStreak],
+    ["Longest streak (days)", contributionSummary.longestStreak],
+    ["Busiest day", `${contributionSummary.busiestDay.count} on ${contributionSummary.busiestDay.date}`],
+    [],
+    ["Language distribution"],
+    ["Language", "Percentage", "Repositories"],
+    ...githubLanguageDistribution.languages.map((language) => [
+      language.name,
+      `${language.percentage}%`,
+      language.repositoryCount,
+    ]),
+    [],
+    [velocity.title],
+    ["Period", "Commits"],
+    ...velocity.points.map(({ label, value }) => [label, value]),
+    [],
+    ["Recent activity"],
+    ["Type", "Title", "Description", "Repository", "Timestamp"],
+    ...githubRecentActivities.map((activity) => [
+      activity.type,
+      activity.title,
+      activity.description,
+      activity.repository,
+      activity.timestamp,
+    ]),
+    [],
+    ["Top repositories (demonstration list)"],
+    ["Repository", "Description", "Language", "Stars", "Forks", "Last updated"],
+    ...githubTopRepositories.map((repository) => [
+      repository.name,
+      repository.description,
+      repository.language,
+      repository.stars,
+      repository.forks,
+      repository.updatedAt,
+    ]),
+  ];
+
+  return rows
+    .map((row) =>
+      row
+        .map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`)
+        .join(","),
+    )
+    .join("\r\n");
+};
+
 const GitHubStatIcon = ({ type }) => {
   const iconContent = {
     activity: <path d="M3 12h4l3-9 4 18 3-9h4" />,
@@ -216,6 +289,7 @@ const GitHubAnalytics = () => {
   const [repositoryLanguage, setRepositoryLanguage] = useState("All languages");
   const [repositorySort, setRepositorySort] = useState("stars");
   const [visibleRepositoryCount, setVisibleRepositoryCount] = useState(4);
+  const [reportExportMessage, setReportExportMessage] = useState("");
   const { profile, metrics, demoMode } = githubProfileData;
   const selectedContributionData = githubContributionData[selectedContributionYear];
   const languageSegments = getDonutSegments(githubLanguageDistribution.languages);
@@ -320,6 +394,27 @@ const GitHubAnalytics = () => {
       left: Math.max(8, Math.min(x + 12, window.innerWidth - 220)),
       top: Math.max(8, y - 38),
     });
+  };
+
+  const handleExportReport = () => {
+    const reportDate = new Date().toISOString().slice(0, 10);
+    const filename = `societyselect-github-report-${reportDate}.csv`;
+    const report = createGitHubReportCsv(
+      selectedContributionYear,
+      selectedVelocityRange,
+    );
+    const file = new Blob([`\uFEFF${report}`], {
+      type: "text/csv;charset=utf-8",
+    });
+    const downloadUrl = URL.createObjectURL(file);
+    const downloadLink = document.createElement("a");
+    downloadLink.href = downloadUrl;
+    downloadLink.download = filename;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    downloadLink.remove();
+    window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    setReportExportMessage(`Report downloaded: ${filename}`);
   };
 
   return (
@@ -1064,6 +1159,61 @@ const GitHubAnalytics = () => {
             </div>
           )}
         </section>
+        <section
+          className="github-report-export"
+          aria-labelledby="github-report-export-title"
+        >
+          <div className="github-report-export-copy">
+            <span className="github-report-export-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4" />
+              </svg>
+            </span>
+            <div>
+              <h2 id="github-report-export-title">Export GitHub Report</h2>
+              <p>
+                Download a CSV summary of your profile, analytics, activity, and
+                repositories for academic review.
+              </p>
+              <span className="github-report-demo-note">
+                Includes demonstration data only; no live GitHub connection.
+              </span>
+            </div>
+          </div>
+          <button
+            className="github-report-export-button"
+            type="button"
+            onClick={handleExportReport}
+          >
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M10 2.5v10m-4-4 4 4 4-4M3.5 14v3h13v-3" />
+            </svg>
+            Export GitHub Report
+          </button>
+          <p className="github-report-export-status" role="status" aria-live="polite">
+            {reportExportMessage}
+          </p>
+        </section>
+
+        <aside
+          className="github-academic-notice"
+          aria-labelledby="github-academic-notice-title"
+        >
+          <span className="github-academic-notice-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3 4.5 6v5.5c0 4.5 3.2 7.8 7.5 9.5 4.3-1.7 7.5-5 7.5-9.5V6L12 3Z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          </span>
+          <div>
+            <h2 id="github-academic-notice-title">Academic Verification Notice</h2>
+            <p>
+              This page and exported report use demonstration data and are not
+              connected to a live GitHub account. Mentors should independently
+              verify GitHub activity before using it for academic review.
+            </p>
+          </div>
+        </aside>
         {hoveredVelocityPoint && (
           <div
             className="github-velocity-tooltip"
@@ -1089,6 +1239,17 @@ const GitHubAnalytics = () => {
           </div>
         )}
       </main>
+      <footer className="github-analytics-footer">
+        <div className="github-analytics-footer-inner">
+          <span className="github-analytics-footer-brand">
+            SocietySelect <span>AI</span>
+          </span>
+          <span>
+            © {new Date().getFullYear()} Academic Engineering Network. All rights
+            reserved.
+          </span>
+        </div>
+      </footer>
     </div>
   );
 };
