@@ -16,6 +16,7 @@ import AssignedStudents from "./mentor/AssignedStudents";
 import StudentDetails from "./mentor/StudentDetails";
 import ProjectReview from "./mentor/ProjectReview";
 import ProjectDetails from "./mentor/ProjectDetails";
+import ErrorPage from "./Components/ErrorPage.jsx";
 
 function App() {
   const getRoute = () => {
@@ -105,6 +106,19 @@ function App() {
       return "register";
     }
 
+    if (
+      path === "/error" ||
+      path === "/500" ||
+      hash === "error" ||
+      hash === "500"
+    ) {
+      return "serverError";
+    }
+
+    if (path === "/" && !rawHash) return "landing";
+    if (rawHash === "" && path !== "/") return "error";
+
+    if (rawHash) return "error";
     return "landing";
   };
 
@@ -145,6 +159,16 @@ function App() {
   if (route === "studentSettings") return <StudentSettings />;
   if (route === "projectReview") return <ProjectReview />;
   if (route === "projectDetails") return <ProjectDetails />;
+  if (route === "serverError") {
+    return (
+      <ErrorPage
+        code="500"
+        title="Something went wrong"
+        message="An unexpected error occurred. Please retry or return to the home page."
+      />
+    );
+  }
+  if (route === "error") return <ErrorPage />;
   return <LandingPage />;
 }
 
