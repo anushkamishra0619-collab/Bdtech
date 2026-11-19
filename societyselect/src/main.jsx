@@ -20,7 +20,7 @@ class AppErrorBoundary extends Component {
         <ErrorPage
           code="500"
           title="Something went wrong"
-          message="An unexpected error occurred. Please retry or return to the home page."
+          message="An unexpected error occurred. Please retry or go back."
         />
       )
     }

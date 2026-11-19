@@ -467,7 +467,7 @@ export default function LoginPage({ initialMode = "login" }) {
               <option value="STUDENT">Student</option>
               <option value="MENTOR">Mentor</option>
             </select>
-            <a href="/forgot-password" className="forgot-link">
+            <a href="/forgot" className="forgot-link">
               Forgot your password?
             </a>
             <button className="auth-button" type="submit" disabled={loading}>
