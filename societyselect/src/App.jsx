@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "./App.css";
 import LandingPage from "./LandingPage.jsx";
 import Welcome from "./Components/welcome.jsx";
@@ -13,18 +13,16 @@ import ProjectDetails from "./mentor/ProjectDetails";
 import MentorAttendance from "./mentor/MentorAttendance";
 import StudentAttendance from "./pages/student/StudentAttendance.jsx";
 import LoadingPage from "./Components/LoadingPage.jsx";
-
 function App() {
-  const getRoute = () => {
-    const rawPath = window.location.pathname.replace(/\/+$/, "") || "/";
-    const rawHash = (window.location.hash || "").replace(/^#\/?/, "").replace(/\/+$/, "");
+  const location = useLocation();
 
+  const getRoute = () => {
+    const rawPath = location.pathname.replace(/\/+$/, "") || "/";
+    const rawHash = (location.hash || "").replace(/^#\/?/, "").replace(/\/+$/, "");
     const path = rawPath.toLowerCase();
     const hash = rawHash.toLowerCase();
-
     if (path === "/login" || hash === "login") return "login";
     if (path === "/forgot" || hash === "forgot") return "forgot";
-
     // Student Details route: /mentor/students/:id or #mentor/students/:id
     if (
       /^\/mentor\/students\/\d+/i.test(path) ||
@@ -34,7 +32,6 @@ function App() {
     ) {
       return "studentdetails";
     }
-
     // Assigned Students list route: /mentor/students or #mentor/students
     if (
       path === "/mentor/students" ||
@@ -42,9 +39,7 @@ function App() {
     ) {
       return "assignedstudents";
     }
-
     if (path === "/mentor" || hash === "mentor") return "mentor";
-
     if (
       path === "/student" ||
       path === "/student/dashboard" ||
@@ -53,14 +48,12 @@ function App() {
     ) {
       return "student";
     }
-
     if (path === "/createproject" || hash === "createproject") {
       return "createproject";
     }
     if (path === "/mentor/projects") {
       return "projectReview";
     }
-
     if (path.startsWith("/mentor/project-review/")) {
       return "projectDetails";
     }
@@ -85,21 +78,7 @@ function App() {
     return "landing";
   };
 
-  const [route, setRoute] = useState(getRoute);
-
-  useEffect(() => {
-    const handleLocationChange = () => {
-      setRoute(getRoute());
-    };
-
-    window.addEventListener("hashchange", handleLocationChange);
-    window.addEventListener("popstate", handleLocationChange);
-
-    return () => {
-      window.removeEventListener("hashchange", handleLocationChange);
-      window.removeEventListener("popstate", handleLocationChange);
-    };
-  }, []);
+  const route = getRoute();
 
   if (route === "login") return <Welcome />;
 
