@@ -164,6 +164,7 @@
   }
 
   .mentor-sidebar {
+    position: fixed;
     width: 100%;
     min-height: 0;
     height: auto;
@@ -172,6 +173,7 @@
     border-right: 0;
     top: auto;
     bottom: 0;
+    flex-direction: row;
     align-items: stretch;
     box-shadow: 0 -8px 20px rgba(52, 91, 104, 0.08);
   }
@@ -192,12 +194,27 @@
 
   .mentor-sidebar-nav,
   .mentor-sidebar-bottom {
-    width: 100%;
+    width: auto;
     flex-direction: row;
     justify-content: space-around;
     gap: 2px;
     padding: 0;
     border-top: 0;
+  }
+
+  .mentor-sidebar-menu {
+    display: contents;
+  }
+
+  .mentor-sidebar-nav {
+    flex: 5;
+  }
+
+  .mentor-sidebar-bottom {
+    flex: 2;
+    margin-top: 0;
+    padding-left: 4px;
+    border-left: 1px solid #edf1f3;
   }
 
   .mentor-sidebar-link {
@@ -208,7 +225,8 @@
     gap: 4px;
     padding: 8px 2px;
     border-radius: 8px;
-    font-size: 10px;
+    font-size: 9px;
+    line-height: 1.15;
     text-align: center;
   }
 
