@@ -11,6 +11,7 @@ import StudentDetails from "./mentor/StudentDetails";
 import ProjectReview from "./mentor/ProjectReview";
 import ProjectDetails from "./mentor/ProjectDetails";
 import MentorAttendance from "./mentor/MentorAttendance";
+import StudentAttendance from "./pages/student/StudentAttendance.jsx";
 
 function App() {
   const getRoute = () => {
@@ -65,6 +66,9 @@ function App() {
     if (path === "/mentor/attendance") {
       return "mentorAttendance";
     }
+    if (path === "/student/attendance") {
+      return "studentAttendance";
+    }
     if (
       path === "/register" ||
       hash === "register" ||
@@ -108,6 +112,7 @@ function App() {
   if (route === "projectReview") return <ProjectReview />;
   if (route === "projectDetails") return <ProjectDetails />;
   if (route === "mentorAttendance") return <MentorAttendance />;
+  if (route === "studentAttendance") return <StudentAttendance />;
   return <LandingPage />;
 }
 
