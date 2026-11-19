@@ -16,6 +16,9 @@ import AssignedStudents from "./mentor/AssignedStudents";
 import StudentDetails from "./mentor/StudentDetails";
 import ProjectReview from "./mentor/ProjectReview";
 import ProjectDetails from "./mentor/ProjectDetails";
+import MentorAttendance from "./mentor/MentorAttendance";
+import StudentAttendance from "./pages/student/StudentAttendance.jsx";
+import LoadingPage from "./Components/LoadingPage.jsx";
 
 function App() {
   const getRoute = () => {
@@ -97,6 +100,15 @@ function App() {
     if (path.startsWith("/mentor/project-review/")) {
       return "projectDetails";
     }
+    if (path === "/mentor/attendance") {
+      return "mentorAttendance";
+    }
+    if (path === "/student/attendance") {
+      return "studentAttendance";
+    }
+    if (path  === "/loading" || hash === "loading") {
+      return "LoadingPage";
+    }
     if (
       path === "/register" ||
       hash === "register" ||
@@ -104,6 +116,7 @@ function App() {
     ) {
       return "register";
     }
+
 
     return "landing";
   };
@@ -145,6 +158,9 @@ function App() {
   if (route === "studentSettings") return <StudentSettings />;
   if (route === "projectReview") return <ProjectReview />;
   if (route === "projectDetails") return <ProjectDetails />;
+  if (route === "mentorAttendance") return <MentorAttendance />;
+  if (route === "studentAttendance") return <StudentAttendance />;
+  if (route === "LoadingPage") return <LoadingPage />;
   return <LandingPage />;
 }
 
