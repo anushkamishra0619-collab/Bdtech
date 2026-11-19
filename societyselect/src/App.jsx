@@ -6,6 +6,12 @@ import ForgotPassword from "./Components/ForgotPassword.jsx";
 import Interviewpage from "./Components/Interviewpage.jsx";
 import MentorDashboard from "./mentor/MentorDashboard";
 import StudentDashboard from "./pages/student/StudentDashboard.jsx";
+import SocietyApplication from "./pages/student/SocietyApplication.jsx";
+import ApplicationTracking from "./pages/student/ApplicationTracking.jsx";
+import InterviewDetails from "./pages/student/InterviewDetails.jsx";
+import MyTasks from "./pages/student/MyTasks.jsx";
+import StudentProfile from "./pages/student/StudentProfile.jsx";
+import StudentSettings from "./pages/student/StudentSettings.jsx";
 import AssignedStudents from "./mentor/AssignedStudents";
 import StudentDetails from "./mentor/StudentDetails";
 import ProjectReview from "./mentor/ProjectReview";
@@ -24,6 +30,14 @@ function App() {
 
     if (path === "/login" || hash === "login") return "login";
     if (path === "/forgot" || hash === "forgot") return "forgot";
+    if (
+      path === "/interviewpage" ||
+      path === "/mentor/interviews" ||
+      hash === "interviewpage" ||
+      hash === "mentor/interviews"
+    ) {
+      return "interviewpage";
+    }
 
     // Student Details route: /mentor/students/:id or #mentor/students/:id
     if (
@@ -52,6 +66,28 @@ function App() {
       hash === "student/dashboard"
     ) {
       return "student";
+    }
+
+    if (path === "/student/apply" || path === "/student/application") {
+      return "studentApplication";
+    }
+    if (
+      path === "/student/application-tracking" ||
+      hash === "student/application-tracking"
+    ) {
+      return "applicationTracking";
+    }
+    if (path === "/student/interview" || hash === "student/interview") {
+      return "studentInterview";
+    }
+    if (path === "/student/tasks" || hash === "student/tasks") {
+      return "studentTasks";
+    }
+    if (path === "/student/profile" || hash === "student/profile") {
+      return "studentProfile";
+    }
+    if (path === "/student/settings" || hash === "student/settings") {
+      return "studentSettings";
     }
 
     if (path === "/createproject" || hash === "createproject") {
@@ -114,6 +150,12 @@ function App() {
   if (route === "assignedstudents") return <AssignedStudents />;
   if (route === "studentdetails") return <StudentDetails />;
   if (route === "student") return <StudentDashboard />;
+  if (route === "studentApplication") return <SocietyApplication />;
+  if (route === "applicationTracking") return <ApplicationTracking />;
+  if (route === "studentInterview") return <InterviewDetails />;
+  if (route === "studentTasks") return <MyTasks />;
+  if (route === "studentProfile") return <StudentProfile />;
+  if (route === "studentSettings") return <StudentSettings />;
   if (route === "projectReview") return <ProjectReview />;
   if (route === "projectDetails") return <ProjectDetails />;
   if (route === "mentorAttendance") return <MentorAttendance />;

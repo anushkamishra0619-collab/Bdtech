@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import {Users,ClipboardCheck,FolderKanban,CalendarDays,ArrowUpRight,Clock,CheckCircle2,CircleAlert,BookOpen,ChevronRight,ChevronsRight,} from "lucide-react";
 import MentorSidebar from "../Components/MentorSidebar";
+import { apiRequest } from "../utils/api.js";
 import { navigateTo } from "../utils/navigation";
 import "./MentorDashboard.css";
 function TextMorphHeading() {
@@ -19,116 +21,72 @@ function TextMorphHeading() {
   );
 }
 
-const stats = [
-  {
-    title: "Assigned Students",
-    value: "03",
-    icon: Users,
-    link: "/mentor/students",
-  },
-  {
-    title: "Pending Reviews",
-    value: "02",
-    icon: ClipboardCheck,
-    link: "/mentor/tasks",
-  },
-  {
-    title: "Active Projects",
-    value: "01",
-    icon: FolderKanban,
-    link: "/mentor/projects",
-  },
-];
-
-const students = [
-  {
-    id: 1,
-    name: "Gargi Yadav",
-    initials: "GY",
-    society: "A Society",
-  },
-  {
-    id: 2,
-    name: "Priya Tiwari",
-    initials: "PT",
-    society: "A Society",
-  },
-  {
-    id: 3,
-    name: "Aastha",
-    initials: "AS",
-    society: "A Society",
-  },
-];
-
-const schedule = [
-  {
-    time: "10:00 AM",
-    title: "Project Review",
-    student: "Gargi Yadav",
-    category: "Project Discussion",
-  },
-  {
-    time: "12:30 PM",
-    title: "Mentoring Session",
-    student: "Priya Tiwari",
-    category: "Career Guidance",
-  },
-  {
-    time: "03:00 PM",
-    title: "Progress Check-in",
-    student: "Aastha",
-    category: "Weekly Review",
-  },
-];
-
-const reviews = [
-  {
-    title: "Portfolio Website",
-    student: "Gargi Yadav",
-    time: "2 hours ago",
-  },
-  {
-    title: "Database Management Project",
-    student: "Priya Tiwari",
-    time: "Yesterday",
-  },
-  {
-    title: "Mini Project Documentation",
-    student: "Aastha",
-    time: "Yesterday",
-  },
-];
-
-const quickActions = [
-  {
-    title: "My Students",
-    description: "View and manage assigned students",
-    icon: Users,
-    link: "/mentor/students",
-  },
-  {
-    title: "Review Submissions",
-    description: "Evaluate pending student work",
-    icon: ClipboardCheck,
-    link: "/mentor/tasks",
-  },
-  {
-    title: "Track Projects",
-    description: "Monitor ongoing projects",
-    icon: FolderKanban,
-    link: "/mentor/projects",
-  },
-  {
-    title: "View Attendance",
-    description: "Check student attendance records",
-    icon: CalendarDays,
-    link: "/mentor/attendance",
-  },
-];
-
 function MentorDashboard() {
-  const mentorName = "Aastha Sharma";
+  const [dashboardData, setDashboardData] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    apiRequest("/api/mentor/dashboard")
+      .then((data) => {
+        if (active) setDashboardData(data);
+      })
+      .catch((requestError) => {
+        if (active) setError(requestError.message);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (error || !dashboardData) {
+    return (
+      <div className="mentor-dashboard">
+        <MentorSidebar />
+        <main className="mentor-main">
+          <h1>{error ? "Unable to load mentor dashboard" : "Loading mentor dashboard..."}</h1>
+          {error ? <p role="alert">{error}</p> : null}
+          {error ? <a href="/login">Sign in</a> : null}
+        </main>
+      </div>
+    );
+  }
+
+  const mentorName = dashboardData.mentor.fullName;
+  const students = dashboardData.studentProgress.map((student) => ({
+    id: student.id,
+    name: student.fullName,
+    initials: student.fullName.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(),
+    society: student.domain,
+    progress: student.progressPercentage,
+    status: student.progressPercentage >= 60 ? "On Track" : "Needs Attention",
+  }));
+  const schedule = dashboardData.schedule.map((item) => ({
+    id: item.applicationId,
+    time: item.scheduledAt ? new Date(item.scheduledAt).toLocaleString() : "Time not set",
+    title: "Interview",
+    student: item.studentName,
+    category: `${item.domain} · ${item.mode || "Mode not set"}`,
+  }));
+  const reviews = dashboardData.pendingReviews.map((review) => ({
+    id: `${review.taskId}-${review.studentId}`,
+    title: review.taskTitle,
+    student: review.studentName,
+    time: review.submittedAt ? new Date(review.submittedAt).toLocaleString() : "Recently submitted",
+  }));
+  const stats = [
+    { title: "Assigned Students", value: dashboardData.stats.assignedStudentsCount, icon: Users, link: "/mentor/students" },
+    { title: "Pending Reviews", value: dashboardData.stats.pendingReviewsCount, icon: ClipboardCheck, link: "/mentor/projects" },
+    { title: "Active Tasks", value: dashboardData.stats.activeTasksCount, icon: FolderKanban, link: "/mentor/projects" },
+  ];
+  const quickActions = [
+    { title: "My Students", description: "View and manage assigned students", icon: Users, link: "/mentor/students" },
+    { title: "Review Submissions", description: "Evaluate pending student work", icon: ClipboardCheck, link: "/mentor/projects" },
+    { title: "Track Tasks", description: "Monitor assigned domain tasks", icon: FolderKanban, link: "/mentor/projects" },
+    { title: "Interviews", description: "Schedule and evaluate candidates", icon: CalendarDays, link: "/mentor/interviews" },
+  ];
+
   const handleNav = (e, url) => {
     e.preventDefault();
     navigateTo(url);
@@ -298,7 +256,7 @@ function MentorDashboard() {
 
             <div className="mentor-schedule-list">
               {schedule.map((item) => (
-                <div className="mentor-schedule-item" key={item.time}>
+                <div className="mentor-schedule-item" key={item.id}>
                   <div className="mentor-schedule-time">
                     <Clock size={14} />
                     <span>{item.time}</span>
@@ -314,9 +272,9 @@ function MentorDashboard() {
             </div>
 
             <a
-              href="/mentor/attendance"
+              href="/mentor/interviews"
               className="mentor-schedule-link"
-              onClick={(e) => handleNav(e, "/mentor/attendance")}
+              onClick={(e) => handleNav(e, "/mentor/interviews")}
             >
               View full schedule <ArrowUpRight size={16} />
             </a>
@@ -333,7 +291,7 @@ function MentorDashboard() {
                 <h2>Pending Reviews</h2>
               </div>
 
-              <span className="mentor-review-badge">03 NEW</span>
+              <span className="mentor-review-badge">{reviews.length} NEW</span>
             </div>
             <div className="mentor-review-list">
               {reviews.map((review) => (
