@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import MentorSidebar from "../Components/MentorSidebar";
+import LoadingPage from "../Components/LoadingPage.jsx";
 import { apiRequest } from "../utils/api.js";
 import { navigateTo } from "../utils/navigation";
 import "./StudentDetails.css";
@@ -98,7 +99,9 @@ function StudentDetails() {
     }
   };
 
-  if (loading || !student) {
+  if (loading) return <LoadingPage />;
+
+  if (!student) {
     return (
       <div className="student-details-layout">
         <MentorSidebar />
@@ -112,8 +115,8 @@ function StudentDetails() {
             Back to Students
           </button>
           <div className="student-not-found">
-            <h2>{loading ? "Loading student profile..." : "Student not found"}</h2>
-            {!loading && visibleError ? <p role="alert">{visibleError}</p> : null}
+            <h2>Student not found</h2>
+            {visibleError ? <p role="alert">{visibleError}</p> : null}
           </div>
         </main>
       </div>

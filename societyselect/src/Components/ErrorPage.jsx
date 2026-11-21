@@ -1,5 +1,5 @@
 import { FiArrowLeft, FiRefreshCw, FiCompass } from "react-icons/fi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./ErrorPage.css";
 
 export default function ErrorPage({
@@ -8,6 +8,22 @@ export default function ErrorPage({
   message = "The page you're looking for doesn't exist, was moved, or never existed in the first place.",
 }) {
   const [retrying, setRetrying] = useState(false);
+  const [typedTitle, setTypedTitle] = useState("");
+
+  useEffect(() => {
+    setTypedTitle("");
+    let index = 0;
+    const interval = window.setInterval(() => {
+      index += 1;
+      setTypedTitle(title.slice(0, index));
+
+      if (index >= title.length) {
+        window.clearInterval(interval);
+      }
+    }, 70);
+
+    return () => window.clearInterval(interval);
+  }, [title]);
 
   const goBack = () => {
     if (window.history.length > 1) {
@@ -33,7 +49,10 @@ export default function ErrorPage({
         </div>
 
         <h1 className="error-code">{code}</h1>
-        <h2 className="error-title">{title}</h2>
+        <h2 className="error-title" aria-label={title}>
+          <span aria-hidden="true">{typedTitle}</span>
+          <span className="typing-cursor" aria-hidden="true" />
+        </h2>
         <p className="error-message">{message}</p>
 
         <div className="error-actions">

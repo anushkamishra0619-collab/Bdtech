@@ -16,12 +16,14 @@ import AssignedStudents from "./mentor/AssignedStudents";
 import StudentDetails from "./mentor/StudentDetails";
 import ProjectReview from "./mentor/ProjectReview";
 import ProjectDetails from "./mentor/ProjectDetails";
+import CreateProject from "./mentor/CreateProject";
 import ErrorPage from "./Components/ErrorPage.jsx";
 import MentorAttendance from "./mentor/MentorAttendance";
 import StudentAttendance from "./pages/student/StudentAttendance.jsx";
 import LoadingPage from "./Components/LoadingPage.jsx";
 import StudentProjects from "./pages/student/StudentProjects";
 import ExaminationManagement from "./mentor/ExaminationManagement";
+import ProbationPerformance from "./Components/ProbationPerformance.jsx";
 function App() {
   const location = useLocation();
 
@@ -81,7 +83,14 @@ function App() {
       return "studentSettings";
     }
 
-    if (path === "/createproject" || hash === "createproject") {
+    if (
+      path === "/createproject" ||
+      path === "/create-project" ||
+      path === "/mentor/projects/create" ||
+      hash === "createproject" ||
+      hash === "create-project" ||
+      hash === "mentor/projects/create"
+    ) {
       return "createproject";
     }
     if (path === "/mentor/projects") {
@@ -93,11 +102,26 @@ function App() {
     if (path === "/mentor/attendance") {
       return "mentorAttendance";
     }
+    if (
+      path === "/mentor/probation-performance" ||
+      path === "/probation-performance" ||
+      path === "/probationperformance" ||
+      hash === "mentor/probation-performance" ||
+      hash === "probation-performance" ||
+      hash === "probationperformance"
+    ) {
+      return "probationPerformance";
+    }
     if (path === "/student/attendance") {
       return "studentAttendance";
     }
-    if (path  === "/loading" || hash === "loading") {
-      return "LoadingPage";
+    if (
+      path === "/loading" ||
+      path === "/loading-page" ||
+      hash === "loading" ||
+      hash === "loading-page"
+    ) {
+      return "loading";
     }
     if (path === "/student/projects" || hash === "student/projects") {
       return "studentProjects";
@@ -152,6 +176,7 @@ function App() {
   if (route === "studentSettings") return <StudentSettings />;
   if (route === "projectReview") return <ProjectReview />;
   if (route === "projectDetails") return <ProjectDetails />;
+  if (route === "createproject") return <CreateProject />;
   if (route === "serverError") {
     return (
       <ErrorPage
@@ -164,7 +189,8 @@ function App() {
   if (route === "error") return <ErrorPage />;
   if (route === "mentorAttendance") return <MentorAttendance />;
   if (route === "studentAttendance") return <StudentAttendance />;
-  if (route === "LoadingPage") return <LoadingPage />;
+  if (route === "probationPerformance") return <ProbationPerformance />;
+  if (route === "loading") return <LoadingPage />;
   if (route === "studentProjects") return <StudentProjects />;
   if (route === "examinationManagement") return <ExaminationManagement />;
   return <LandingPage />;
