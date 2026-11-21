@@ -174,12 +174,8 @@ function App() {
   if (route === "error") return <ErrorPage />;
   if (route === "mentorAttendance") return <MentorAttendance />;
   if (route === "studentAttendance") return <StudentAttendance />;
-<<<<<<< HEAD
   if (route === "loading") return <LoadingPage />;
-=======
-  if (route === "LoadingPage") return <LoadingPage />;
   if (route === "studentProjects") return <StudentProjects />;
->>>>>>> 2537871535b39561e36949829da30676bb678106
   return <LandingPage />;
 }
 

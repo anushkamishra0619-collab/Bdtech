@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import LoadingPage from "../../Components/LoadingPage.jsx";
 import { apiRequest } from "../../utils/api.js";
@@ -121,14 +120,6 @@ const MyTasks = () => {
         </ul>
       </div>
     </main>
-=======
-const MyTasks = () => {
-  return (
-    <div>
-      <h2>My Tasks</h2>
-      <p>This is the My Tasks page for students.</p>
-    </div>
->>>>>>> 2537871535b39561e36949829da30676bb678106
   );
 };
 
