@@ -1276,14 +1276,6 @@ const GitHubAnalytics = () => {
           </p>
         </section>
 
-        <aside className="gh-verification-notice" aria-label="Data verification notice">
-          <strong>Verification notice</strong>
-          <span>
-            This page uses demonstration data only. Verify profile details and metrics directly
-            with GitHub before using them for evaluation.
-          </span>
-        </aside>
-
         {hoveredVelocityPoint && (
           <div
             className="github-velocity-tooltip"
@@ -1309,17 +1301,6 @@ const GitHubAnalytics = () => {
           </div>
         )}
       </main>
-      <footer className="github-analytics-footer">
-        <div className="github-analytics-footer-inner">
-          <span className="github-analytics-footer-brand">
-            SocietySelect <span>AI</span>
-          </span>
-          <span>
-            © {new Date().getFullYear()} Academic Engineering Network. All rights
-            reserved.
-          </span>
-        </div>
-      </footer>
     </div>
   );
 };

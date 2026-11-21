@@ -24,8 +24,7 @@
 }
 
 .gh-page .github-analytics-navbar-inner,
-.gh-page .github-analytics-content,
-.gh-page .github-analytics-footer-inner {
+.gh-page .github-analytics-content {
   width: min(calc(100% - 80px), 1200px);
   margin-right: auto;
   margin-left: auto;
@@ -114,7 +113,7 @@
 }
 
 .gh-page .github-analytics-content {
-  padding: 24px 0 52px;
+  padding: 24px 0 28px;
 }
 
 .gh-page .github-analytics-breadcrumb {
@@ -1885,55 +1884,6 @@
   display: none;
 }
 
-.gh-page .gh-verification-notice {
-  display: grid;
-  margin-top: 12px;
-  padding: 12px 15px;
-  gap: 3px;
-  border: 1px solid #e0eaee;
-  border-left: 3px solid var(--gh-blue);
-  border-radius: 0 10px 10px 0;
-  background: #f4f8fa;
-}
-
-.gh-page .gh-verification-notice strong {
-  color: #405b69;
-  font-size: 10px;
-}
-
-.gh-page .gh-verification-notice span {
-  color: var(--gh-muted);
-  font-size: 9px;
-  line-height: 1.5;
-}
-
-.gh-page .github-analytics-footer {
-  border-top: 1px solid #e7eef0;
-  background: #fff;
-}
-
-.gh-page .github-analytics-footer-inner {
-  display: flex;
-  min-height: 61px;
-  align-items: center;
-  gap: 10px;
-  color: var(--gh-muted);
-  font-size: 10px;
-  line-height: 1.5;
-}
-
-.gh-page .github-analytics-footer-brand {
-  color: var(--gh-ink);
-  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-size: 19px;
-  white-space: nowrap;
-}
-
-.gh-page .github-analytics-footer-brand span {
-  color: var(--gh-blue);
-  font-size: 14px;
-}
-
 .gh-page .github-profile-overview,
 .gh-page .github-stat-card,
 .gh-page .github-contribution-card,
@@ -1973,8 +1923,7 @@
 
 @media (max-width: 760px) {
   .gh-page .github-analytics-navbar-inner,
-  .gh-page .github-analytics-content,
-  .gh-page .github-analytics-footer-inner {
+  .gh-page .github-analytics-content {
     width: calc(100% - 40px);
   }
 
@@ -2032,8 +1981,7 @@
   }
 
   .gh-page .github-analytics-navbar-inner,
-  .gh-page .github-analytics-content,
-  .gh-page .github-analytics-footer-inner {
+  .gh-page .github-analytics-content {
     width: calc(100% - 32px);
   }
 
@@ -2398,19 +2346,11 @@
     margin: -7px 0 0;
   }
 
-  .gh-page .github-analytics-footer-inner {
-    padding: 11px 0;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 1px;
-    font-size: 9px;
-  }
 }
 
 @media (max-width: 360px) {
   .gh-page .github-analytics-navbar-inner,
-  .gh-page .github-analytics-content,
-  .gh-page .github-analytics-footer-inner {
+  .gh-page .github-analytics-content {
     width: calc(100% - 26px);
   }
 
