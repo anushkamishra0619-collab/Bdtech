@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useCountUp from "../../hooks/useCountUp";
 import {
   githubContributionData,
   githubAnalyticsStats,
@@ -6,6 +7,7 @@ import {
   githubLanguageDistribution,
   githubProfileData,
   githubRecentActivities,
+  githubReadiness,
   githubTopRepositories,
 } from "../../data/GithubData";
 import "../../styles/GithubAnalytics.css";
@@ -84,7 +86,7 @@ const createGitHubReportCsv = (contributionYear, velocityRange) => {
   const rows = [
     ["SocietySelect AI GitHub Analytics Report"],
     ["Generated at (UTC)", new Date().toISOString()],
-    ["Data source", "Demonstration data only - not live GitHub data"],
+    ["Data source", "Demonstration data only - GitHub is not connected"],
     [],
     ["GitHub profile"],
     ["Name", profile.name],
@@ -237,12 +239,22 @@ const getContributionLevel = (count) => {
 };
 
 const formatContributionDate = (date) =>
-  new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", {
+  new Date(`${date}T00:00:00Z`).toLocaleDateString("en-GB", {
+    weekday: "short",
+    day: "2-digit",
     month: "short",
-    day: "numeric",
     year: "numeric",
     timeZone: "UTC",
   });
+
+const GitHubStatValue = ({ value }) => {
+  const { ref, displayValue } = useCountUp(value);
+  return (
+    <p className="github-stat-value" ref={ref} aria-label={value}>
+      {displayValue}
+    </p>
+  );
+};
 
 const getSmoothLinePath = (points) => {
   if (points.length < 2) return "";
@@ -281,6 +293,7 @@ const getDonutSegments = (languages) => {
 
 const GitHubAnalytics = () => {
   const [syncMessage, setSyncMessage] = useState("");
+  const [isSyncing, setIsSyncing] = useState(false);
   const [selectedContributionYear, setSelectedContributionYear] = useState("2026");
   const [hoveredContribution, setHoveredContribution] = useState(null);
   const [selectedVelocityRange, setSelectedVelocityRange] = useState("Weekly");
@@ -290,7 +303,7 @@ const GitHubAnalytics = () => {
   const [repositorySort, setRepositorySort] = useState("stars");
   const [visibleRepositoryCount, setVisibleRepositoryCount] = useState(4);
   const [reportExportMessage, setReportExportMessage] = useState("");
-  const { profile, metrics, demoMode } = githubProfileData;
+  const { profile, metrics } = githubProfileData;
   const selectedContributionData = githubContributionData[selectedContributionYear];
   const languageSegments = getDonutSegments(githubLanguageDistribution.languages);
   const velocitySeries = githubCommitVelocity[selectedVelocityRange];
@@ -375,12 +388,36 @@ const GitHubAnalytics = () => {
     return markers;
   }, []);
 
+  useEffect(() => {
+    if (!syncMessage) return undefined;
+    const timeout = window.setTimeout(() => setSyncMessage(""), 3200);
+    return () => window.clearTimeout(timeout);
+  }, [syncMessage]);
+
+  useEffect(() => {
+    if (!isSyncing) return undefined;
+    const timeout = window.setTimeout(() => setIsSyncing(false), 700);
+    return () => window.clearTimeout(timeout);
+  }, [isSyncing]);
+
+  const handleDemoSync = () => {
+    setIsSyncing(true);
+    setSyncMessage("Demo mode: sample profile data is already up to date.");
+  };
+
   const showContributionTooltip = (event, day) => {
+    const date = new Date(`${day.date}T00:00:00Z`);
+    const weekday = date.toLocaleDateString("en-US", {
+      weekday: "short",
+      timeZone: "UTC",
+    });
     setHoveredContribution({
       text: `${day.count} ${
         day.count === 1 ? "contribution" : "contributions"
-      } on ${formatContributionDate(day.date)}`,
-      left: Math.max(8, Math.min(event.clientX + 12, window.innerWidth - 220)),
+      } (${day.commits} commits, ${day.pullRequestReviews} PR reviews) · ${weekday}, ${formatContributionDate(
+        day.date,
+      ).replace(`${weekday}, `, "")}`,
+      left: Math.max(8, Math.min(event.clientX + 12, window.innerWidth - 300)),
       top: Math.max(8, event.clientY - 38),
     });
   };
@@ -418,7 +455,7 @@ const GitHubAnalytics = () => {
   };
 
   return (
-    <div className="github-analytics-page">
+    <div className="gh-page github-analytics-page">
       <header className="github-analytics-navbar">
         <div className="github-analytics-navbar-inner">
           <a
@@ -468,24 +505,23 @@ const GitHubAnalytics = () => {
             </h1>
             <span className="github-analytics-demo-badge">
               <span className="github-analytics-demo-dot" aria-hidden="true" />
-              Demo mode · not connected · {profile.username}
+              Demo mode · not connected
             </span>
           </div>
           <p className="github-analytics-description">
-            Track your coding journey, contributions and velocity. Sample telemetry shown to campus
-            engineering societies and mentor panels. Not live GitHub data.
+            Track your coding journey, contributions and velocity. All profile, activity, language,
+            and repository figures are demonstration data; GitHub is not connected.
           </p>
           <div className="github-analytics-actions">
             <button
-              className="github-analytics-sync-button"
+              className={`github-analytics-sync-button${isSyncing ? " is-syncing" : ""}`}
               type="button"
-              onClick={() => setSyncMessage("Sample profile data is up to date.")}
+              onClick={handleDemoSync}
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="gh-sync-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M20 7v5h-5M4.7 9A7.5 7.5 0 0 1 18 6l2 2M4 17v-5h5m10.3 3A7.5 7.5 0 0 1 6 18l-2-2" />
               </svg>
-              <span>Sync GitHub Activity</span>
-              {demoMode && <span className="github-analytics-sync-demo">demo</span>}
+              <span>Sync</span>
             </button>
             <a
               className="github-analytics-profile-button"
@@ -495,10 +531,13 @@ const GitHubAnalytics = () => {
             >
               View GitHub Profile <span aria-hidden="true">↗</span>
             </a>
-            <span className="github-analytics-sync-message" aria-live="polite">
-              {syncMessage}
-            </span>
           </div>
+          {syncMessage && (
+            <div className="gh-sync-toast" role="status" aria-live="polite">
+              <span aria-hidden="true">✓</span>
+              {syncMessage}
+            </div>
+          )}
         </section>
 
         <section className="github-profile-overview" aria-label="GitHub profile overview">
@@ -545,12 +584,13 @@ const GitHubAnalytics = () => {
         </section>
 
         <section className="github-statistics-grid" aria-label="GitHub statistics">
-          {githubAnalyticsStats.map((stat) => {
+          {githubAnalyticsStats.map((stat, index) => {
             const sparklinePoints = getSparklinePoints(stat.sparkline);
 
             return (
               <article
                 className={`github-stat-card github-stat-card--${stat.tone}`}
+                style={{ "--gh-stagger": `${index * 70}ms` }}
                 key={stat.id}
               >
                 <div className="github-stat-card-heading">
@@ -559,7 +599,7 @@ const GitHubAnalytics = () => {
                     <GitHubStatIcon type={stat.icon} />
                   </span>
                 </div>
-                <p className="github-stat-value">{stat.value}</p>
+                <GitHubStatValue value={stat.value} />
                 {stat.trend ? (
                   <p className="github-stat-trend">{stat.trend}</p>
                 ) : (
@@ -674,14 +714,18 @@ const GitHubAnalytics = () => {
                             key={day.date}
                             aria-label={`${day.count} ${
                               day.count === 1 ? "contribution" : "contributions"
-                            } on ${dayLabel}`}
+                            } (${day.commits} commits, ${day.pullRequestReviews} PR reviews) · ${dayLabel}`}
                             title={`${day.count} ${
                               day.count === 1 ? "contribution" : "contributions"
-                            } on ${dayLabel}`}
+                            } (${day.commits} commits, ${day.pullRequestReviews} PR reviews) · ${dayLabel}`}
                             onMouseEnter={(event) =>
                               showContributionTooltip(event, day)
                             }
                             onMouseLeave={() => setHoveredContribution(null)}
+                            onFocus={(event) =>
+                              showContributionTooltip(event, day)
+                            }
+                            onBlur={() => setHoveredContribution(null)}
                           />
                         );
                       })}
@@ -724,6 +768,7 @@ const GitHubAnalytics = () => {
           </div>
         </section>
 
+        <div className="gh-insights-grid">
         <section
           className="github-language-card"
           aria-labelledby="github-language-title"
@@ -812,6 +857,42 @@ const GitHubAnalytics = () => {
             </ul>
           </div>
         </section>
+
+        <section className="gh-readiness-card" aria-labelledby="gh-readiness-title">
+          <div className="gh-readiness-heading">
+            <div>
+              <h2 id="gh-readiness-title">Society readiness</h2>
+              <p>Demonstration estimate based on this profile.</p>
+            </div>
+            <span className="gh-demo-label">DEMO DATA</span>
+          </div>
+          <div className="gh-readiness-score">
+            <div
+              className="gh-readiness-ring"
+              style={{ "--gh-readiness-score": `${githubReadiness.score}%` }}
+              role="img"
+              aria-label={`Readiness score: ${githubReadiness.score} out of 100`}
+            >
+              <div>
+                <strong>{githubReadiness.score}</strong>
+                <span>/ 100</span>
+              </div>
+            </div>
+            <div className="gh-readiness-score-copy">
+              <strong>Strong foundation</strong>
+              <span>Explore these official societies</span>
+            </div>
+          </div>
+          <ul className="gh-society-list" aria-label="Official society recommendations">
+            {githubReadiness.recommendedSocieties.map((society) => (
+              <li key={society}>
+                <span aria-hidden="true">↗</span>
+                {society}
+              </li>
+            ))}
+          </ul>
+        </section>
+        </div>
 
         <section
           className="github-velocity-card"
@@ -959,11 +1040,12 @@ const GitHubAnalytics = () => {
           </div>
 
           <ol className="github-telemetry-list">
-            {githubRecentActivities.map((activity) => (
+            {githubRecentActivities.map((activity, index) => (
               <li
-                className={`github-telemetry-item github-telemetry-item-${activity.type
+                className={`github-telemetry-item gh-activity-item github-telemetry-item-${activity.type
                   .toLowerCase()
                   .replace(" ", "-")}`}
+                style={{ "--gh-stagger": `${index * 70}ms` }}
                 key={activity.id}
               >
                 <span className="github-telemetry-icon">
@@ -988,6 +1070,7 @@ const GitHubAnalytics = () => {
                       {activity.repository}
                     </span>
                     <span className="github-telemetry-type">{activity.type}</span>
+                    <span className="gh-activity-status">{activity.status}</span>
                   </div>
                 </div>
               </li>
@@ -1141,11 +1224,9 @@ const GitHubAnalytics = () => {
                   <button
                     className="github-repository-load-more"
                     type="button"
-                    onClick={() =>
-                      setVisibleRepositoryCount((count) => count + 4)
-                    }
+                    onClick={() => setVisibleRepositoryCount(filteredRepositories.length)}
                   >
-                    Load More Repositories
+                    Load {filteredRepositories.length - visibleRepositoryCount} more
                     <svg viewBox="0 0 16 16" aria-hidden="true">
                       <path d="M8 3v10m-4-4 4 4 4-4" />
                     </svg>
@@ -1176,7 +1257,7 @@ const GitHubAnalytics = () => {
                 repositories for academic review.
               </p>
               <span className="github-report-demo-note">
-                Includes demonstration data only; no live GitHub connection.
+                Includes demonstration data only; GitHub is not connected.
               </span>
             </div>
           </div>
@@ -1194,6 +1275,14 @@ const GitHubAnalytics = () => {
             {reportExportMessage}
           </p>
         </section>
+
+        <aside className="gh-verification-notice" aria-label="Data verification notice">
+          <strong>Verification notice</strong>
+          <span>
+            This page uses demonstration data only. Verify profile details and metrics directly
+            with GitHub before using them for evaluation.
+          </span>
+        </aside>
 
         {hoveredVelocityPoint && (
           <div

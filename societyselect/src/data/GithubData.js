@@ -14,8 +14,22 @@ export const githubProfileData = {
   metrics: [
     { label: "Followers", value: "248" },
     { label: "Following", value: "132" },
-    { label: "Public repositories", value: "36" },
-    { label: "Commits YTD", value: "1,284" },
+    { label: "Repos", value: "36" },
+    { label: "Commits", value: "1,284" },
+  ],
+};
+
+export const githubReadiness = {
+  score: 82,
+  recommendedSocieties: [
+    "Big Data Center of Excellence",
+    "Software Incubator",
+    "Machine Learning Center of Excellence",
+    "Programming Club",
+    "Center of Software Intelligence",
+    "Horizon",
+    "Footprints",
+    "Goonj",
   ],
 };
 
@@ -132,6 +146,8 @@ const buildContributionYear = (year, targetTotal, peakCount) => {
   const days = scaledCounts.map((count, index) => ({
     date: new Date(firstDay + index * millisecondsPerDay).toISOString().slice(0, 10),
     count,
+    commits: Math.ceil(count * 0.75),
+    pullRequestReviews: count - Math.ceil(count * 0.75),
   }));
   let currentStreak = 0;
   let longestStreak = 0;
@@ -195,11 +211,11 @@ export const githubLanguageDistribution = {
   repositoryCount: 34,
   subtitle: "Cumulative byte-weight across 34 public repositories.",
   languages: [
-    { name: "TypeScript", percentage: 38.5, repositoryCount: 16, color: "#2858e8" },
-    { name: "Python", percentage: 26.2, repositoryCount: 10, color: "#61d887" },
-    { name: "Rust", percentage: 14.8, repositoryCount: 4, color: "#e96d23" },
-    { name: "Go", percentage: 12, repositoryCount: 3, color: "#17a9c7" },
-    { name: "C++", percentage: 8.5, repositoryCount: 1, color: "#aeb9ce" },
+    { name: "TypeScript", percentage: 38.5, repositoryCount: 16, color: "#4d7c96" },
+    { name: "Python", percentage: 26.2, repositoryCount: 10, color: "#7aaf8a" },
+    { name: "Rust", percentage: 14.8, repositoryCount: 4, color: "#bd8751" },
+    { name: "Go", percentage: 12, repositoryCount: 3, color: "#6d9fb1" },
+    { name: "C++", percentage: 8.5, repositoryCount: 1, color: "#9eacb4" },
   ],
 };
 
@@ -265,6 +281,7 @@ export const githubRecentActivities = [
   {
     id: "activity-001",
     type: "Commit",
+    status: "Committed",
     title: "Pushed 3 commits to main",
     description: "Refined dashboard metrics and improved responsive chart behavior.",
     repository: "societyselect-web",
@@ -273,6 +290,7 @@ export const githubRecentActivities = [
   {
     id: "activity-002",
     type: "Pull Request",
+    status: "In review",
     title: "Opened a pull request",
     description: "Added accessible labels and keyboard support to analytics charts.",
     repository: "societyselect-web",
@@ -281,6 +299,7 @@ export const githubRecentActivities = [
   {
     id: "activity-003",
     type: "Issue",
+    status: "Resolved",
     title: "Closed an issue",
     description: "Resolved a mobile layout overflow in the activity dashboard.",
     repository: "campus-connect",
@@ -289,6 +308,7 @@ export const githubRecentActivities = [
   {
     id: "activity-004",
     type: "Merge",
+    status: "Merged",
     title: "Merged a pull request",
     description: "Merged the student profile improvements into the development branch.",
     repository: "societyselect-web",
@@ -297,6 +317,7 @@ export const githubRecentActivities = [
   {
     id: "activity-005",
     type: "Commit",
+    status: "Committed",
     title: "Committed 5 changes",
     description: "Updated application form validation and its inline feedback states.",
     repository: "society-apply",
@@ -311,7 +332,7 @@ export const githubTopRepositories = [
     description:
       "Campus matching platform for student technical societies and hackathon teams. Implements deterministic matching and peer evaluation workflows.",
     language: "TypeScript",
-    languageColor: "#2858e8",
+    languageColor: "#4d7c96",
     stars: 184,
     forks: 42,
     updatedAt: "2026-11-18T10:00:00Z",
@@ -324,7 +345,7 @@ export const githubTopRepositories = [
     description:
       "WebGPU-accelerated neural network visualizer for learning coursework. Renders layer-by-layer activations in the browser.",
     language: "Python",
-    languageColor: "#61d887",
+    languageColor: "#7aaf8a",
     stars: 126,
     forks: 28,
     updatedAt: "2026-11-17T10:00:00Z",
@@ -336,7 +357,7 @@ export const githubTopRepositories = [
     description:
       "Discord and Slack bot that syncs seminar calendars, RSVP webhooks and automated reminders for student events.",
     language: "Go",
-    languageColor: "#17a9c7",
+    languageColor: "#6d9fb1",
     stars: 68,
     forks: 14,
     updatedAt: "2026-11-15T10:00:00Z",
@@ -348,7 +369,7 @@ export const githubTopRepositories = [
     description:
       "Algorithms and persistent data structures implemented idiomatically in Rust with benchmarks.",
     language: "Rust",
-    languageColor: "#e96d23",
+    languageColor: "#bd8751",
     stars: 50,
     forks: 19,
     updatedAt: "2026-11-11T10:00:00Z",
@@ -360,7 +381,7 @@ export const githubTopRepositories = [
     description:
       "A campus peer-learning portal with subject discovery, tutor profiles, and session scheduling.",
     language: "TypeScript",
-    languageColor: "#2858e8",
+    languageColor: "#4d7c96",
     stars: 46,
     forks: 11,
     updatedAt: "2026-11-09T10:00:00Z",
@@ -372,7 +393,7 @@ export const githubTopRepositories = [
     description:
       "Interactive onboarding guides that help new contributors find beginner-friendly project issues.",
     language: "JavaScript",
-    languageColor: "#e6c447",
+    languageColor: "#b2a25f",
     stars: 38,
     forks: 9,
     updatedAt: "2026-11-07T10:00:00Z",
@@ -384,7 +405,7 @@ export const githubTopRepositories = [
     description:
       "A lightweight experiment notebook for organizing class lab observations and reproducible results.",
     language: "Python",
-    languageColor: "#61d887",
+    languageColor: "#7aaf8a",
     stars: 31,
     forks: 7,
     updatedAt: "2026-11-05T10:00:00Z",
@@ -396,7 +417,7 @@ export const githubTopRepositories = [
     description:
       "Accessible campus navigation with searchable buildings, routes, and student-friendly location details.",
     language: "TypeScript",
-    languageColor: "#2858e8",
+    languageColor: "#4d7c96",
     stars: 27,
     forks: 6,
     updatedAt: "2026-11-02T10:00:00Z",
@@ -408,7 +429,7 @@ export const githubTopRepositories = [
     description:
       "Room availability and booking prototype designed for collaborative campus study spaces.",
     language: "Java",
-    languageColor: "#c74634",
+    languageColor: "#9f716c",
     stars: 22,
     forks: 5,
     updatedAt: "2026-10-29T10:00:00Z",
@@ -420,7 +441,7 @@ export const githubTopRepositories = [
     description:
       "Small visualization toolkit for exploring matrix data with configurable color scales and labels.",
     language: "JavaScript",
-    languageColor: "#e6c447",
+    languageColor: "#b2a25f",
     stars: 18,
     forks: 4,
     updatedAt: "2026-10-24T10:00:00Z",
@@ -432,7 +453,7 @@ export const githubTopRepositories = [
     description:
       "Reusable test fixtures and examples for validating student project REST APIs.",
     language: "Python",
-    languageColor: "#61d887",
+    languageColor: "#7aaf8a",
     stars: 14,
     forks: 3,
     updatedAt: "2026-10-19T10:00:00Z",
@@ -444,7 +465,7 @@ export const githubTopRepositories = [
     description:
       "A command-line study notes prototype focused on fast search and portable plain-text storage.",
     language: "Rust",
-    languageColor: "#e96d23",
+    languageColor: "#bd8751",
     stars: 11,
     forks: 2,
     updatedAt: "2026-10-12T10:00:00Z",
