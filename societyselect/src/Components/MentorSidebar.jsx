@@ -100,12 +100,6 @@ function MentorSidebar() {
         </div>
       </div>
 
-      <div className="mentor-sidebar-profile">
-        <div className="mentor-profile-details">
-          <h3>Alex Morgan</h3>
-        </div>
-      </div>
-
       <div className="mentor-sidebar-menu">
         <p className="mentor-menu-heading">WORKSPACE</p>
         <nav className="mentor-sidebar-nav">
