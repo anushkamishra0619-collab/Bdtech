@@ -7,7 +7,6 @@ import {
   githubLanguageDistribution,
   githubProfileData,
   githubRecentActivities,
-  githubReadiness,
   githubTopRepositories,
 } from "../../data/GithubData";
 import "../../styles/GithubAnalytics.css";
@@ -768,7 +767,6 @@ const GitHubAnalytics = () => {
           </div>
         </section>
 
-        <div className="gh-insights-grid">
         <section
           className="github-language-card"
           aria-labelledby="github-language-title"
@@ -857,42 +855,6 @@ const GitHubAnalytics = () => {
             </ul>
           </div>
         </section>
-
-        <section className="gh-readiness-card" aria-labelledby="gh-readiness-title">
-          <div className="gh-readiness-heading">
-            <div>
-              <h2 id="gh-readiness-title">Society readiness</h2>
-              <p>Demonstration estimate based on this profile.</p>
-            </div>
-            <span className="gh-demo-label">DEMO DATA</span>
-          </div>
-          <div className="gh-readiness-score">
-            <div
-              className="gh-readiness-ring"
-              style={{ "--gh-readiness-score": `${githubReadiness.score}%` }}
-              role="img"
-              aria-label={`Readiness score: ${githubReadiness.score} out of 100`}
-            >
-              <div>
-                <strong>{githubReadiness.score}</strong>
-                <span>/ 100</span>
-              </div>
-            </div>
-            <div className="gh-readiness-score-copy">
-              <strong>Strong foundation</strong>
-              <span>Explore these official societies</span>
-            </div>
-          </div>
-          <ul className="gh-society-list" aria-label="Official society recommendations">
-            {githubReadiness.recommendedSocieties.map((society) => (
-              <li key={society}>
-                <span aria-hidden="true">↗</span>
-                {society}
-              </li>
-            ))}
-          </ul>
-        </section>
-        </div>
 
         <section
           className="github-velocity-card"

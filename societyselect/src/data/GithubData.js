@@ -19,20 +19,6 @@ export const githubProfileData = {
   ],
 };
 
-export const githubReadiness = {
-  score: 82,
-  recommendedSocieties: [
-    "Big Data Center of Excellence",
-    "Software Incubator",
-    "Machine Learning Center of Excellence",
-    "Programming Club",
-    "Center of Software Intelligence",
-    "Horizon",
-    "Footprints",
-    "Goonj",
-  ],
-};
-
 export const githubAnalyticsStats = [
   {
     id: "contributions",
