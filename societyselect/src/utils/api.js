@@ -45,21 +45,26 @@ const refreshAccessToken = () => {
 };
 
 export const apiRequest = async (path, options = {}, canRetry = true) => {
-  let token = localStorage.getItem("accessToken");
-  if (!token && canRetry && (await refreshAccessToken())) {
+  const { auth = true, body, headers: requestHeaders, ...fetchOptions } = options;
+  let token = auth ? localStorage.getItem("accessToken") : null;
+  if (auth && !token && canRetry && (await refreshAccessToken())) {
     token = localStorage.getItem("accessToken");
   }
-  if (!token) throw new ApiError(SIGN_IN_MESSAGE, 401);
+  if (auth && !token) throw new ApiError(SIGN_IN_MESSAGE, 401);
+
+  const headers = new Headers(requestHeaders);
+  headers.set("Accept", "application/json");
+  if (auth && token) headers.set("Authorization", `Bearer ${token}`);
+  if (body !== undefined) headers.set("Content-Type", "application/json");
 
   let res;
   try {
     res = await fetch(`${API_BASE}${path}`, {
-      ...options,
+      ...fetchOptions,
+      method: fetchOptions.method || (body === undefined ? "GET" : "POST"),
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
     });
   } catch {
     throw new ApiError(
@@ -68,7 +73,7 @@ export const apiRequest = async (path, options = {}, canRetry = true) => {
     );
   }
 
-  if (res.status === 401 && canRetry && (await refreshAccessToken())) {
+  if (res.status === 401 && auth && canRetry && (await refreshAccessToken())) {
     return apiRequest(path, options, false);
   }
 
