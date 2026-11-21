@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import LoadingPage from "../../Components/LoadingPage.jsx";
 import { apiRequest } from "../../utils/api.js";
 import "./StudentApiPages.css";
 
@@ -66,6 +67,8 @@ const MyTasks = () => {
     }
   };
 
+  if (loading) return <LoadingPage />;
+
   return (
     <main className="backend-page">
       <div className="backend-page-content">
@@ -77,10 +80,9 @@ const MyTasks = () => {
           <a className="backend-page-link" href="/student/dashboard">Dashboard</a>
         </header>
 
-        {loading ? <p>Loading tasks...</p> : null}
         {error ? <p className="backend-page-error" role="alert">{error}</p> : null}
         {message ? <p className="backend-page-message" role="status">{message}</p> : null}
-        {!loading && data?.tasks?.length === 0 ? <p>No tasks are available yet.</p> : null}
+        {data?.tasks?.length === 0 ? <p>No tasks are available yet.</p> : null}
         <ul className="backend-page-list">
           {data?.tasks?.map((task) => {
             const draft = getDraft(task);

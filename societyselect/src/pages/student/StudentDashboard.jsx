@@ -7,6 +7,7 @@ import {
   ShinyText,
   SpotlightCard,
 } from "../../Components/ui/DashboardEffects.jsx";
+import LoadingPage from "../../Components/LoadingPage.jsx";
 import { apiRequest } from "../../utils/api.js";
 import "./StudentDashboard.css";
 
@@ -76,11 +77,7 @@ const StudentDashboard = () => {
   }
 
   if (!overviewData) {
-    return (
-      <main className="student-dashboard">
-        <section className="dashboard-section" aria-live="polite">Loading your dashboard...</section>
-      </main>
-    );
+    return <LoadingPage />;
   }
 
   const apiStudent = overviewData.student;

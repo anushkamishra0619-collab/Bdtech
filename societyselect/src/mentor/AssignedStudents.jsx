@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { MessageCircle, Search, SlidersHorizontal, Users } from "lucide-react";
 import MentorSidebar from "../Components/MentorSidebar";
+import LoadingPage from "../Components/LoadingPage.jsx";
 import { apiRequest } from "../utils/api.js";
 import { navigateTo } from "../utils/navigation";
 import "./AssignedStudents.css";
@@ -59,6 +60,8 @@ function AssignedStudents() {
     alert(`No messaging service is connected for ${student.fullName}.`);
   };
 
+  if (loading) return <LoadingPage />;
+
   return (
     <div className="assigned-page">
       <MentorSidebar />
@@ -106,9 +109,8 @@ function AssignedStudents() {
               </div>
             </div>
 
-            {loading ? <p>Loading assigned students...</p> : null}
             {error ? <p role="alert">{error}</p> : null}
-            {!loading && !error ? (
+            {!error ? (
               <div className="assigned-student-grid">
               {filteredStudents.length > 0 ? (
                 filteredStudents.map((student) => (

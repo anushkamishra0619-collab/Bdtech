@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import LoadingPage from "../../Components/LoadingPage.jsx";
 import { apiRequest } from "../../utils/api.js";
 import "./StudentApiPages.css";
 
@@ -27,6 +28,8 @@ const InterviewDetails = () => {
 
   const interview = details?.interview;
 
+  if (loading) return <LoadingPage />;
+
   return (
     <main className="backend-page">
       <div className="backend-page-content">
@@ -38,9 +41,8 @@ const InterviewDetails = () => {
           <a className="backend-page-link" href="/student/dashboard">Dashboard</a>
         </header>
 
-        {loading ? <p>Loading interview details...</p> : null}
         {error ? <p className="backend-page-error" role="alert">{error}</p> : null}
-        {!loading && !error ? (
+        {!error ? (
           <section className="backend-page-card">
             {!details?.scheduled || !interview ? (
               <>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import LoadingPage from "../../Components/LoadingPage.jsx";
 import { apiRequest } from "../../utils/api.js";
 import "./StudentApiPages.css";
 
@@ -85,6 +86,8 @@ const SocietyApplication = () => {
 
   const isLocked = Boolean(application && application.stage !== "APPLIED");
 
+  if (loading) return <LoadingPage />;
+
   return (
     <main className="backend-page">
       <div className="backend-page-content">
@@ -96,54 +99,50 @@ const SocietyApplication = () => {
           <a className="backend-page-link" href="/student/dashboard">Dashboard</a>
         </header>
 
-        {loading ? (
-          <p>Loading application...</p>
-        ) : (
-          <section className="backend-page-card">
-            {application ? (
-              <p>Current stage: <strong>{application.stage.replaceAll("_", " ")}</strong></p>
-            ) : null}
-            {isLocked ? (
-              <p>This application can no longer be edited because it has moved past the applied stage.</p>
-            ) : (
-              <form className="backend-page-form" onSubmit={handleSubmit}>
-                <label>
-                  Society
-                  <input name="societyName" value={form.societyName} onChange={handleChange} required minLength={2} />
-                </label>
-                <label>
-                  Domain
-                  <input name="domain" value={form.domain} onChange={handleChange} required minLength={2} />
-                </label>
-                <label>
-                  Why do you want to join?
-                  <textarea name="whyJoin" value={form.whyJoin} onChange={handleChange} required minLength={20} maxLength={1000} />
-                </label>
-                <label>
-                  Relevant experience
-                  <textarea name="experience" value={form.experience} onChange={handleChange} maxLength={1000} />
-                </label>
-                <label>
-                  GitHub URL
-                  <input name="githubUrl" type="url" value={form.githubUrl} onChange={handleChange} />
-                </label>
-                <label>
-                  Portfolio URL
-                  <input name="portfolioUrl" type="url" value={form.portfolioUrl} onChange={handleChange} />
-                </label>
-                <label>
-                  Resume URL
-                  <input name="resumeUrl" type="url" value={form.resumeUrl} onChange={handleChange} />
-                </label>
-                <button className="backend-page-button" type="submit" disabled={saving}>
-                  {saving ? "Saving..." : application ? "Update application" : "Submit application"}
-                </button>
-              </form>
-            )}
-            {error ? <p className="backend-page-message backend-page-error" role="alert">{error}</p> : null}
-            {message ? <p className="backend-page-message" role="status">{message}</p> : null}
-          </section>
-        )}
+        <section className="backend-page-card">
+          {application ? (
+            <p>Current stage: <strong>{application.stage.replaceAll("_", " ")}</strong></p>
+          ) : null}
+          {isLocked ? (
+            <p>This application can no longer be edited because it has moved past the applied stage.</p>
+          ) : (
+            <form className="backend-page-form" onSubmit={handleSubmit}>
+              <label>
+                Society
+                <input name="societyName" value={form.societyName} onChange={handleChange} required minLength={2} />
+              </label>
+              <label>
+                Domain
+                <input name="domain" value={form.domain} onChange={handleChange} required minLength={2} />
+              </label>
+              <label>
+                Why do you want to join?
+                <textarea name="whyJoin" value={form.whyJoin} onChange={handleChange} required minLength={20} maxLength={1000} />
+              </label>
+              <label>
+                Relevant experience
+                <textarea name="experience" value={form.experience} onChange={handleChange} maxLength={1000} />
+              </label>
+              <label>
+                GitHub URL
+                <input name="githubUrl" type="url" value={form.githubUrl} onChange={handleChange} />
+              </label>
+              <label>
+                Portfolio URL
+                <input name="portfolioUrl" type="url" value={form.portfolioUrl} onChange={handleChange} />
+              </label>
+              <label>
+                Resume URL
+                <input name="resumeUrl" type="url" value={form.resumeUrl} onChange={handleChange} />
+              </label>
+              <button className="backend-page-button" type="submit" disabled={saving}>
+                {saving ? "Saving..." : application ? "Update application" : "Submit application"}
+              </button>
+            </form>
+          )}
+          {error ? <p className="backend-page-message backend-page-error" role="alert">{error}</p> : null}
+          {message ? <p className="backend-page-message" role="status">{message}</p> : null}
+        </section>
       </div>
     </main>
   );

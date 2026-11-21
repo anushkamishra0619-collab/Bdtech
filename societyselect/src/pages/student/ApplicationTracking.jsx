@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import LoadingPage from "../../Components/LoadingPage.jsx";
 import { apiRequest } from "../../utils/api.js";
 import "./StudentApiPages.css";
 
@@ -25,6 +26,8 @@ const ApplicationTracking = () => {
     };
   }, []);
 
+  if (loading) return <LoadingPage />;
+
   return (
     <main className="backend-page">
       <div className="backend-page-content">
@@ -36,9 +39,8 @@ const ApplicationTracking = () => {
           <a className="backend-page-link" href="/student/dashboard">Dashboard</a>
         </header>
 
-        {loading ? <p>Loading application status...</p> : null}
         {error ? <p className="backend-page-error" role="alert">{error}</p> : null}
-        {!loading && !error && status ? (
+        {!error && status ? (
           <section className="backend-page-card">
             {status.hasApplied ? (
               <>
