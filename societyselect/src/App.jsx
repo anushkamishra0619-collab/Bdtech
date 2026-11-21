@@ -22,6 +22,7 @@ import MentorAttendance from "./mentor/MentorAttendance";
 import StudentAttendance from "./pages/student/StudentAttendance.jsx";
 import LoadingPage from "./Components/LoadingPage.jsx";
 import StudentProjects from "./pages/student/StudentProjects";
+import ProbationPerformance from "./Components/ProbationPerformance.jsx";
 function App() {
   const location = useLocation();
 
@@ -100,6 +101,16 @@ function App() {
     if (path === "/mentor/attendance") {
       return "mentorAttendance";
     }
+    if (
+      path === "/mentor/probation-performance" ||
+      path === "/probation-performance" ||
+      path === "/probationperformance" ||
+      hash === "mentor/probation-performance" ||
+      hash === "probation-performance" ||
+      hash === "probationperformance"
+    ) {
+      return "probationPerformance";
+    }
     if (path === "/student/attendance") {
       return "studentAttendance";
     }
@@ -174,6 +185,7 @@ function App() {
   if (route === "error") return <ErrorPage />;
   if (route === "mentorAttendance") return <MentorAttendance />;
   if (route === "studentAttendance") return <StudentAttendance />;
+  if (route === "probationPerformance") return <ProbationPerformance />;
   if (route === "loading") return <LoadingPage />;
   if (route === "studentProjects") return <StudentProjects />;
   return <LandingPage />;

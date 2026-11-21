@@ -443,7 +443,6 @@ const Interviewpage = () => {
       <header className="im-head">
         <div>
           <h1 className="im-title">Interview Management</h1>
-          <p className="im-sub">Schedule interviews and score shortlisted candidates</p>
         </div>
         <button className="im-primary" onClick={() => openSchedule()}>
           <FiPlus /> Schedule Interview
