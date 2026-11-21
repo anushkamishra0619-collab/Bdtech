@@ -32,8 +32,10 @@ class AppErrorBoundary extends Component {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AppErrorBoundary>
-      <App />
-    </AppErrorBoundary>
+    <BrowserRouter>
+      <AppErrorBoundary>
+        <App />
+      </AppErrorBoundary>
+    </BrowserRouter>
   </StrictMode>,
 )
