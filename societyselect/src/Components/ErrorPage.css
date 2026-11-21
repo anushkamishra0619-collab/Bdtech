@@ -86,7 +86,20 @@
   color: transparent;
 }
 
-.error-title { margin: 8px 0 12px; font-size: 26px; }
+.error-title { margin: 8px 0 12px; min-height: 32px; font-size: 26px; }
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 4px;
+  vertical-align: -0.12em;
+  background: var(--accent-2);
+  animation: typingBlink 0.7s steps(1) infinite;
+}
+
+@keyframes typingBlink {
+  50% { opacity: 0; }
+}
 .error-message { margin: 0 auto 32px; max-width: 380px; color: var(--muted); line-height: 1.6; }
 
 .error-actions {

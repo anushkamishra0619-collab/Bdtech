@@ -16,6 +16,7 @@ import {
 } from "react-icons/fi";
 import MotivationBanner from "./ui/MotivationBanner.jsx";
 import MentorSidebar from "./MentorSidebar";
+import LoadingPage from "./LoadingPage.jsx";
 import { apiRequest } from "../utils/api.js";
 import "./Interviewpage.css";
 
@@ -429,6 +430,8 @@ const Interviewpage = () => {
   const workflowCandidate =
     candidates.find((candidate) => String(candidate.id) === callCandidateId) || selected;
 
+  if (loading) return <LoadingPage />;
+
   return (
     <div className="im-page">
       <div className="im-app-shell">
@@ -448,7 +451,6 @@ const Interviewpage = () => {
       </header>
 
       {apiError && <p className="im-camera-error" role="alert">{apiError}</p>}
-      {loading && <p aria-live="polite">Loading interview candidates...</p>}
       <MotivationBanner />
 
       {/* Stat cards */}

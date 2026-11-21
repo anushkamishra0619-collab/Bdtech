@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {Users,ClipboardCheck,FolderKanban,CalendarDays,ArrowUpRight,Clock,CheckCircle2,CircleAlert,BookOpen,ChevronRight,ChevronsRight,} from "lucide-react";
 import MentorSidebar from "../Components/MentorSidebar";
+import LoadingPage from "../Components/LoadingPage.jsx";
 import { apiRequest } from "../utils/api.js";
 import { navigateTo } from "../utils/navigation";
 import "./MentorDashboard.css";
@@ -40,14 +41,16 @@ function MentorDashboard() {
     };
   }, []);
 
-  if (error || !dashboardData) {
+  if (!dashboardData && !error) return <LoadingPage />;
+
+  if (error) {
     return (
       <div className="mentor-dashboard">
         <MentorSidebar />
         <main className="mentor-main">
-          <h1>{error ? "Unable to load mentor dashboard" : "Loading mentor dashboard..."}</h1>
-          {error ? <p role="alert">{error}</p> : null}
-          {error ? <a href="/login">Sign in</a> : null}
+          <h1>Unable to load mentor dashboard</h1>
+          <p role="alert">{error}</p>
+          <a href="/login">Sign in</a>
         </main>
       </div>
     );

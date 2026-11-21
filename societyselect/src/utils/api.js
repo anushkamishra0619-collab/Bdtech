@@ -1,86 +1,87 @@
-const API_BASE = (
-  import.meta.env.PROD
-    ? ""
-    : import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"
-).replace(/\/+$/, "");
+export const API_BASE = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? "" : "http://localhost:5000")
+).replace(/\/$/, "");
 
-let refreshRequest;
+const SIGN_IN_MESSAGE = "Your session has expired. Please sign in again.";
 
-const request = (path, options, accessToken) => {
-  const headers = new Headers(options.headers);
-  headers.set("Accept", "application/json");
-  if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
-  if (options.body !== undefined) headers.set("Content-Type", "application/json");
-
-  return fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers,
-    credentials: "include",
-  });
-};
-
-const readResponse = async (response) => {
-  if (response.status === 204) return null;
-
-  const contentType = response.headers.get("content-type") || "";
-  const payload = contentType.includes("application/json")
-    ? await response.json()
-    : await response.text();
-
-  if (!response.ok) {
-    const message =
-      payload?.errors?.[0]?.message ||
-      payload?.message ||
-      (typeof payload === "string" && payload.trim()) ||
-      `Request failed (${response.status})`;
-    throw new Error(message);
+export class ApiError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
   }
+}
 
-  return payload;
+const extractError = (data, fallback) => {
+  if (data?.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+    return data.errors[0].message;
+  }
+  return data?.message || fallback;
 };
 
-const refreshAccessToken = async () => {
-  if (!refreshRequest) {
-    refreshRequest = (async () => {
-      try {
-        const response = await request(
-          "/api/auth/refresh",
-          { method: "POST" },
-          null
-        );
-        const data = await readResponse(response);
-        if (!data?.accessToken) {
-          throw new Error("Session refresh did not return an access token.");
-        }
+// Access tokens last 15 minutes, so refresh them with the refresh cookie.
+// One shared promise stops parallel calls from reusing the same refresh token.
+let refreshPromise = null;
+
+const refreshAccessToken = () => {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${API_BASE}/api/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.accessToken) return false;
         localStorage.setItem("accessToken", data.accessToken);
-        return data.accessToken;
-      } catch (error) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("user");
-        throw error;
-      } finally {
-        refreshRequest = null;
-      }
-    })();
+        return true;
+      })
+      .catch(() => false)
+      .finally(() => {
+        refreshPromise = null;
+      });
   }
-  return refreshRequest;
+  return refreshPromise;
 };
 
-export const apiRequest = async (path, options = {}) => {
-  const { auth = true, body, ...fetchOptions } = options;
-  const method = fetchOptions.method || (body === undefined ? "GET" : "POST");
-  const requestOptions = {
-    ...fetchOptions,
-    method,
-    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-  };
-  let accessToken = auth ? localStorage.getItem("accessToken") : null;
-  let response = await request(path, requestOptions, accessToken);
+export const apiRequest = async (path, options = {}, canRetry = true) => {
+  let token = localStorage.getItem("accessToken");
+  if (!token && canRetry && (await refreshAccessToken())) {
+    token = localStorage.getItem("accessToken");
+  }
+  if (!token) throw new ApiError(SIGN_IN_MESSAGE, 401);
 
-  if (response.status === 401 && accessToken && path !== "/api/auth/refresh") {
-    accessToken = await refreshAccessToken();
-    response = await request(path, requestOptions, accessToken);
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch {
+    throw new ApiError(
+      "Could not reach the server. Check your connection and try again.",
+      0
+    );
   }
 
-  return readResponse(response);
+  if (res.status === 401 && canRetry && (await refreshAccessToken())) {
+    return apiRequest(path, options, false);
+  }
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401) throw new ApiError(SIGN_IN_MESSAGE, 401);
+    if (res.status === 403) {
+      throw new ApiError(
+        "You do not have permission to do this. Sign in with a mentor account.",
+        403
+      );
+    }
+    throw new ApiError(extractError(data, "Request failed"), res.status);
+  }
+  return data;
 };

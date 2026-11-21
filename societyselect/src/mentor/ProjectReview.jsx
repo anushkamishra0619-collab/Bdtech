@@ -7,6 +7,7 @@ import {
   Users,
 } from "lucide-react";
 import MentorSidebar from "../Components/MentorSidebar";
+import LoadingPage from "../Components/LoadingPage.jsx";
 import { apiRequest } from "../utils/api.js";
 import { navigateTo } from "../utils/navigation";
 import "../pages/student/StudentApiPages.css";
@@ -73,6 +74,8 @@ function ProjectReview() {
     }
   };
 
+  if (loading) return <LoadingPage />;
+
   return (
     <div className="project-review-layout">
       <MentorSidebar />
@@ -101,9 +104,8 @@ function ProjectReview() {
 
         <section className="project-list-section">
           <div className="project-list-heading"><h2>Tasks in your domain</h2></div>
-          {loading ? <p>Loading tasks...</p> : null}
-          {!loading && !tasks.length ? <p>No tasks have been created yet.</p> : null}
-          {!loading && tasks.length ? (
+          {!tasks.length ? <p>No tasks have been created yet.</p> : null}
+          {tasks.length ? (
             <div className="project-table-wrapper">
               <table className="project-table">
                 <thead>
