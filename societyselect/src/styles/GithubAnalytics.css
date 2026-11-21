@@ -160,28 +160,6 @@
   font-weight: 400;
 }
 
-.gh-page .github-analytics-demo-badge {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border: 1px solid #f1e4c9;
-  border-radius: 20px;
-  background: #fbf5e9;
-  color: var(--gh-amber);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-.gh-page .github-analytics-demo-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #c18b32;
-}
-
 .gh-page .github-analytics-description {
   max-width: 760px;
   margin: 12px 0 17px;
@@ -1130,19 +1108,6 @@
   justify-content: space-between;
   gap: 15px;
   margin-bottom: 10px;
-}
-
-.gh-page .github-telemetry-demo-badge {
-  flex: 0 0 auto;
-  margin-top: 2px;
-  padding: 5px 8px;
-  border: 1px solid #e1e9ec;
-  border-radius: 15px;
-  background: #f5f8f9;
-  color: var(--gh-muted);
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
 }
 
 .gh-page .github-telemetry-list {

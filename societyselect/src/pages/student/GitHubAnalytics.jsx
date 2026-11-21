@@ -502,10 +502,6 @@ const GitHubAnalytics = () => {
             <h1 id="github-analytics-title">
               GitHub <em>Analytics</em>
             </h1>
-            <span className="github-analytics-demo-badge">
-              <span className="github-analytics-demo-dot" aria-hidden="true" />
-              Demo mode · not connected
-            </span>
           </div>
           <p className="github-analytics-description">
             Track your coding journey, contributions and velocity. All profile, activity, language,
@@ -998,7 +994,6 @@ const GitHubAnalytics = () => {
               <h2 id="github-telemetry-title">Recent telemetry feed</h2>
               <p>Recent activity across your GitHub repositories.</p>
             </div>
-            <span className="github-telemetry-demo-badge">DEMO DATA</span>
           </div>
 
           <ol className="github-telemetry-list">
