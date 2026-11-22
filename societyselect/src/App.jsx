@@ -23,6 +23,7 @@ import StudentAttendance from "./pages/student/StudentAttendance.jsx";
 import LoadingPage from "./Components/LoadingPage.jsx";
 import StudentProjects from "./pages/student/StudentProjects";
 import ProbationPerformance from "./Components/ProbationPerformance.jsx";
+import FinalSelection from "./Components/FinalSelection.jsx";
 function App() {
   const location = useLocation();
 
@@ -102,6 +103,14 @@ function App() {
       return "mentorAttendance";
     }
     if (
+      path === "/mentor/interviews" ||
+      path === "/interviewpage" ||
+      hash === "mentor/interviews" ||
+      hash === "interviewpage"
+    ) {
+      return "interviewpage";
+    }
+    if (
       path === "/mentor/probation-performance" ||
       path === "/probation-performance" ||
       path === "/probationperformance" ||
@@ -110,6 +119,16 @@ function App() {
       hash === "probationperformance"
     ) {
       return "probationPerformance";
+    }
+    if (
+      path === "/mentor/final-selection" ||
+      path === "/final-selection" ||
+      path === "/finalselection" ||
+      hash === "mentor/final-selection" ||
+      hash === "final-selection" ||
+      hash === "finalselection"
+    ) {
+      return "finalSelection";
     }
     if (path === "/student/attendance") {
       return "studentAttendance";
@@ -186,6 +205,7 @@ function App() {
   if (route === "mentorAttendance") return <MentorAttendance />;
   if (route === "studentAttendance") return <StudentAttendance />;
   if (route === "probationPerformance") return <ProbationPerformance />;
+  if (route === "finalSelection") return <FinalSelection />;
   if (route === "loading") return <LoadingPage />;
   if (route === "studentProjects") return <StudentProjects />;
   return <LandingPage />;

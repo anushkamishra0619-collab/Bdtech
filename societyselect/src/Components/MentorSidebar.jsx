@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {LayoutDashboard,Users,ClipboardCheck,FolderKanban,CalendarDays,MessageSquare,Settings,LogOut,} from "lucide-react";
+import {LayoutDashboard,Users,ClipboardCheck,CalendarDays,MessageSquare,TrendingUp,Award,Settings,LogOut,} from "lucide-react";
 import { navigateTo } from "../utils/navigation";
 import "./MentorSidebar.css";
 
@@ -29,6 +29,16 @@ const menuItems = [
     label: "Interviews",
     icon: MessageSquare,
     href: "/mentor/interviews",
+  },
+  {
+    label: "Probation & Performance",
+    icon: TrendingUp,
+    href: "/mentor/probation-performance",
+  },
+  {
+    label: "Final Selection",
+    icon: Award,
+    href: "/mentor/final-selection",
   },
 ];
 
@@ -60,6 +70,28 @@ function MentorSidebar() {
     if (
       href === "/mentor/interviews" &&
       (path === "/interviewpage" || hash === "interviewpage")
+    ) {
+      return true;
+    }
+    if (
+      href === "/mentor/probation-performance" &&
+      (
+        path === "/probation-performance" ||
+        path === "/probationperformance" ||
+        hash === "probation-performance" ||
+        hash === "probationperformance"
+      )
+    ) {
+      return true;
+    }
+    if (
+      href === "/mentor/final-selection" &&
+      (
+        path === "/final-selection" ||
+        path === "/finalselection" ||
+        hash === "final-selection" ||
+        hash === "finalselection"
+      )
     ) {
       return true;
     }
