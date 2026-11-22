@@ -310,6 +310,14 @@ export default function ProbationPerformance() {
             <span className="pp-session-badge">
               ● Recruitment 2026
             </span>
+            <button
+              type="button"
+              className="pp-ai-button"
+              onClick={() => setActiveTab("recommendations")}
+            >
+              <span aria-hidden="true">✦</span>
+              AI Recommendations
+            </button>
           </div>
         </div>
         <ProbationBanner />
@@ -336,6 +344,7 @@ export default function ProbationPerformance() {
         >
           ▥ Analytics
         </button>
+
         </div>
 
       {/* OVERVIEW */}
@@ -591,6 +600,56 @@ export default function ProbationPerformance() {
                 <p>Try changing your search or filter.</p>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* AI RECOMMENDATIONS */}
+      {activeTab === "recommendations" && (
+        <div className="pp-content">
+          <div className="pp-section-heading">
+            <div>
+              <h2>AI Recommendations</h2>
+              <p>Review suggested mentor actions based on probation performance.</p>
+            </div>
+
+            <span className="pp-session-badge">
+              Recruitment 2026
+            </span>
+          </div>
+
+          <div className="pp-panel pp-ai-panel pp-ai-dedicated-panel">
+            <div className="pp-ai-heading">
+              <div className="pp-ai-icon">✦</div>
+              <div>
+                <h3>AI Performance Insights</h3>
+                <p>{recommendations.length} recommendations generated from current records</p>
+              </div>
+            </div>
+
+            <div className="pp-ai-list">
+              {recommendations.map((item) => (
+                <div
+                  className={`pp-ai-item ${item.type}`}
+                  key={item.id}
+                >
+                  <div>
+                    <strong>{item.student}</strong>
+                    <span>{item.title}</span>
+                    <p>{item.message}</p>
+                  </div>
+                </div>
+              ))}
+
+              {recommendations.length === 0 && (
+                <p>No insights available yet.</p>
+              )}
+            </div>
+
+            <small className="pp-demo-note">
+              These are rule-based sample insights, not a connected AI model.
+              Final evaluation should always be done by mentors.
+            </small>
           </div>
         </div>
       )}

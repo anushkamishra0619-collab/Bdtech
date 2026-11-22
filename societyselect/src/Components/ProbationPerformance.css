@@ -71,6 +71,38 @@
   white-space: nowrap;
 }
 
+.pp-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pp-ai-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #477f91;
+  background: #477f91;
+  color: #fff;
+  border-radius: 9px;
+  padding: 10px 15px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.pp-ai-button span {
+  font-size: 15px;
+}
+
+.pp-ai-button:hover {
+  background: #365e6b;
+  border-color: #365e6b;
+  transform: translateY(-1px);
+}
+
 /* ================================
    TABS
 ================================ */
@@ -936,6 +968,16 @@
 
   .pp-header {
     flex-direction: column;
+  }
+
+  .pp-header-right {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .pp-ai-button {
+    flex: 1;
+    justify-content: center;
   }
 
   .pp-header h1 {
