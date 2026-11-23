@@ -152,6 +152,12 @@
   white-space: nowrap;
 }
 
+.notifications-mark-all:disabled {
+  border-color: var(--notification-line);
+  color: #9aa7ad;
+  cursor: default;
+}
+
 .notifications-summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -284,6 +290,11 @@
   text-align: left;
 }
 
+.notifications-status-filter button[aria-pressed="true"] {
+  color: var(--notification-ink);
+  font-weight: 700;
+}
+
 .filter-dot {
   width: 8px;
   height: 8px;
@@ -378,6 +389,39 @@
   gap: 10px;
 }
 
+.notification-action-message {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--notification-line);
+  border-radius: 10px;
+  background: var(--notification-mist);
+  color: var(--notification-blue);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.notifications-empty {
+  min-height: 180px;
+  padding: 42px 24px;
+  border: 1px solid var(--notification-line);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 88%);
+  text-align: center;
+}
+
+.notifications-empty h2 {
+  color: var(--notification-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.notifications-empty p {
+  margin-top: 6px;
+  color: var(--notification-muted);
+  font-size: 11px;
+}
+
 .notification-card {
   position: relative;
   display: grid;
@@ -429,7 +473,7 @@
 }
 
 .notification-category,
-.notification-unread-label {
+.notification-read-toggle {
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -444,9 +488,15 @@
   color: #597e67;
 }
 
-.notification-unread-label {
+.notification-read-toggle {
   padding: 3px 7px;
+  border: 1px solid transparent;
   border-radius: 10px;
+  background: transparent;
+  color: #9aa7ad;
+}
+
+.notification-read-toggle.is-unread {
   background: var(--notification-mist);
   color: var(--notification-blue);
 }

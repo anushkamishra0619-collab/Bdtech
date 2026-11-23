@@ -1,6 +1,6 @@
+import { useMemo, useState } from "react";
 import {
   notifications,
-  getNotificationCounts,
 } from "../../data/NotificationData";
 import "../../styles/Notification.css";
 
@@ -63,7 +63,77 @@ const formatTimestamp = (timestamp) => {
 };
 
 const Notifications = () => {
-  const counts = getNotificationCounts();
+  const [notificationItems, setNotificationItems] = useState(() =>
+    notifications.map((notification) => ({ ...notification })),
+  );
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("newest");
+  const [actionMessage, setActionMessage] = useState("");
+
+  const counts = useMemo(() => ({
+    total: notificationItems.length,
+    unread: notificationItems.filter((notification) => !notification.isRead).length,
+    tasks: notificationItems.filter((notification) => notification.category === "Task").length,
+    attendance: notificationItems.filter((notification) => notification.category === "Attendance").length,
+  }), [notificationItems]);
+
+  const visibleNotifications = useMemo(() => {
+    const normalizedSearch = searchQuery.trim().toLowerCase();
+    const filtered = notificationItems.filter((notification) => {
+      const matchesCategory =
+        activeCategory === "All" ||
+        (activeCategory === "Unread" && !notification.isRead) ||
+        notification.category === activeCategory;
+      const matchesStatus =
+        statusFilter === "All" ||
+        (statusFilter === "Unread" && !notification.isRead) ||
+        (statusFilter === "Read" && notification.isRead);
+      const matchesSearch =
+        !normalizedSearch ||
+        notification.title.toLowerCase().includes(normalizedSearch) ||
+        notification.description.toLowerCase().includes(normalizedSearch);
+
+      return matchesCategory && matchesStatus && matchesSearch;
+    });
+
+    return [...filtered].sort((a, b) => {
+      const dateDifference = new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      return sortOrder === "oldest" ? -dateDifference : dateDifference;
+    });
+  }, [activeCategory, notificationItems, searchQuery, sortOrder, statusFilter]);
+
+  const markAllAsRead = () => {
+    setNotificationItems((items) =>
+      items.map((notification) => ({ ...notification, isRead: true })),
+    );
+    setActionMessage("All notifications marked as read.");
+  };
+
+  const toggleReadStatus = (notificationId) => {
+    setNotificationItems((items) =>
+      items.map((notification) =>
+        notification.id === notificationId
+          ? { ...notification, isRead: !notification.isRead }
+          : notification,
+      ),
+    );
+  };
+
+  const handleNotificationAction = (notification) => {
+    setNotificationItems((items) =>
+      items.map((item) =>
+        item.id === notification.id ? { ...item, isRead: true } : item,
+      ),
+    );
+    setActionMessage(
+      notification.category === "Task"
+        ? `Opening task: ${notification.title}`
+        : `Opening attendance: ${notification.title}`,
+    );
+  };
+
   const summaryCards = [
     { label: "Total", value: counts.total, detail: "Notifications" },
     { label: "Unread", value: counts.unread, detail: "Need attention" },
@@ -114,7 +184,12 @@ const Notifications = () => {
               Stay informed about tasks, attendance and important SocietySelect updates.
             </p>
           </div>
-          <button className="notifications-mark-all" type="button">
+          <button
+            className="notifications-mark-all"
+            type="button"
+            onClick={markAllAsRead}
+            disabled={counts.unread === 0}
+          >
             Mark All as Read
           </button>
         </section>
@@ -139,19 +214,35 @@ const Notifications = () => {
             </div>
 
             <nav className="notifications-categories" aria-label="Notification categories">
-              <button className="active" type="button">
+              <button
+                className={activeCategory === "All" ? "active" : ""}
+                type="button"
+                onClick={() => setActiveCategory("All")}
+              >
                 <span>All Notifications</span>
                 <strong>{counts.total}</strong>
               </button>
-              <button type="button">
+              <button
+                className={activeCategory === "Unread" ? "active" : ""}
+                type="button"
+                onClick={() => setActiveCategory("Unread")}
+              >
                 <span>Unread</span>
                 <strong>{counts.unread}</strong>
               </button>
-              <button type="button">
+              <button
+                className={activeCategory === "Task" ? "active" : ""}
+                type="button"
+                onClick={() => setActiveCategory("Task")}
+              >
                 <span>Tasks</span>
                 <strong>{counts.tasks}</strong>
               </button>
-              <button type="button">
+              <button
+                className={activeCategory === "Attendance" ? "active" : ""}
+                type="button"
+                onClick={() => setActiveCategory("Attendance")}
+              >
                 <span>Attendance</span>
                 <strong>{counts.attendance}</strong>
               </button>
@@ -159,15 +250,27 @@ const Notifications = () => {
 
             <div className="notifications-status-filter">
               <p>Filter by</p>
-              <button type="button" aria-pressed="false">
+              <button
+                type="button"
+                aria-pressed={statusFilter === "All"}
+                onClick={() => setStatusFilter("All")}
+              >
                 <span className="filter-dot" />
                 All statuses
               </button>
-              <button type="button" aria-pressed="false">
+              <button
+                type="button"
+                aria-pressed={statusFilter === "Unread"}
+                onClick={() => setStatusFilter("Unread")}
+              >
                 <span className="filter-dot unread" />
                 Unread only
               </button>
-              <button type="button" aria-pressed="false">
+              <button
+                type="button"
+                aria-pressed={statusFilter === "Read"}
+                onClick={() => setStatusFilter("Read")}
+              >
                 <span className="filter-dot read" />
                 Read only
               </button>
@@ -182,21 +285,34 @@ const Notifications = () => {
                   <path d="m16 16 4.5 4.5" />
                 </svg>
                 <span className="visually-hidden">Search notifications</span>
-                <input type="search" placeholder="Search notifications" />
+                <input
+                  type="search"
+                  placeholder="Search notifications"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                />
               </label>
 
               <label className="notifications-sort">
                 <span>Sort</span>
-                <select defaultValue="newest" aria-label="Sort notifications">
+                <select
+                  value={sortOrder}
+                  aria-label="Sort notifications"
+                  onChange={(event) => setSortOrder(event.target.value)}
+                >
                   <option value="newest">Newest first</option>
                   <option value="oldest">Oldest first</option>
-                  <option value="unread">Unread first</option>
                 </select>
               </label>
             </div>
 
             <div className="notifications-list">
-              {notifications.slice(0, 6).map((notification) => (
+              {actionMessage && (
+                <p className="notification-action-message" role="status" aria-live="polite">
+                  {actionMessage}
+                </p>
+              )}
+              {visibleNotifications.map((notification) => (
                 <article
                   className={`notification-card${notification.isRead ? "" : " is-unread"}`}
                   key={notification.id}
@@ -210,9 +326,18 @@ const Notifications = () => {
                       <span className={`notification-category ${notification.category.toLowerCase()}`}>
                         {notification.category}
                       </span>
-                      {!notification.isRead && (
-                        <span className="notification-unread-label">Unread</span>
-                      )}
+                      <button
+                        className={`notification-read-toggle${notification.isRead ? "" : " is-unread"}`}
+                        type="button"
+                        onClick={() => toggleReadStatus(notification.id)}
+                        aria-label={
+                          notification.isRead
+                            ? `Mark "${notification.title}" as unread`
+                            : `Mark "${notification.title}" as read`
+                        }
+                      >
+                        {notification.isRead ? "Mark unread" : "Unread"}
+                      </button>
                       <time dateTime={notification.timestamp}>
                         {formatTimestamp(notification.timestamp)}
                       </time>
@@ -235,7 +360,11 @@ const Notifications = () => {
                       </div>
                     )}
 
-                    <button className="notification-action" type="button">
+                    <button
+                      className="notification-action"
+                      type="button"
+                      onClick={() => handleNotificationAction(notification)}
+                    >
                       {notification.action.label}
                       <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M5 12h14M14 7l5 5-5 5" />
@@ -244,6 +373,12 @@ const Notifications = () => {
                   </div>
                 </article>
               ))}
+              {visibleNotifications.length === 0 && (
+                <div className="notifications-empty">
+                  <h2>No notifications found</h2>
+                  <p>Try another category, status or search term.</p>
+                </div>
+              )}
             </div>
           </div>
         </section>
