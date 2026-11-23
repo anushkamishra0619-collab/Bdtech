@@ -217,6 +217,7 @@ const Notifications = () => {
               <button
                 className={activeCategory === "All" ? "active" : ""}
                 type="button"
+                aria-pressed={activeCategory === "All"}
                 onClick={() => setActiveCategory("All")}
               >
                 <span>All Notifications</span>
@@ -225,6 +226,7 @@ const Notifications = () => {
               <button
                 className={activeCategory === "Unread" ? "active" : ""}
                 type="button"
+                aria-pressed={activeCategory === "Unread"}
                 onClick={() => setActiveCategory("Unread")}
               >
                 <span>Unread</span>
@@ -233,6 +235,7 @@ const Notifications = () => {
               <button
                 className={activeCategory === "Task" ? "active" : ""}
                 type="button"
+                aria-pressed={activeCategory === "Task"}
                 onClick={() => setActiveCategory("Task")}
               >
                 <span>Tasks</span>
@@ -241,6 +244,7 @@ const Notifications = () => {
               <button
                 className={activeCategory === "Attendance" ? "active" : ""}
                 type="button"
+                aria-pressed={activeCategory === "Attendance"}
                 onClick={() => setActiveCategory("Attendance")}
               >
                 <span>Attendance</span>
