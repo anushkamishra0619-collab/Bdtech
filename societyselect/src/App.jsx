@@ -26,6 +26,7 @@ import ExaminationManagement from "./mentor/ExaminationManagement";
 import AIRecommendation from "./mentor/AIRecommendations";
 import ProbationPerformance from "./Components/ProbationPerformance.jsx";
 import FinalSelection from "./Components/FinalSelection.jsx";
+import AIRecommendationStudent from "./pages/student/AIRecommendationsStudent.jsx";
 function App() {
   const location = useLocation();
 
@@ -152,6 +153,9 @@ function App() {
     if (path === "/mentor/ai-recommendations" || hash === "mentor/ai-recommendations") {
       return "aiRecommendations";
     }
+    if (path === "/student/ai-recommendations" || hash === "student/ai-recommendations") {
+      return "aiRecommendationsStudent";
+    }
     if (
       path === "/register" ||
       hash === "register" ||
@@ -200,6 +204,7 @@ function App() {
   if (route === "projectReview") return <ProjectReview />;
   if (route === "projectDetails") return <ProjectDetails />;
   if (route === "createproject") return <CreateProject />;
+  if (route === "aiRecommendationsStudent") return <AIRecommendationStudent />;
   if (route === "serverError") {
     return (
       <ErrorPage
