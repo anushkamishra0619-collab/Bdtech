@@ -4,6 +4,7 @@ import {
   ChartNoAxesCombined,
   ClipboardList,
   FileText,
+  History,
   Lightbulb,
   MessageSquare,
   ShieldCheck,
@@ -258,18 +259,21 @@ const ProbationDashboard = () => {
             className="probation-timeline"
             aria-label="Probation timeline"
           >
-            <div className="probation-timeline-track" aria-hidden="true">
-              <span
-                className="probation-timeline-progress"
-                style={{ width: `${currentTimelinePosition}%` }}
-              />
+            <div
+              className="probation-timeline-track"
+              aria-hidden="true"
+              style={{ "--timeline-progress": `${currentTimelinePosition}%` }}
+            >
+              <span className="probation-timeline-progress" />
             </div>
             <ol className="probation-timeline-milestones">
               {timelineMilestones.map((milestone) => (
                 <li
                   className={`probation-timeline-milestone is-${milestone.alignment}`}
                   key={milestone.id}
-                  style={{ left: `${milestone.position}%` }}
+                  style={{
+                    "--milestone-position": `${milestone.position}%`,
+                  }}
                 >
                   <span className="probation-timeline-marker" aria-hidden="true" />
                   <div className="probation-timeline-copy">
@@ -430,6 +434,7 @@ const ProbationDashboard = () => {
         aria-labelledby="probation-history-title"
       >
         <div className="probation-history-heading">
+          <History size={17} strokeWidth={1.8} aria-hidden="true" />
           <div>
             <h2 id="probation-history-title">Probation history</h2>
             <p>Previous probation periods and their final outcomes.</p>
