@@ -106,28 +106,30 @@
   min-height: 388px;
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
   overflow: hidden;
-  border-radius: 8px;
-  background: #263746;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 30px 999px 999px 30px;
+  background: #5b8da4;
   color: #fff;
+  box-shadow: 0 16px 38px rgb(57 83 93 / 12%);
 }
 
 .probation-status-panel {
   min-width: 0;
   padding: 38px 44px 40px;
-  border-right: 1px solid rgb(220 231 236 / 12%);
+  border-right: 1px solid rgb(255 255 255 / 20%);
 }
 
 .probation-status-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #a9bfca;
+  color: rgb(255 255 255 / 82%);
   font-size: 12px;
   line-height: 1.4;
 }
 
 .probation-status-label svg {
-  color: #b7cbd4;
+  color: #e5eff3;
 }
 
 .probation-status-value {
@@ -142,8 +144,8 @@
   height: 12px;
   flex: 0 0 12px;
   border-radius: 50%;
-  background: #6d9fb1;
-  box-shadow: 0 0 0 7px rgb(109 159 177 / 14%);
+  background: #e5eff3;
+  box-shadow: 0 0 0 7px rgb(255 255 255 / 15%);
 }
 
 .probation-status-value h2 {
@@ -158,7 +160,7 @@
 
 .probation-status-description {
   margin: 9px 0 0;
-  color: #afc1cb;
+  color: rgb(255 255 255 / 88%);
   font-size: 13px;
   line-height: 1.55;
 }
@@ -166,7 +168,7 @@
 .probation-status-divider {
   height: 1px;
   margin: 27px 0 20px;
-  background: rgb(220 231 236 / 13%);
+  background: rgb(255 255 255 / 22%);
 }
 
 .probation-status-details {
@@ -182,7 +184,7 @@
 
 .probation-status-detail dt {
   margin: 0 0 5px;
-  color: #a9bfca;
+  color: rgb(255 255 255 / 74%);
   font-size: 11px;
   line-height: 1.45;
 }
