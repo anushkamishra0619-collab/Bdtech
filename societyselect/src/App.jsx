@@ -31,6 +31,7 @@ import SocietyApplication from "./pages/student/SocietyApplication";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentProfile from "./pages/student/StudentProfile";
 import StudentSettings from "./pages/student/StudentSettings";
+import StudentLayout from "./layouts/StudentLayout";
 import Welcome from "./Components/welcome.jsx";
 
 function LegacyRoutes() {
@@ -98,25 +99,27 @@ function App() {
         <Route path="/mentor/students" element={<AssignedStudents />} />
         <Route path="/mentor/societies" element={<MentorSocietyManagement />} />
         <Route path="/createproject" element={<LegacyRoutes />} />
-        <Route path="/student" element={<StudentDashboard />} />
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
-        <Route path="/student/profile" element={<StudentProfile />} />
-        <Route path="/student/application" element={<SocietyApplication />} />
-        <Route path="/student/application-tracking" element={<ApplicationTracking />} />
-        <Route path="/student/online-examination" element={<OnlineExamination />} />
-        <Route path="/student/examination-results" element={<ExaminationResults />} />
-        <Route path="/student/interview" element={<InterviewDetails />} />
-        <Route path="/student/probation" element={<ProbationDashboard />} />
-        <Route path="/student/tasks" element={<MyTasks />} />
-        <Route path="/student/project-submission" element={<ProjectSubmission />} />
-        <Route path="/student/github-analytics" element={<GitHubAnalytics />} />
-        <Route path="/student/performance" element={<MyPerformance />} />
-        <Route path="/student/ai-recommendations" element={<AIRecommendations />} />
-        <Route path="/student/notifications" element={<Notifications />} />
-        <Route path="/student/settings" element={<StudentSettings />} />
-        <Route path="/student/attendance" element={<MyAttendance />} />
-        <Route path="/student/attendance-calendar" element={<AttendanceCalendar />} />
-        <Route path="/student/leave-request" element={<LeaveRequest />} />
+        <Route path="/student" element={<StudentLayout />}>
+          <Route index element={<StudentDashboard />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="profile" element={<StudentProfile />} />
+          <Route path="application" element={<SocietyApplication />} />
+          <Route path="application-tracking" element={<ApplicationTracking />} />
+          <Route path="online-examination" element={<OnlineExamination />} />
+          <Route path="examination-results" element={<ExaminationResults />} />
+          <Route path="interview" element={<InterviewDetails />} />
+          <Route path="probation" element={<ProbationDashboard />} />
+          <Route path="tasks" element={<MyTasks />} />
+          <Route path="project-submission" element={<ProjectSubmission />} />
+          <Route path="github-analytics" element={<GitHubAnalytics />} />
+          <Route path="performance" element={<MyPerformance />} />
+          <Route path="ai-recommendations" element={<AIRecommendations />} />
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="settings" element={<StudentSettings />} />
+          <Route path="attendance" element={<MyAttendance />} />
+          <Route path="attendance-calendar" element={<AttendanceCalendar />} />
+          <Route path="leave-request" element={<LeaveRequest />} />
+        </Route>
         <Route path="*" element={<LegacyRoutes />} />
       </Routes>
     </BrowserRouter>

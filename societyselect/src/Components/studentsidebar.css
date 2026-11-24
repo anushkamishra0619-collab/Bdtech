@@ -6,8 +6,15 @@
   --sidebar-line: #dce7ec;
   --sidebar-mist: #edf4f6;
   --sidebar-muted: #6f7478;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
   width: 260px;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   background: #fff;
   border-right: 1px solid var(--sidebar-line);
   color: var(--sidebar-ink);
@@ -17,6 +24,18 @@
 
 .student-sidebar.is-collapsed {
   width: 76px;
+}
+
+@media (max-width: 760px) {
+  .student-sidebar {
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: auto;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
 }
 
 .student-sidebar-header {
