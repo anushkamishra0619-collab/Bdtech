@@ -311,6 +311,231 @@
   line-height: 1;
 }
 
+.probation-review-section {
+  width: min(100%, 1280px);
+  margin: 18px auto 0;
+  overflow: hidden;
+  border: 1px solid #dce7ec;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(38 55 70 / 4%);
+}
+
+.probation-review-timeline {
+  padding: 30px 42px 26px;
+}
+
+.probation-review-section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.probation-review-section-heading > svg {
+  flex: 0 0 auto;
+  margin-top: 5px;
+  color: #4d7c96;
+}
+
+.probation-review-section-heading h2 {
+  margin: 0;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 27px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.probation-review-section-heading p {
+  margin: 4px 0 0;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.probation-timeline {
+  position: relative;
+  min-height: 116px;
+  margin: 37px 14px 0;
+}
+
+.probation-timeline-track {
+  position: absolute;
+  top: 7px;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: #dce7ec;
+}
+
+.probation-timeline-progress {
+  display: block;
+  height: 100%;
+  background: #6d9fb1;
+}
+
+.probation-timeline-milestones {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.probation-timeline-milestone {
+  position: absolute;
+  top: 7px;
+  width: 0;
+}
+
+.probation-timeline-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #6d9fb1;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.probation-timeline-milestone.is-start .probation-timeline-marker {
+  background: #4d7c96;
+}
+
+.probation-timeline-milestone.is-current .probation-timeline-marker {
+  width: 20px;
+  height: 20px;
+  border: 4px solid #dcebf0;
+  background: #263746;
+  box-shadow: 0 0 0 1px #263746;
+}
+
+.probation-timeline-milestone.is-review .probation-timeline-marker {
+  width: 16px;
+  height: 16px;
+  border-color: #4d7c96;
+}
+
+.probation-timeline-milestone.is-end .probation-timeline-marker {
+  border-color: #9ab9c5;
+}
+
+.probation-timeline-copy {
+  position: absolute;
+  top: 20px;
+  display: flex;
+  width: min(150px, 30vw);
+  flex-direction: column;
+  gap: 3px;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.probation-timeline-copy time {
+  color: #263746;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.probation-timeline-copy > span {
+  color: #6f7478;
+}
+
+.probation-timeline-milestone.is-start .probation-timeline-copy {
+  left: 0;
+  text-align: left;
+}
+
+.probation-timeline-milestone.is-current .probation-timeline-copy,
+.probation-timeline-milestone.is-end .probation-timeline-copy {
+  right: 0;
+  text-align: right;
+}
+
+.probation-timeline-milestone.is-review .probation-timeline-copy {
+  left: 0;
+  text-align: left;
+}
+
+.probation-review-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.9fr);
+  gap: 26px;
+  margin: 0;
+  padding: 22px 42px 30px;
+  border-top: 1px solid #dce7ec;
+}
+
+.probation-review-date-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 24px;
+  border-right: 1px solid #dce7ec;
+}
+
+.probation-review-outcome {
+  padding-right: 24px;
+  border-right: 1px solid #dce7ec;
+}
+
+.probation-review-details dt {
+  margin: 0 0 6px;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.probation-review-details dd {
+  margin: 0;
+  color: #39535d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.probation-review-details time {
+  color: #263746;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.probation-review-status,
+.probation-review-outcome-badge {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 11px;
+  border-radius: 999px;
+  background: #e2eef2;
+  color: #4d7c96;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.probation-review-status::before,
+.probation-review-outcome-badge::before {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+.probation-review-outcome-badge {
+  background: #f6edda;
+  color: #a87322;
+}
+
+.probation-review-remarks dd {
+  max-width: 560px;
+}
+
 @media (max-width: 1050px) {
   .probation-page-heading {
     align-items: flex-start;
@@ -342,6 +567,18 @@
   .probation-status-details {
     gap: 12px;
   }
+
+  .probation-review-details {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.5fr);
+    gap: 20px;
+    padding-right: 30px;
+    padding-left: 30px;
+  }
+
+  .probation-review-timeline {
+    padding-right: 30px;
+    padding-left: 30px;
+  }
 }
 
 @media (max-width: 760px) {
@@ -362,6 +599,34 @@
   .probation-progress-panel {
     min-height: 300px;
     padding: 28px 26px 30px;
+  }
+
+  .probation-review-timeline {
+    padding: 26px 20px 24px;
+  }
+
+  .probation-timeline {
+    margin: 31px 8px 0;
+  }
+
+  .probation-review-details {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 22px 20px 26px;
+  }
+
+  .probation-review-date-group {
+    padding-right: 0;
+    padding-bottom: 16px;
+    border-right: 0;
+    border-bottom: 1px solid #dce7ec;
+  }
+
+  .probation-review-outcome {
+    padding-right: 0;
+    padding-bottom: 16px;
+    border-right: 0;
+    border-bottom: 1px solid #dce7ec;
   }
 }
 
@@ -408,6 +673,15 @@
   .probation-progress-metric:nth-child(3) {
     padding-left: 0;
     border-left: 0;
+  }
+
+  .probation-review-section-heading h2 {
+    font-size: 24px;
+  }
+
+  .probation-timeline-copy {
+    width: min(118px, 31vw);
+    font-size: 10px;
   }
 }
 

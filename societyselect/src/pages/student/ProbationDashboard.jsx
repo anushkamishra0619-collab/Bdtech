@@ -8,6 +8,16 @@ const probationDetails = [
   { label: "Duration", value: "105 days" },
 ];
 
+const getDateTimestamp = (date) => Date.parse(`${date}T00:00:00Z`);
+
+const formatTimelineDate = (date, includeYear = false) =>
+  new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    ...(includeYear ? { year: "numeric" } : {}),
+    timeZone: "UTC",
+  }).format(new Date(getDateTimestamp(date)));
+
 const ProbationDashboard = () => {
   const improvementTasks = probationData.improvementTasks;
   const totalAssigned = improvementTasks.length;
@@ -27,6 +37,61 @@ const ProbationDashboard = () => {
     { value: pendingTasks, label: "Pending" },
     { value: remainingTasks, label: "Remaining to complete" },
   ];
+
+  const { startDate, currentDate, endDate } = probationData.probationPeriod;
+  const nextReviewDate = probationData.reviewDetails.nextReviewAt.split("T")[0];
+  const startTimestamp = getDateTimestamp(startDate);
+  const currentTimestamp = getDateTimestamp(currentDate);
+  const endTimestamp = getDateTimestamp(endDate);
+  const periodDuration = endTimestamp - startTimestamp;
+  const currentDay =
+    periodDuration > 0 && Number.isFinite(currentTimestamp)
+      ? Math.floor((currentTimestamp - startTimestamp) / 86400000) + 1
+      : 0;
+  const getTimelinePosition = (date) => {
+    const timestamp = getDateTimestamp(date);
+    if (periodDuration <= 0 || !Number.isFinite(timestamp)) return 0;
+    return Math.max(
+      0,
+      Math.min(100, ((timestamp - startTimestamp) / periodDuration) * 100),
+    );
+  };
+  const timelineMilestones = [
+    {
+      id: "start",
+      date: startDate,
+      label: "Probation starts",
+      alignment: "start",
+      includeYear: true,
+    },
+    {
+      id: "current",
+      date: currentDate,
+      label: `Today, day ${currentDay}`,
+      alignment: "current",
+      includeYear: false,
+    },
+    {
+      id: "review",
+      date: nextReviewDate,
+      label: "Next review",
+      alignment: "review",
+      includeYear: false,
+    },
+    {
+      id: "end",
+      date: endDate,
+      label: "Probation ends",
+      alignment: "end",
+      includeYear: true,
+    },
+  ].map((milestone) => ({
+    ...milestone,
+    position: getTimelinePosition(milestone.date),
+  }));
+  const currentTimelinePosition =
+    timelineMilestones.find((milestone) => milestone.id === "current")
+      ?.position ?? 0;
 
   return (
     <main className="probation-dashboard">
@@ -135,6 +200,86 @@ const ProbationDashboard = () => {
             ))}
           </dl>
         </div>
+      </section>
+
+      <section
+        className="probation-review-section"
+        aria-labelledby="probation-review-title"
+      >
+        <div className="probation-review-timeline">
+          <div className="probation-review-section-heading">
+            <CalendarDays size={17} strokeWidth={1.8} aria-hidden="true" />
+            <div>
+              <h2 id="probation-review-title">Review timeline</h2>
+              <p>Your probation period and upcoming review.</p>
+            </div>
+          </div>
+
+          <div
+            className="probation-timeline"
+            aria-label="Probation timeline"
+          >
+            <div className="probation-timeline-track" aria-hidden="true">
+              <span
+                className="probation-timeline-progress"
+                style={{ width: `${currentTimelinePosition}%` }}
+              />
+            </div>
+            <ol className="probation-timeline-milestones">
+              {timelineMilestones.map((milestone) => (
+                <li
+                  className={`probation-timeline-milestone is-${milestone.alignment}`}
+                  key={milestone.id}
+                  style={{ left: `${milestone.position}%` }}
+                >
+                  <span className="probation-timeline-marker" aria-hidden="true" />
+                  <div className="probation-timeline-copy">
+                    <time
+                      dateTime={milestone.date}
+                      aria-current={milestone.id === "current" ? "date" : undefined}
+                    >
+                      {formatTimelineDate(milestone.date, milestone.includeYear)}
+                    </time>
+                    <span>{milestone.label}</span>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        <dl className="probation-review-details">
+          <div className="probation-review-date-group">
+            <div>
+              <dt>Next review</dt>
+              <dd>
+                <time dateTime={probationData.reviewDetails.nextReviewAt}>
+                  {probationData.reviewDetails.nextReviewLabel}
+                </time>
+              </dd>
+            </div>
+            <div>
+              <dt>Review status</dt>
+              <dd>
+                <span className="probation-review-status">
+                  {probationData.reviewDetails.status}
+                </span>
+              </dd>
+            </div>
+          </div>
+          <div className="probation-review-outcome">
+            <dt>Evaluation outcome</dt>
+            <dd>
+              <span className="probation-review-outcome-badge">
+                {probationData.reviewDetails.evaluationOutcome}
+              </span>
+            </dd>
+          </div>
+          <div className="probation-review-remarks">
+            <dt>Review remarks</dt>
+            <dd>{probationData.reviewDetails.remarks}</dd>
+          </div>
+        </dl>
       </section>
     </main>
   );
