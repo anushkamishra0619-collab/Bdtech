@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   CalendarCheck,
   CalendarClock,
@@ -9,18 +10,43 @@ import {
   Lightbulb,
   ListTodo,
   Monitor,
+  PanelLeftClose,
+  PanelLeftOpen,
   UserRound,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import "./studentsidebar.css";
 
-const StudentSidebar = () => (
-  <aside className="student-sidebar">
-    <div className="student-sidebar-brand" aria-label="SocietySelect AI">
-      <span className="student-sidebar-brand-name">SocietySelect</span>
-      <span className="student-sidebar-brand-ai">AI</span>
-    </div>
-    <nav className="student-sidebar-nav" aria-label="Student navigation">
+const StudentSidebar = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  return (
+    <aside className={`student-sidebar${isCollapsed ? " is-collapsed" : ""}`}>
+      <div className="student-sidebar-header">
+        <div className="student-sidebar-brand" aria-label="SocietySelect AI">
+          <span className="student-sidebar-brand-name">SocietySelect</span>
+          <span className="student-sidebar-brand-ai">AI</span>
+        </div>
+        <button
+          className="student-sidebar-toggle"
+          type="button"
+          aria-label={isCollapsed ? "Expand student sidebar" : "Collapse student sidebar"}
+          aria-expanded={!isCollapsed}
+          aria-controls="student-sidebar-navigation"
+          onClick={() => setIsCollapsed((collapsed) => !collapsed)}
+        >
+          {isCollapsed ? (
+            <PanelLeftOpen size={18} strokeWidth={1.7} aria-hidden="true" />
+          ) : (
+            <PanelLeftClose size={18} strokeWidth={1.7} aria-hidden="true" />
+          )}
+        </button>
+      </div>
+      <nav
+        id="student-sidebar-navigation"
+        className="student-sidebar-nav"
+        aria-label="Student navigation"
+      >
       <div className="student-sidebar-group">
         <h2 className="student-sidebar-group-heading">PROFILE</h2>
         <NavLink
@@ -28,6 +54,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="My Profile"
+          title={isCollapsed ? "My Profile" : undefined}
           to="/student/profile"
         >
           <UserRound size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -41,6 +69,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="Application Tracking"
+          title={isCollapsed ? "Application Tracking" : undefined}
           to="/student/application-tracking"
         >
           <ClipboardList size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -51,6 +81,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="Online Examination"
+          title={isCollapsed ? "Online Examination" : undefined}
           to="/student/online-examination"
         >
           <Monitor size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -61,6 +93,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="Examination Results"
+          title={isCollapsed ? "Examination Results" : undefined}
           to="/student/examination-results"
         >
           <FileCheck size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -71,6 +105,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="Interview Details"
+          title={isCollapsed ? "Interview Details" : undefined}
           to="/student/interview"
         >
           <CalendarDays size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -81,6 +117,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="Probation Dashboard"
+          title={isCollapsed ? "Probation Dashboard" : undefined}
           to="/student/probation"
         >
           <ChartNoAxesCombined size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -94,6 +132,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="My Tasks"
+          title={isCollapsed ? "My Tasks" : undefined}
           to="/student/tasks"
         >
           <ListTodo size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -104,6 +144,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="Project Submission"
+          title={isCollapsed ? "Project Submission" : undefined}
           to="/student/project-submission"
         >
           <FileUp size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -114,6 +156,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="AI Recommendations"
+          title={isCollapsed ? "AI Recommendations" : undefined}
           to="/student/ai-recommendations"
         >
           <Lightbulb size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -127,6 +171,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="My Attendance"
+          title={isCollapsed ? "My Attendance" : undefined}
           to="/student/attendance"
         >
           <CalendarCheck size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -137,6 +183,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="Attendance Calendar"
+          title={isCollapsed ? "Attendance Calendar" : undefined}
           to="/student/attendance-calendar"
         >
           <CalendarDays size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -147,6 +195,8 @@ const StudentSidebar = () => (
             `student-sidebar-link${isActive ? " active" : ""}`
           }
           end
+          aria-label="Leave Request"
+          title={isCollapsed ? "Leave Request" : undefined}
           to="/student/leave-request"
         >
           <CalendarClock size={18} strokeWidth={1.7} aria-hidden="true" />
@@ -154,7 +204,8 @@ const StudentSidebar = () => (
         </NavLink>
       </div>
     </nav>
-  </aside>
-);
+    </aside>
+  );
+};
 
 export default StudentSidebar;
