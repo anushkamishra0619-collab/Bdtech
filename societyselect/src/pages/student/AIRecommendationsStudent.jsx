@@ -1,6 +1,6 @@
 import {Sparkles,RefreshCw,Target,TrendingUp,Star,BookOpen,Lightbulb,CheckCircle2,ArrowRight,
   Compass,} from "lucide-react";
-import "./AIRecommendationStudent.css";
+import "./AIRecommendationsStudent.css";
 function AIRecommendationStudent() {
   const societies = [
     {
