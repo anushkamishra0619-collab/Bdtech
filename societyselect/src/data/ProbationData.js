@@ -76,6 +76,22 @@ const probationData = {
       isUnread: false,
     },
   ],
+  probationHistory: [
+    {
+      id: "semester-3",
+      semester: "Semester 3",
+      duration: "60 days",
+      status: "Completed",
+      finalOutcome: "Cleared",
+    },
+    {
+      id: "semester-4",
+      semester: "Semester 4",
+      duration: "90 days",
+      status: "Completed",
+      finalOutcome: "Continued",
+    },
+  ],
 };
 
 export default probationData;

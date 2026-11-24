@@ -775,6 +775,92 @@
   clip-path: inset(50%);
 }
 
+.probation-history-section {
+  width: min(100%, 1280px);
+  margin: 18px auto 0;
+  padding: 28px 34px 30px;
+  border: 1px solid #dce7ec;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(38 55 70 / 4%);
+}
+
+.probation-history-heading {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.probation-history-heading h2 {
+  margin: 0;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.probation-history-heading p {
+  margin: 5px 0 0;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.probation-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  text-align: left;
+}
+
+.probation-history-table th {
+  padding: 12px 14px;
+  border-bottom: 1px solid #dce7ec;
+  background: #edf4f6;
+  color: #6f7478;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.probation-history-table td {
+  padding: 15px 14px;
+  border-bottom: 1px solid #dce7ec;
+  color: #39535d;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.probation-history-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.probation-history-status {
+  color: #6f7478;
+}
+
+.probation-history-outcome {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid #d1e2e8;
+  border-radius: 999px;
+  background: #edf4f6;
+  color: #4d7c96;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.probation-history-empty-row td {
+  padding: 24px 14px;
+  color: #6f7478;
+  text-align: center;
+}
+
 @media (max-width: 1050px) {
   .probation-page-heading {
     align-items: flex-start;
@@ -892,6 +978,83 @@
     grid-template-columns: minmax(118px, 0.42fr) minmax(0, 1fr);
     gap: 12px;
   }
+
+  .probation-history-section {
+    padding: 25px 22px;
+  }
+
+  .probation-history-table th,
+  .probation-history-table td {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .probation-history-table {
+    display: block;
+    table-layout: auto;
+  }
+
+  .probation-history-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+  }
+
+  .probation-history-table tbody {
+    display: block;
+  }
+
+  .probation-history-table tbody tr:not(.probation-history-empty-row) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 7px 0;
+    border-bottom: 1px solid #dce7ec;
+  }
+
+  .probation-history-table
+    tbody
+    tr:not(.probation-history-empty-row):last-child {
+    border-bottom: 0;
+  }
+
+  .probation-history-table
+    tbody
+    tr:not(.probation-history-empty-row)
+    td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 0;
+    text-align: right;
+  }
+
+  .probation-history-table
+    tbody
+    tr:not(.probation-history-empty-row)
+    td::before {
+    color: #6f7478;
+    content: attr(data-label);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .probation-history-table .probation-history-empty-row {
+    display: block;
+  }
+
+  .probation-history-table .probation-history-empty-row td {
+    display: block;
+    padding: 20px 4px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -960,6 +1123,14 @@
   .probation-mentor-note {
     grid-template-columns: 1fr;
     gap: 5px;
+  }
+
+  .probation-history-section {
+    padding: 22px 18px;
+  }
+
+  .probation-history-heading h2 {
+    font-size: 26px;
   }
 }
 

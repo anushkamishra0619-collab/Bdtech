@@ -110,6 +110,7 @@ const ProbationDashboard = () => {
       ?.position ?? 0;
   const mentorRemarks = probationData.mentorRemarks;
   const notifications = probationData.notifications;
+  const probationHistory = probationData.probationHistory ?? [];
   const unreadNotificationCount = notifications.filter(
     (notification) => notification.isUnread,
   ).length;
@@ -422,6 +423,58 @@ const ProbationDashboard = () => {
             })}
           </ul>
         </section>
+      </section>
+
+      <section
+        className="probation-history-section"
+        aria-labelledby="probation-history-title"
+      >
+        <div className="probation-history-heading">
+          <div>
+            <h2 id="probation-history-title">Probation history</h2>
+            <p>Previous probation periods and their final outcomes.</p>
+          </div>
+        </div>
+
+        <table className="probation-history-table">
+          <caption className="probation-visually-hidden">
+            Previous probation records by semester
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Semester</th>
+              <th scope="col">Duration</th>
+              <th scope="col">Status</th>
+              <th scope="col">Final Outcome</th>
+            </tr>
+          </thead>
+          <tbody>
+            {probationHistory.length > 0 ? (
+              probationHistory.map((record) => (
+                <tr key={record.id}>
+                  <td data-label="Semester">{record.semester}</td>
+                  <td data-label="Duration">{record.duration}</td>
+                  <td data-label="Status">
+                    <span className="probation-history-status">
+                      {record.status}
+                    </span>
+                  </td>
+                  <td data-label="Final Outcome">
+                    <span className="probation-history-outcome">
+                      {record.finalOutcome}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr className="probation-history-empty-row">
+                <td colSpan={4}>
+                  No previous probation records are available.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </section>
     </main>
   );
