@@ -197,6 +197,120 @@
   line-height: 1.45;
 }
 
+.probation-progress-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 38px 44px 40px;
+}
+
+.probation-progress-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(255 255 255 / 82%);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.probation-progress-label svg {
+  color: #e5eff3;
+}
+
+.probation-progress-value {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-top: 12px;
+  color: #fff;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(62px, 6vw, 76px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+}
+
+.probation-progress-percent {
+  font-size: 0.42em;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.probation-progress-description {
+  margin: 3px 0 0;
+  color: rgb(255 255 255 / 84%);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.probation-progress-segments {
+  display: flex;
+  gap: 6px;
+  margin-top: 21px;
+}
+
+.probation-progress-segment {
+  height: 10px;
+  min-width: 0;
+  flex: 1 1 0;
+  border-radius: 3px;
+  background: rgb(220 231 236 / 22%);
+}
+
+.probation-progress-segment.is-completed {
+  background: #b7d6e0;
+}
+
+.probation-progress-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  color: rgb(255 255 255 / 75%);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.probation-progress-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: auto 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid rgb(255 255 255 / 20%);
+}
+
+.probation-progress-metric {
+  display: grid;
+  min-width: 0;
+  grid-template-areas:
+    "value"
+    "label";
+  align-content: start;
+  gap: 1px;
+  padding-right: 12px;
+}
+
+.probation-progress-metric + .probation-progress-metric {
+  padding-left: 14px;
+  border-left: 1px solid rgb(255 255 255 / 18%);
+}
+
+.probation-progress-metric dt {
+  grid-area: label;
+  color: rgb(255 255 255 / 75%);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.probation-progress-metric dd {
+  grid-area: value;
+  margin: 0;
+  color: #fff;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+}
+
 @media (max-width: 1050px) {
   .probation-page-heading {
     align-items: flex-start;
@@ -209,13 +323,20 @@
   }
 
   .probation-status-hero {
-    min-height: 360px;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    min-height: 0;
+    grid-template-columns: 1fr;
   }
 
   .probation-status-panel {
     padding-right: 30px;
     padding-left: 30px;
+    border-right: 0;
+    border-bottom: 1px solid rgb(255 255 255 / 20%);
+  }
+
+  .probation-progress-panel {
+    min-height: 320px;
+    padding: 30px;
   }
 
   .probation-status-details {
@@ -236,6 +357,11 @@
   .probation-status-panel {
     padding: 30px 26px 32px;
     border-right: 0;
+  }
+
+  .probation-progress-panel {
+    min-height: 300px;
+    padding: 28px 26px 30px;
   }
 }
 
@@ -272,6 +398,16 @@
   .probation-status-details {
     grid-template-columns: 1fr;
     gap: 13px;
+  }
+
+  .probation-progress-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 14px;
+  }
+
+  .probation-progress-metric:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
   }
 }
 
