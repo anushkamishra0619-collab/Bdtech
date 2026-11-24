@@ -8,6 +8,7 @@ import {
   Users,
 } from "lucide-react";
 import MentorSidebar from "../Components/MentorSidebar";
+import LoadingPage from "../Components/LoadingPage.jsx";
 import { apiRequest } from "../utils/api.js";
 import { navigateTo } from "../utils/navigation";
 import "../pages/student/StudentApiPages.css";
@@ -118,6 +119,8 @@ function ProjectDetails() {
     }
   };
 
+  if (loading) return <LoadingPage />;
+
   return (
     <div className="project-details-layout">
       <MentorSidebar />
@@ -125,7 +128,6 @@ function ProjectDetails() {
         <button className="back-project-btn" onClick={() => navigateTo("/mentor/projects")}>
           <ArrowLeft size={17} /> Back to Tasks
         </button>
-        {loading ? <p>Loading task...</p> : null}
         {visibleError ? <p role="alert">{visibleError}</p> : null}
         {message ? <p role="status">{message}</p> : null}
         {visibleTask ? (

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import LoadingPage from "../../Components/LoadingPage.jsx";
 import { apiRequest } from "../../utils/api.js";
 import "./StudentApiPages.css";
 
@@ -71,6 +72,8 @@ const StudentProfile = () => {
     }
   };
 
+  if (loading) return <LoadingPage />;
+
   return (
     <main className="backend-page">
       <div className="backend-page-content">
@@ -82,8 +85,7 @@ const StudentProfile = () => {
           <a className="backend-page-link" href="/student/dashboard">Dashboard</a>
         </header>
 
-        {loading ? <p>Loading profile...</p> : null}
-        {!loading && profile ? (
+        {profile ? (
           <section className="backend-page-card">
             <form className="backend-page-form" onSubmit={saveProfile}>
               <label>Full name<input name="fullName" value={profile.fullName || ""} onChange={updateField} required minLength={2} /></label>

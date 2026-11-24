@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {LayoutDashboard,Users,ClipboardCheck,FolderKanban,CalendarDays,MessageSquare,Settings,LogOut,} from "lucide-react";
+import {LayoutDashboard,Users,ClipboardCheck,CalendarDays,MessageSquare,TrendingUp,Award,Settings,LogOut,} from "lucide-react";
 import { navigateTo } from "../utils/navigation";
 import "./MentorSidebar.css";
 
@@ -25,10 +25,25 @@ const menuItems = [
     icon: CalendarDays,
     href: "/mentor/attendance",
   },
-  {
+   {
     label: "Interviews",
     icon: MessageSquare,
     href: "/mentor/interviews",
+  },
+  {
+    label: "Examination Management",
+    icon: ClipboardCheck,
+    href: "/mentor/examination-management",
+  },
+  {
+    label: "Probation & Performance",
+    icon: TrendingUp,
+    href: "/mentor/probation-performance",
+  },
+  {
+    label: "Final Selection",
+    icon: Award,
+    href: "/mentor/final-selection",
   },
 ];
 
@@ -60,6 +75,28 @@ function MentorSidebar() {
     if (
       href === "/mentor/interviews" &&
       (path === "/interviewpage" || hash === "interviewpage")
+    ) {
+      return true;
+    }
+    if (
+      href === "/mentor/probation-performance" &&
+      (
+        path === "/probation-performance" ||
+        path === "/probationperformance" ||
+        hash === "probation-performance" ||
+        hash === "probationperformance"
+      )
+    ) {
+      return true;
+    }
+    if (
+      href === "/mentor/final-selection" &&
+      (
+        path === "/final-selection" ||
+        path === "/finalselection" ||
+        hash === "final-selection" ||
+        hash === "finalselection"
+      )
     ) {
       return true;
     }
@@ -95,12 +132,6 @@ function MentorSidebar() {
         </div>
       </div>
 
-      <div className="mentor-sidebar-profile">
-        <div className="mentor-profile-details">
-          <h3>Alex Morgan</h3>
-        </div>
-      </div>
-
       <div className="mentor-sidebar-menu">
         <p className="mentor-menu-heading">WORKSPACE</p>
         <nav className="mentor-sidebar-nav">
@@ -124,17 +155,6 @@ function MentorSidebar() {
       </div>
 
       <div className="mentor-sidebar-bottom">
-        <a
-          href="/mentor/settings"
-          className={`mentor-sidebar-link ${
-            isItemActive("/mentor/settings") ? "active" : ""
-          }`}
-          onClick={(e) => handleNavClick(e, "/mentor/settings")}
-        >
-          <Settings size={19} />
-          <span>Settings</span>
-        </a>
-
         <a
           href="/login"
           className="mentor-sidebar-link mentor-logout"

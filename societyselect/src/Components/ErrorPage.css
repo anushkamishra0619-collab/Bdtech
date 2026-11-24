@@ -1,0 +1,187 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+.error-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #c5c8d1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  font-family: "Roboto", sans-serif;
+  color: #1c2237;
+}
+
+/* Main white card container */
+.error-card {
+  width: 100%;
+  max-width: 1120px;
+  min-height: 680px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 24px 55px rgba(28, 34, 55, 0.14);
+  padding: 44px 56px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Top-left hamburger icon */
+.error-header {
+  display: flex;
+  align-items: center;
+}
+
+.error-menu-btn {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.error-menu-btn span {
+  display: block;
+  width: 30px;
+  height: 3.5px;
+  background: #243b73;
+  border-radius: 3px;
+}
+
+/* Two-column centered layout */
+.error-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 10px 20px 30px;
+}
+
+/* Plug illustration (Left) */
+.error-plug-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plug-art-svg {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  overflow: visible;
+}
+
+.cable {
+  fill: none;
+  stroke: #243b73;
+  stroke-width: 6.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.plug {
+  fill: #455a99;
+}
+
+.spark {
+  fill: none;
+  stroke: #243b73;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+
+/* Error text & CTA (Right) */
+.error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.error-code {
+  font-size: clamp(96px, 11vw, 138px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1;
+  color: #243b73;
+  margin: 0 0 12px;
+}
+
+.error-title {
+  margin: 0 0 14px;
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #1b2136;
+}
+
+.error-title span {
+  transition: none;
+}
+
+.error-message {
+  max-width: 390px;
+  margin: 0 0 30px;
+  color: #c2d4e8;
+  font-size: 14.5px;
+  line-height: 1.55;
+  font-weight: 400;
+  white-space: pre-line;
+}
+
+.error-home-button {
+  min-width: 165px;
+  padding: 13px 34px;
+  border: none;
+  border-radius: 999px;
+  background: #243b73;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+}
+
+.error-home-button:hover {
+  background: #2f4b8f;
+}
+
+/* Preserve back & retry functions visually hidden */
+.error-hidden-actions {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .error-page {
+    padding: 16px;
+  }
+
+  .error-card {
+    padding: 28px 24px;
+    min-height: auto;
+  }
+
+  .error-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px 0;
+  }
+
+  .plug-art-svg {
+    max-width: 280px;
+  }
+}
