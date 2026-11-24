@@ -1,6 +1,7 @@
 
 import React, { useMemo, useState } from "react";
 import MentorSidebar from "./MentorSidebar";
+import { navigateTo } from "../utils/navigation";
 import "./FinalSelection.css";
 
 const initialCandidates = [
@@ -160,7 +161,14 @@ const statusClass = (status) =>
   status.toLowerCase().replace(/\s+/g, "-");
 
 function FinalSelection() {
-  const [candidates, setCandidates] = useState(initialCandidates);
+  const [candidates, setCandidates] = useState(() => {
+    try {
+      const savedCandidates = window.sessionStorage.getItem("mentor-final-selection");
+      return savedCandidates ? JSON.parse(savedCandidates) : initialCandidates;
+    } catch {
+      return initialCandidates;
+    }
+  });
   const [activeTab, setActiveTab] = useState("Top Candidates");
   const [selectedId, setSelectedId] = useState(1);
   const [search, setSearch] = useState("");
@@ -213,13 +221,24 @@ function FinalSelection() {
   const handleConfirmDecision = () => {
     if (!selectedCandidate) return;
 
-    setCandidates((previous) =>
-      previous.map((candidate) =>
+    setCandidates((previous) => {
+      const updatedCandidates = previous.map((candidate) =>
         candidate.id === selectedId
           ? { ...candidate, status: decision }
           : candidate
-      )
-    );
+      );
+
+      try {
+        window.sessionStorage.setItem(
+          "mentor-final-selection",
+          JSON.stringify(updatedCandidates)
+        );
+      } catch {
+        // Selection state remains available for the current page session.
+      }
+
+      return updatedCandidates;
+    });
 
     setMessage(
       `${selectedCandidate.name} has been marked as ${decision}.`
@@ -259,7 +278,10 @@ function FinalSelection() {
               </p>
             </div>
 
-            <button className="fs-recruitment-button">
+            <button
+              className="fs-recruitment-button"
+              onClick={() => navigateTo("/mentor/probation-performance")}
+            >
               Recruitment 2026 <span>⌄</span>
             </button>
           </section>

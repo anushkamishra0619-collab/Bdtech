@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import "./ProbationPerformance.css";
 import MentorSidebar from "./MentorSidebar";
 import ProbationBanner from "./ui/ProbationBanner.jsx";
+import { navigateTo } from "../utils/navigation";
 
 const initialStudents = [
   {
@@ -310,6 +311,13 @@ export default function ProbationPerformance() {
             <span className="pp-session-badge">
               ● Recruitment 2026
             </span>
+            <button
+              type="button"
+              className="pp-primary-btn"
+              onClick={() => navigateTo("/mentor/final-selection")}
+            >
+              Final Selection →
+            </button>
             <button
               type="button"
               className="pp-ai-button"
