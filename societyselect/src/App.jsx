@@ -106,6 +106,7 @@ function App() {
           <Route path="application" element={<SocietyApplication />} />
           <Route path="application-tracking" element={<ApplicationTracking />} />
           <Route path="online-examination" element={<OnlineExamination />} />
+          <Route path="examination" element={<OnlineExamination />} />
           <Route path="examination-results" element={<ExaminationResults />} />
           <Route path="interview" element={<InterviewDetails />} />
           <Route path="probation" element={<ProbationDashboard />} />
