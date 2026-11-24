@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CalendarCheck,
   CalendarClock,
@@ -9,16 +9,30 @@ import {
   FileUp,
   Lightbulb,
   ListTodo,
+  LogOut,
   Monitor,
   PanelLeftClose,
   PanelLeftOpen,
   UserRound,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./studentsidebar.css";
 
 const StudentSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLogoutDialogOpen) return undefined;
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") setIsLogoutDialogOpen(false);
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isLogoutDialogOpen]);
 
   return (
     <aside className={`student-sidebar${isCollapsed ? " is-collapsed" : ""}`}>
@@ -204,6 +218,50 @@ const StudentSidebar = () => {
         </NavLink>
       </div>
     </nav>
+      <button
+        className="student-sidebar-logout"
+        type="button"
+        aria-label="Logout"
+        title={isCollapsed ? "Logout" : undefined}
+        onClick={() => setIsLogoutDialogOpen(true)}
+      >
+        <LogOut size={18} strokeWidth={1.7} aria-hidden="true" />
+        <span>Logout</span>
+      </button>
+      {isLogoutDialogOpen && (
+        <div className="student-sidebar-logout-overlay">
+          <section
+            className="student-sidebar-logout-modal"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="student-logout-title"
+            aria-describedby="student-logout-description"
+            tabIndex={-1}
+          >
+          <h2 id="student-logout-title">Log out?</h2>
+          <p id="student-logout-description">
+            Are you sure you want to log out of SocietySelect AI?
+          </p>
+          <div className="student-sidebar-logout-actions">
+            <button
+              className="student-sidebar-logout-cancel"
+              type="button"
+              autoFocus
+              onClick={() => setIsLogoutDialogOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="student-sidebar-logout-confirm"
+              type="button"
+              onClick={() => navigate("/login")}
+            >
+              Confirm Logout
+            </button>
+          </div>
+          </section>
+        </div>
+      )}
     </aside>
   );
 };
