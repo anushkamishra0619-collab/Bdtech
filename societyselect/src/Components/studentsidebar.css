@@ -24,7 +24,7 @@
   padding: 0 22px;
 }
 
-.student-sidebar-profile-group {
+.student-sidebar-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
