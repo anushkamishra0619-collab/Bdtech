@@ -1,0 +1,36 @@
+.student-sidebar-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 26px 22px 20px;
+  margin-bottom: 8px;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+.student-sidebar-brand-ai {
+  color: #6d9fb1;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.student-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 22px;
+}
+
+.student-sidebar-group-heading {
+  margin: 0;
+  color: #6f7478;
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
