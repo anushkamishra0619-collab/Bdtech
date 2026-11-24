@@ -1,4 +1,13 @@
-import { CalendarDays, ChartNoAxesCombined, ShieldCheck } from "lucide-react";
+import {
+  Bell,
+  CalendarDays,
+  ChartNoAxesCombined,
+  ClipboardList,
+  FileText,
+  Lightbulb,
+  MessageSquare,
+  ShieldCheck,
+} from "lucide-react";
 import probationData from "../../data/ProbationData";
 import "../../styles/ProbationDashboard.css";
 
@@ -17,6 +26,13 @@ const formatTimelineDate = (date, includeYear = false) =>
     ...(includeYear ? { year: "numeric" } : {}),
     timeZone: "UTC",
   }).format(new Date(getDateTimestamp(date)));
+
+const notificationIconByType = {
+  deadline: CalendarDays,
+  review: CalendarDays,
+  reminder: ClipboardList,
+  status: ShieldCheck,
+};
 
 const ProbationDashboard = () => {
   const improvementTasks = probationData.improvementTasks;
@@ -92,6 +108,28 @@ const ProbationDashboard = () => {
   const currentTimelinePosition =
     timelineMilestones.find((milestone) => milestone.id === "current")
       ?.position ?? 0;
+  const mentorRemarks = probationData.mentorRemarks;
+  const notifications = probationData.notifications;
+  const unreadNotificationCount = notifications.filter(
+    (notification) => notification.isUnread,
+  ).length;
+  const mentorNotes = [
+    {
+      label: "Recommendations",
+      content: mentorRemarks.recommendations,
+      Icon: Lightbulb,
+    },
+    {
+      label: "Instructions",
+      content: mentorRemarks.instructions,
+      Icon: ClipboardList,
+    },
+    {
+      label: "Follow-up notes",
+      content: mentorRemarks.followUpNotes,
+      Icon: FileText,
+    },
+  ];
 
   return (
     <main className="probation-dashboard">
@@ -280,6 +318,110 @@ const ProbationDashboard = () => {
             <dd>{probationData.reviewDetails.remarks}</dd>
           </div>
         </dl>
+      </section>
+
+      <section
+        className="probation-feedback-section"
+        aria-label="Mentor remarks and notifications"
+      >
+        <article
+          className="probation-mentor-remarks"
+          aria-labelledby="probation-mentor-title"
+        >
+          <div className="probation-feedback-heading">
+            <MessageSquare size={17} strokeWidth={1.8} aria-hidden="true" />
+            <div>
+              <h2 id="probation-mentor-title">Mentor remarks</h2>
+              <p>Shared by your mentor. View only.</p>
+            </div>
+          </div>
+
+          <div className="probation-mentor-identity">
+            <span className="probation-mentor-avatar" aria-hidden="true">
+              {mentorRemarks.initials}
+            </span>
+            <div>
+              <h3>{mentorRemarks.name}</h3>
+              <p>{mentorRemarks.designation}</p>
+            </div>
+          </div>
+
+          <blockquote className="probation-mentor-feedback">
+            {mentorRemarks.feedback}
+          </blockquote>
+
+          <dl className="probation-mentor-notes">
+            {mentorNotes.map(({ label, content, Icon }) => (
+              <div className="probation-mentor-note" key={label}>
+                <dt>
+                  <Icon size={14} strokeWidth={1.8} aria-hidden="true" />
+                  <span>{label}</span>
+                </dt>
+                <dd>{content}</dd>
+              </div>
+            ))}
+          </dl>
+        </article>
+
+        <section
+          className="probation-notifications"
+          aria-labelledby="probation-notifications-title"
+        >
+          <div className="probation-feedback-heading probation-notifications-heading">
+            <Bell size={17} strokeWidth={1.8} aria-hidden="true" />
+            <div>
+              <h2 id="probation-notifications-title">
+                Notifications and deadlines
+              </h2>
+              <p>{unreadNotificationCount} unread</p>
+            </div>
+          </div>
+
+          <ul className="probation-notification-list">
+            {notifications.map((notification) => {
+              const NotificationIcon =
+                notificationIconByType[notification.type];
+              const [day, month] = formatTimelineDate(notification.date).split(
+                " ",
+              );
+
+              return (
+                <li
+                  className={`probation-notification${
+                    notification.isUnread ? " is-unread" : ""
+                  }`}
+                  key={notification.id}
+                >
+                  <time
+                    className="probation-notification-date"
+                    dateTime={notification.date}
+                  >
+                    <span>{day}</span>
+                    <span>{month}</span>
+                  </time>
+                  <div className="probation-notification-copy">
+                    <h3>
+                      <span className="probation-notification-dot" aria-hidden="true" />
+                      {notification.title}
+                      {notification.isUnread && (
+                        <span className="probation-visually-hidden">, unread</span>
+                      )}
+                    </h3>
+                    <p>{notification.description}</p>
+                    <span className="probation-notification-category">
+                      <NotificationIcon
+                        size={12}
+                        strokeWidth={1.8}
+                        aria-hidden="true"
+                      />
+                      {notification.category}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       </section>
     </main>
   );

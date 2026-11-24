@@ -26,6 +26,56 @@ const probationData = {
     remarks:
       "Attendance has improved noticeably. The panel will focus on lab submissions and pending project milestones.",
   },
+  mentorRemarks: {
+    name: "Dr. Meera Iyer",
+    designation: "Assistant Professor, Mentor",
+    initials: "MI",
+    feedback:
+      "You have responded well to feedback this month. Your lab work is more consistent and your participation has improved.",
+    recommendations:
+      "Keep a weekly study schedule and share it with me. Start the project report early.",
+    instructions:
+      "Submit the data structures assignment by 28 Nov. Attend the Friday mentoring session each week.",
+    followUpNotes: "Next one-to-one on 1 Dec. Bring your task checklist.",
+  },
+  notifications: [
+    {
+      id: "assignment-deadline",
+      date: "2026-11-28",
+      title: "Assignment deadline approaching",
+      description: "Data structures assignment is due.",
+      category: "Deadline alert",
+      type: "deadline",
+      isUnread: true,
+    },
+    {
+      id: "probation-review",
+      date: "2026-12-05",
+      title: "Probation review scheduled",
+      description: "Review meeting with the committee.",
+      category: "Upcoming review date",
+      type: "review",
+      isUnread: true,
+    },
+    {
+      id: "pending-tasks",
+      date: "2026-11-24",
+      title: "5 improvement tasks still pending",
+      description: "Complete them before your review.",
+      category: "Pending task reminder",
+      type: "reminder",
+      isUnread: false,
+    },
+    {
+      id: "status-update",
+      date: "2026-09-02",
+      title: "Probation status confirmed as Active",
+      description: "Confirmed by the academic committee.",
+      category: "Status update",
+      type: "status",
+      isUnread: false,
+    },
+  ],
 };
 
 export default probationData;

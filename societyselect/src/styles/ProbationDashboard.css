@@ -536,6 +536,245 @@
   max-width: 560px;
 }
 
+.probation-feedback-section {
+  display: grid;
+  width: min(100%, 1280px);
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.95fr);
+  margin: 18px auto 0;
+  overflow: hidden;
+  border: 1px solid #dce7ec;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(38 55 70 / 4%);
+}
+
+.probation-mentor-remarks,
+.probation-notifications {
+  min-width: 0;
+  padding: 30px 34px 32px;
+}
+
+.probation-mentor-remarks {
+  border-right: 1px solid #dce7ec;
+}
+
+.probation-feedback-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.probation-feedback-heading > svg {
+  flex: 0 0 auto;
+  margin-top: 5px;
+  color: #4d7c96;
+}
+
+.probation-feedback-heading h2 {
+  margin: 0;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 27px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.probation-feedback-heading p {
+  margin: 4px 0 0;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.probation-mentor-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 16px;
+}
+
+.probation-mentor-avatar {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border: 1px solid #dce7ec;
+  border-radius: 50%;
+  background: #edf4f6;
+  color: #4d7c96;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 20px;
+}
+
+.probation-mentor-identity h3 {
+  margin: 0;
+  color: #263746;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.probation-mentor-identity p {
+  margin: 2px 0 0;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.probation-mentor-feedback {
+  margin: 0 0 18px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid #dce7ec;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(21px, 2vw, 25px);
+  line-height: 1.42;
+}
+
+.probation-mentor-notes {
+  margin: 0;
+}
+
+.probation-mentor-note {
+  display: grid;
+  grid-template-columns: minmax(128px, 0.42fr) minmax(0, 1fr);
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid #dce7ec;
+}
+
+.probation-mentor-note:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.probation-mentor-note dt {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #4d7c96;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.probation-mentor-note dt svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.probation-mentor-note dd {
+  margin: 0;
+  color: #39535d;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.probation-notifications-heading {
+  margin-bottom: 12px;
+}
+
+.probation-notification-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.probation-notification {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 13px;
+  padding: 15px 0;
+  border-bottom: 1px solid #dce7ec;
+}
+
+.probation-notification:last-child {
+  border-bottom: 0;
+}
+
+.probation-notification-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: start;
+  color: #6f7478;
+  line-height: 1.2;
+}
+
+.probation-notification-date span:first-child {
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.probation-notification-date span:last-child {
+  font-size: 10px;
+}
+
+.probation-notification-copy {
+  min-width: 0;
+}
+
+.probation-notification-copy h3 {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  color: #39535d;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.probation-notification-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  margin-top: 4px;
+  border: 1px solid #8eafbd;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.probation-notification.is-unread .probation-notification-dot {
+  border-color: #4d7c96;
+  background: #4d7c96;
+}
+
+.probation-notification-copy p {
+  margin: 2px 0 0;
+  color: #6f7478;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.probation-notification-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  color: #4d7c96;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.probation-notification-category svg {
+  flex: 0 0 auto;
+}
+
+.probation-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
 @media (max-width: 1050px) {
   .probation-page-heading {
     align-items: flex-start;
@@ -578,6 +817,21 @@
   .probation-review-timeline {
     padding-right: 30px;
     padding-left: 30px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .probation-feedback-section {
+    grid-template-columns: 1fr;
+  }
+
+  .probation-mentor-remarks {
+    border-right: 0;
+    border-bottom: 1px solid #dce7ec;
+  }
+
+  .probation-notifications-heading {
+    margin-bottom: 8px;
   }
 }
 
@@ -627,6 +881,16 @@
     padding-bottom: 16px;
     border-right: 0;
     border-bottom: 1px solid #dce7ec;
+  }
+
+  .probation-mentor-remarks,
+  .probation-notifications {
+    padding: 26px 22px;
+  }
+
+  .probation-mentor-note {
+    grid-template-columns: minmax(118px, 0.42fr) minmax(0, 1fr);
+    gap: 12px;
   }
 }
 
@@ -679,9 +943,23 @@
     font-size: 24px;
   }
 
+  .probation-feedback-heading h2 {
+    font-size: 24px;
+  }
+
   .probation-timeline-copy {
     width: min(118px, 31vw);
     font-size: 10px;
+  }
+
+  .probation-mentor-remarks,
+  .probation-notifications {
+    padding: 24px 18px;
+  }
+
+  .probation-mentor-note {
+    grid-template-columns: 1fr;
+    gap: 5px;
   }
 }
 
