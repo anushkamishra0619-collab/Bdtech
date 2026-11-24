@@ -25,10 +25,15 @@ const menuItems = [
     icon: CalendarDays,
     href: "/mentor/attendance",
   },
-  {
+   {
     label: "Interviews",
     icon: MessageSquare,
     href: "/mentor/interviews",
+  },
+  {
+    label: "Examination Management",
+    icon: ClipboardCheck,
+    href: "/mentor/examination-management",
   },
   {
     label: "Probation & Performance",
@@ -150,17 +155,6 @@ function MentorSidebar() {
       </div>
 
       <div className="mentor-sidebar-bottom">
-        <a
-          href="/mentor/settings"
-          className={`mentor-sidebar-link ${
-            isItemActive("/mentor/settings") ? "active" : ""
-          }`}
-          onClick={(e) => handleNavClick(e, "/mentor/settings")}
-        >
-          <Settings size={19} />
-          <span>Settings</span>
-        </a>
-
         <a
           href="/login"
           className="mentor-sidebar-link mentor-logout"
