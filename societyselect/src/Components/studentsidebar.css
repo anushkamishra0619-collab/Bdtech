@@ -58,6 +58,7 @@
 }
 
 .student-sidebar-link {
+  position: relative;
   display: flex;
   min-height: 40px;
   align-items: center;
@@ -71,9 +72,54 @@
   letter-spacing: 0.1em;
   line-height: 1.4;
   text-transform: uppercase;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
 }
 
 .student-sidebar-link svg {
   flex: 0 0 auto;
   color: var(--sidebar-teal);
+  transition: color 180ms ease;
+}
+
+.student-sidebar-link:hover,
+.student-sidebar-link:active,
+.student-sidebar-link:focus-visible {
+  background: var(--sidebar-mist);
+  color: var(--sidebar-blue);
+}
+
+.student-sidebar-link:hover svg,
+.student-sidebar-link:active svg,
+.student-sidebar-link:focus-visible svg {
+  color: var(--sidebar-blue);
+}
+
+.student-sidebar-link:focus-visible {
+  outline: 2px solid var(--sidebar-teal);
+  outline-offset: 2px;
+}
+
+.student-sidebar-link.active,
+.student-sidebar-link[aria-current="page"] {
+  background: var(--sidebar-mist);
+  color: var(--sidebar-ink);
+}
+
+.student-sidebar-link.active::before,
+.student-sidebar-link[aria-current="page"]::before {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--sidebar-teal);
+  content: "";
+}
+
+.student-sidebar-link.active svg,
+.student-sidebar-link[aria-current="page"] svg {
+  color: var(--sidebar-blue);
 }
