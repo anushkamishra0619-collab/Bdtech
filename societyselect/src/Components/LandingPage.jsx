@@ -85,7 +85,7 @@ function LandingPage() {
             what's written on paper.
           </h2>
           <p className="intro-description">
-            SocietySelect brings students, mentors, and college
+            Socia brings students, mentors, and college
             societies together to make recruitment more meaningful,
             transparent, and focused on real-world abilities.
           </p>
@@ -154,7 +154,7 @@ function LandingPage() {
             <p>
               Traditional recruitment often focuses on examination
               scores and interviews. But talent goes beyond that.
-              SocietySelect creates a complete ecosystem where
+              Socia creates a complete ecosystem where
               students can showcase practical skills, work on projects,
               receive mentorship, and demonstrate consistent growth.
             </p>
@@ -194,7 +194,7 @@ function LandingPage() {
             <a href="/login">Login</a>
           </div>
           <span className="copyright">
-            © 2026 SocietySelect. All rights reserved.
+            © 2026 Socia. All rights reserved.
           </span>
         </footer>
       </main>

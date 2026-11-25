@@ -70,30 +70,22 @@ a {
   background: #fafafa;
   gap: 25px;
 }
-
 .brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  letter-spacing: -1px;
-  color: #273d43;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 
-.brand span {
-  color: #6ba9bc;
+.brand img {
+  width: 180px;
+  height: 65px;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
 }
-
-.brand small {
-  font-family: 'Roboto', sans-serif;
-  font-size: 10px;
-  background: #6ba9bc;
-  color: white;
-  padding: 3px 5px;
-  border-radius: 4px;
-  margin-left: 4px;
-  vertical-align: middle;
-}
-
 .nav-links {
   display: flex;
   align-items: center;

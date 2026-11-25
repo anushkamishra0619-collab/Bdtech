@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {LayoutDashboard,Users,ClipboardCheck,CalendarDays,MessageSquare,TrendingUp,Award,Settings,LogOut,} from "lucide-react";
+import { LayoutDashboard, Users, ClipboardCheck, CalendarDays, MessageSquare, TrendingUp, Award, Settings, LogOut, } from "lucide-react";
 import { navigateTo } from "../utils/navigation";
 import "./MentorSidebar.css";
 
@@ -19,13 +19,13 @@ const menuItems = [
     icon: ClipboardCheck,
     href: "/mentor/projects",
   },
-  
+
   {
     label: "Attendance",
     icon: CalendarDays,
     href: "/mentor/attendance",
   },
-   {
+  {
     label: "Interviews",
     icon: MessageSquare,
     href: "/mentor/interviews",
@@ -127,8 +127,8 @@ function MentorSidebar() {
         onClick={(e) => handleNavClick(e, "/mentor")}
         style={{ cursor: "pointer" }}
       >
-        <div className="mentor-logo-text">
-          <h2>SocietySelect</h2>
+        <div className="mentor-logo">
+          <img src="/logo.jpeg" alt="Socia Logo" />
         </div>
       </div>
 

@@ -376,7 +376,7 @@ const Interviewpage = () => {
   const copyInterviewDetails = async () => {
     if (!workflowCandidate) return;
     const details = [
-      `SocietySelect interview: ${workflowCandidate.name}`,
+      `Socia interview: ${workflowCandidate.name}`,
       `Date and time: ${workflowCandidate.date}`,
       `Mode: ${workflowCandidate.mode}`,
       `Interviewer: ${workflowCandidate.interviewer || "Not specified"}`,
@@ -575,7 +575,7 @@ const Interviewpage = () => {
                 target="_blank"
                 rel="noreferrer"
               >
-                Join SocietySelect AI interview
+                Join Socia AI interview
               </a>
             )}
 

@@ -367,7 +367,7 @@ function MentorDashboard() {
         </section>
 
         <footer className="mentor-footer">
-          <p>© 2026 SocietySelect. All rights reserved.</p>
+          <p>© 2026 Socia. All rights reserved.</p>
           <p>Empowering student growth, one step at a time.</p>
         </footer>
       </main>

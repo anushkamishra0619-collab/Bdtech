@@ -626,7 +626,7 @@ export default function LoginPage({ initialMode = "login" }) {
               <h2>
                 Welcome To
                 <br />
-                The SocietySelect
+                The Socia
               </h2>
               <p>New Here?</p>
               <button
@@ -645,7 +645,7 @@ export default function LoginPage({ initialMode = "login" }) {
               <h2>
                 Welcome back To
                 <br />
-                The SocietySelect
+                The Socia
               </h2>
               <p className="existing-account-prompt">Already have an account?</p>
               <button
