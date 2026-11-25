@@ -7,6 +7,7 @@ import {
   ClipboardList,
   FileCheck,
   FileUp,
+  LayoutDashboard,
   Lightbulb,
   ListTodo,
   LogOut,
@@ -61,6 +62,18 @@ const StudentSidebar = () => {
         className="student-sidebar-nav"
         aria-label="Student navigation"
       >
+      <NavLink
+        className={({ isActive }) =>
+          `student-sidebar-link${isActive ? " active" : ""}`
+        }
+        end
+        aria-label="Dashboard"
+        title={isCollapsed ? "Dashboard" : undefined}
+        to="/student/dashboard"
+      >
+        <LayoutDashboard size={18} strokeWidth={1.7} aria-hidden="true" />
+        <span>Dashboard</span>
+      </NavLink>
       <div className="student-sidebar-group">
         <h2 className="student-sidebar-group-heading">PROFILE</h2>
         <NavLink
