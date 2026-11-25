@@ -79,7 +79,7 @@ function LandingPage() {
       <main className="landing-container">
         <header className="landing-navbar">
           <Link to="/" className="brand">
-            Society<span>Select</span>
+            <img src="/logo.jpeg" alt="Socia Logo" />
           </Link>
           <nav className="nav-links" aria-label="Primary navigation">
             <a href="#home">Home</a>
@@ -124,7 +124,7 @@ function LandingPage() {
             <DirectionHover title="what's written on paper." />
           </h2>
           <p className="intro-description">
-            SocietySelect brings students, mentors, and college
+            Socia brings students, mentors, and college
             societies together to make recruitment more meaningful,
             transparent, and focused on real-world abilities.
           </p>
@@ -227,7 +227,7 @@ function LandingPage() {
             <p>
               Traditional recruitment often focuses on examination
               scores and interviews. But talent goes beyond that.
-              SocietySelect creates a complete ecosystem where
+              Socia creates a complete ecosystem where
               students can showcase practical skills, work on projects,
               receive mentorship, and demonstrate consistent growth.
             </p>
@@ -260,7 +260,7 @@ function LandingPage() {
 
         <footer className="landing-footer">
           <Link to="/" className="brand">
-            Society<span>Select</span>
+            Socia
           </Link>
           <p>Beyond Marks. Beyond Interviews. Discover Real Potential.</p>
           <div className="footer-links">
@@ -270,7 +270,7 @@ function LandingPage() {
             <Link to="/login">Login</Link>
           </div>
           <span className="copyright">
-            © 2026 SocietySelect. All rights reserved.
+            © 2026 Socia. All rights reserved.
           </span>
         </footer>
       </main>

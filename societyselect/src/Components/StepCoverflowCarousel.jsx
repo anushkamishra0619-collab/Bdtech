@@ -30,7 +30,7 @@ function StepCoverflowCarousel({ steps }) {
     <div
       className="coverflow-wrapper"
       role="region"
-      aria-label="How SocietySelect works steps carousel"
+      aria-label="How Socia works steps carousel"
     >
       <div className="coverflow-stage">
         {steps.map((step, index) => {

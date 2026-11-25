@@ -316,7 +316,7 @@ const ForgotPassword = () => {
             <h2>
               Welcome To
               <br />
-              The SocietySelect
+              The Socia
             </h2>
             <p>
               Your journey towards discovering your technical potential starts

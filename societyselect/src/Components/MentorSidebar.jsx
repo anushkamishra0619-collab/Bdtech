@@ -128,7 +128,7 @@ function MentorSidebar() {
         style={{ cursor: "pointer" }}
       >
         <div className="mentor-logo">
-          <img src="/logo.jpeg" alt="SocietySelect Logo" />
+          <img src="/logo.jpeg" alt="Socia Logo" />
         </div>
       </div>
 

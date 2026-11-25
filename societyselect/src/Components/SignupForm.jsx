@@ -95,7 +95,7 @@ export default function SignupForm() {
         <div className="signup-heading">
           <span className="signup-logo">SA</span>
           <h1>Create Account</h1>
-          <p>Join SocietySelect AI and explore your potential.</p>
+          <p>Join Socia AI and explore your potential.</p>
         </div>
 
         <form onSubmit={handleBasicSubmit}>
@@ -336,7 +336,7 @@ export default function SignupForm() {
             </div>
             <h2>Registration Successful!</h2>
             <p>
-              Welcome to SocietySelect AI, {basicData.name}.
+              Welcome to Socia AI, {basicData.name}.
               Your student profile has been created.
             </p>
             <button

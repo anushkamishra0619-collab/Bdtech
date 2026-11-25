@@ -171,8 +171,8 @@ const StudentDashboard = () => {
   return (
     <main className="student-dashboard">
       <header className="dashboard-navbar">
-        <a className="navbar-brand" href="/student/dashboard" aria-label="SocietySelect AI home">
-          <span className="brand-name">SocietySelect</span>
+        <a className="navbar-brand" href="/student/dashboard" aria-label="Socia AI home">
+          <span className="brand-name">Socia</span>
           <span className="brand-ai">AI</span>
         </a>
 
@@ -522,7 +522,7 @@ const StudentDashboard = () => {
       </div>
 
       <footer className="dashboard-footer">
-        <span>SocietySelect AI</span>
+        <span>Socia AI</span>
         <span aria-hidden="true">•</span>
         <span>Empowering the next generation</span>
       </footer>
