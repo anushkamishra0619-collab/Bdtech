@@ -4,8 +4,8 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/api/auth/:path*",
-      "destination": "https://societyselect.onrender.com/api/auth/:path*"
+      "source": "/api/:path*",
+      "destination": "https://societyselect.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",

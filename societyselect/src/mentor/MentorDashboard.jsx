@@ -1,8 +1,10 @@
-import { Users, ClipboardCheck, FolderKanban, CalendarDays, ArrowUpRight, Clock, CheckCircle2, CircleAlert, BookOpen, ChevronRight, ChevronsRight, Building2 } from "lucide-react";
-
+import { useEffect, useState } from "react";
+import {Users,ClipboardCheck,FolderKanban,CalendarDays,ArrowUpRight,Clock,CheckCircle2,CircleAlert,BookOpen,ChevronRight,ChevronsRight,} from "lucide-react";
 import MentorSidebar from "../Components/MentorSidebar";
+import LoadingPage from "../Components/LoadingPage.jsx";
+import { apiRequest } from "../utils/api.js";
+import { navigateTo } from "../utils/navigation";
 import "./MentorDashboard.css";
-
 function TextMorphHeading() {
   const words = ["Guide.", "Inspire.", "Empower."];
 
@@ -11,9 +13,7 @@ function TextMorphHeading() {
       {words.map((word, index) => (
         <span
           key={word}
-          style={{
-            animationDelay: `${index * 2}s`,
-          }}
+          style={{animationDelay: `${index * 2}s`,}}
         >
           {word}
         </span>
@@ -22,122 +22,79 @@ function TextMorphHeading() {
   );
 }
 
-const stats = [
-  {
-    title: "Assigned Students",
-    value: "03",
-    icon: Users,
-  },
-  {
-    title: "Pending Reviews",
-    value: "02",
-    icon: ClipboardCheck,
-  },
-  {
-    title: "Active Projects",
-    value: "01",
-    icon: FolderKanban,
-  },
-];
-
-const students = [
-  {
-    name: "Gargi Yadav",
-    initials: "GY",
-    society: "A Society",
-    progress: 85,
-    status: "On Track",
-  },
-  {
-    name: "priya Tiwari",
-    initials: "PV",
-    society: "A Society",
-    progress: 65,
-    status: "On Track",
-  },
-  {
-    name: "Aastha",
-    initials: "AS",
-    society: "A Society",
-    progress: 42,
-    status: "Needs Attention",
-  },
-];
-
-const schedule = [
-  {
-    time: "10:00 AM",
-    title: "Project Review",
-    student: "Gargi Yadav",
-    category: "Project Discussion",
-  },
-  {
-    time: "12:30 PM",
-    title: "Mentoring Session",
-    student: "Priya Tiwari",
-    category: "Career Guidance",
-  },
-  {
-    time: "03:00 PM",
-    title: "Progress Check-in",
-    student: "Aastha",
-    category: "Weekly Review",
-  },
-];
-
-const reviews = [
-  {
-    title: "Portfolio Website",
-    student: "Gargi Yadav",
-    time: "2 hours ago",
-  },
-  {
-    title: "Database Management Project",
-    student: "Priya Tiwari",
-    time: "Yesterday",
-  },
-  {
-    title: "Mini Project Documentation",
-    student: "Aastha",
-    time: "Yesterday",
-  },
-];
-
-const quickActions = [
-  {
-    title: "Manage Students",
-    description: "View and manage assigned students",
-    icon: Users,
-    link: "/mentor/students",
-  },
-  {
-    title: "Manage Societies",
-    description: "Update society profiles and recruitment",
-    icon: Building2,
-    link: "/mentor/societies",
-  },
-  {
-    title: "Review Submissions",
-    description: "Evaluate pending student work",
-    icon: ClipboardCheck,
-    link: "/mentor/tasks",
-  },
-  {
-    title: "Track Projects",
-    description: "Monitor ongoing projects",
-    icon: FolderKanban,
-    link: "/mentor/projects",
-  },
-  {
-    title: "View Attendance",
-    description: "Check student attendance records",
-    icon: CalendarDays,
-    link: "/mentor/attendance",
-  },
-];
-
 function MentorDashboard() {
-  const mentorName = "Aastha Sharma";
+  const [dashboardData, setDashboardData] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    apiRequest("/api/mentor/dashboard")
+      .then((data) => {
+        if (active) setDashboardData(data);
+      })
+      .catch((requestError) => {
+        if (active) setError(requestError.message);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!dashboardData && !error) return <LoadingPage />;
+
+  if (error) {
+    return (
+      <div className="mentor-dashboard">
+        <MentorSidebar />
+        <main className="mentor-main">
+          <h1>Unable to load mentor dashboard</h1>
+          <p role="alert">{error}</p>
+          <a href="/login">Sign in</a>
+        </main>
+      </div>
+    );
+  }
+
+  const mentorName = dashboardData.mentor.fullName;
+  const students = dashboardData.studentProgress.map((student) => ({
+    id: student.id,
+    name: student.fullName,
+    initials: student.fullName.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(),
+    society: student.domain,
+    progress: student.progressPercentage,
+    status: student.progressPercentage >= 60 ? "On Track" : "Needs Attention",
+  }));
+  const schedule = dashboardData.schedule.map((item) => ({
+    id: item.applicationId,
+    time: item.scheduledAt ? new Date(item.scheduledAt).toLocaleString() : "Time not set",
+    title: "Interview",
+    student: item.studentName,
+    category: `${item.domain} · ${item.mode || "Mode not set"}`,
+  }));
+  const reviews = dashboardData.pendingReviews.map((review) => ({
+    id: `${review.taskId}-${review.studentId}`,
+    title: review.taskTitle,
+    student: review.studentName,
+    time: review.submittedAt ? new Date(review.submittedAt).toLocaleString() : "Recently submitted",
+  }));
+  const stats = [
+    { title: "Assigned Students", value: dashboardData.stats.assignedStudentsCount, icon: Users, link: "/mentor/students" },
+    { title: "Pending Reviews", value: dashboardData.stats.pendingReviewsCount, icon: ClipboardCheck, link: "/mentor/projects" },
+    { title: "Active Tasks", value: dashboardData.stats.activeTasksCount, icon: FolderKanban, link: "/mentor/projects" },
+  ];
+  const quickActions = [
+    { title: "My Students", description: "View and manage assigned students", icon: Users, link: "/mentor/students" },
+    { title: "Review Submissions", description: "Evaluate pending student work", icon: ClipboardCheck, link: "/mentor/projects" },
+    { title: "Track Tasks", description: "Monitor assigned domain tasks", icon: FolderKanban, link: "/mentor/projects" },
+    { title: "Interviews", description: "Schedule and evaluate candidates", icon: CalendarDays, link: "/mentor/interviews" },
+  ];
+
+  const handleNav = (e, url) => {
+    e.preventDefault();
+    navigateTo(url);
+  };
+
   return (
     <div className="mentor-dashboard">
       <MentorSidebar />
@@ -155,6 +112,7 @@ function MentorDashboard() {
             </div>
           </div>
         </header>
+
         <section className="mentor-welcome-banner">
           <div className="mentor-banner-arrows top-left">
             <ChevronsRight size={50} />
@@ -169,7 +127,11 @@ function MentorDashboard() {
               Every student has potential. Your guidance helps transform
               that potential into meaningful achievements.
             </p>
-            <a href="/mentor/students" className="mentor-primary-btn">
+            <a
+              href="/mentor/students"
+              className="mentor-primary-btn"
+              onClick={(e) => handleNav(e, "/mentor/students")}
+            >
               Explore Students
             </a>
           </div>
@@ -186,7 +148,14 @@ function MentorDashboard() {
             const Icon = stat.icon;
 
             return (
-              <article className="mentor-stat-card" key={stat.title}>
+              <article
+                className={`mentor-stat-card ${
+                  stat.link ? "mentor-stat-card-clickable" : ""
+                }`}
+                key={stat.title}
+                onClick={() => stat.link && navigateTo(stat.link)}
+                title={stat.link ? `Go to ${stat.title}` : undefined}
+              >
                 <div className="mentor-stat-top">
                   <div className="mentor-stat-icon">
                     <Icon size={24} />
@@ -219,13 +188,22 @@ function MentorDashboard() {
                 </span>
                 <h2>Student Progress</h2>
               </div>
-              <a href="/mentor/students" className="mentor-view-all">
+              <a
+                href="/mentor/students"
+                className="mentor-view-all"
+                onClick={(e) => handleNav(e, "/mentor/students")}
+              >
                 View all <ChevronRight size={16} />
               </a>
             </div>
             <div className="mentor-student-list">
               {students.map((student) => (
-                <div className="mentor-student-row" key={student.name}>
+                <div
+                  className="mentor-student-row clickable"
+                  key={student.name}
+                  onClick={() => navigateTo(`/mentor/students/${student.id}`)}
+                  title={`View details for ${student.name}`}
+                >
                   <div className="mentor-student-avatar">
                     {student.initials}
                   </div>
@@ -281,7 +259,7 @@ function MentorDashboard() {
 
             <div className="mentor-schedule-list">
               {schedule.map((item) => (
-                <div className="mentor-schedule-item" key={item.time}>
+                <div className="mentor-schedule-item" key={item.id}>
                   <div className="mentor-schedule-time">
                     <Clock size={14} />
                     <span>{item.time}</span>
@@ -296,7 +274,11 @@ function MentorDashboard() {
               ))}
             </div>
 
-            <a href="/mentor/attendance" className="mentor-schedule-link">
+            <a
+              href="/mentor/interviews"
+              className="mentor-schedule-link"
+              onClick={(e) => handleNav(e, "/mentor/interviews")}
+            >
               View full schedule <ArrowUpRight size={16} />
             </a>
           </div>
@@ -312,7 +294,7 @@ function MentorDashboard() {
                 <h2>Pending Reviews</h2>
               </div>
 
-              <span className="mentor-review-badge">03 NEW</span>
+              <span className="mentor-review-badge">{reviews.length} NEW</span>
             </div>
             <div className="mentor-review-list">
               {reviews.map((review) => (
@@ -329,13 +311,18 @@ function MentorDashboard() {
                     href="/mentor/tasks"
                     className="mentor-review-action"
                     aria-label={`Review ${review.title}`}
+                    onClick={(e) => handleNav(e, "/mentor/tasks")}
                   >
                     <ArrowUpRight size={18} />
                   </a>
                 </div>
               ))}
             </div>
-            <a href="/mentor/tasks" className="mentor-all-reviews">
+            <a
+              href="/mentor/tasks"
+              className="mentor-all-reviews"
+              onClick={(e) => handleNav(e, "/mentor/tasks")}
+            >
               View all submissions <ChevronRight size={16} />
             </a>
           </div>
@@ -357,6 +344,7 @@ function MentorDashboard() {
                     href={action.link}
                     className="mentor-quick-action"
                     key={action.title}
+                    onClick={(e) => handleNav(e, action.link)}
                   >
                     <div className="mentor-quick-icon">
                       <Icon size={20} />

@@ -359,6 +359,29 @@
   gap: 12px;
   padding: 15px 0;
   border-bottom: 1px solid #eff3f5;
+  transition: all 0.2s ease;
+}
+
+.mentor-student-row.clickable {
+  cursor: pointer;
+  padding: 12px 10px;
+  border-radius: 10px;
+}
+
+.mentor-student-row.clickable:hover {
+  background: #f0f7fa;
+  transform: translateX(4px);
+}
+
+.mentor-stat-card-clickable {
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.mentor-stat-card-clickable:hover {
+  transform: translateY(-4px);
+  border-color: #bad8e6;
+  box-shadow: 0 10px 24px rgba(70, 110, 130, 0.1);
 }
 
 .mentor-student-row:last-child {

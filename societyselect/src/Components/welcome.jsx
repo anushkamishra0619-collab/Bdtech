@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FaArrowLeft,
   FaCheckCircle,
@@ -8,12 +8,11 @@ import {
   FaLinkedinIn,
   FaTimes,
 } from "react-icons/fa";
+import { apiRequest } from "../utils/api.js";
 import "./welcome.css";
 
-const API_BASE = import.meta.env.PROD
-  ? "/api/auth"
-  : import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/auth";
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+const GOOGLE_CLIENT_ID =
+  "524622286901-nn6dac26l3k4th6p4a2t3kl3jq5vblov.apps.googleusercontent.com";
 
 export default function LoginPage({ initialMode = "login" }) {
   const [isSignup, setIsSignup] = useState(initialMode === "signup");
@@ -58,13 +57,6 @@ export default function LoginPage({ initialMode = "login" }) {
   const [errorMsg, setErrorMsg] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
 
-  const extractError = (data, fallback) => {
-    if (data?.errors && Array.isArray(data.errors) && data.errors.length > 0) {
-      return data.errors[0].message;
-    }
-    return data?.message || fallback;
-  };
-
   const saveAuthSession = (data) => {
     if (data?.accessToken) {
       localStorage.setItem("accessToken", data.accessToken);
@@ -74,25 +66,21 @@ export default function LoginPage({ initialMode = "login" }) {
     }
   };
 
-  const redirectStudentToDashboard = (role) => {
-    if (String(role || "").toUpperCase() !== "STUDENT") return false;
-    window.location.assign("/student/dashboard");
-    return true;
+  const redirectUserToDashboard = (role) => {
+    const normalizedRole = String(role || "").toUpperCase();
+    if (normalizedRole === "STUDENT") {
+      window.location.assign("/student/dashboard");
+      return true;
+    }
+    if (normalizedRole === "MENTOR") {
+      window.location.assign("/mentor");
+      return true;
+    }
+    return false;
   };
 
-  // Clear all form fields on mount & listen for Google popup callback
+  // Listen for the Google OAuth popup callback.
   useEffect(() => {
-    setLoginData({ email: "", password: "" });
-    setSignupData({
-      fullName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      domain: "",
-      studentNumber: "",
-    });
-
-    // If this window IS the Google OAuth popup returning with #id_token=...
     if (window.opener && window.location.hash.includes("id_token=")) {
       const params = new URLSearchParams(window.location.hash.substring(1));
       const idToken = params.get("id_token");
@@ -105,18 +93,6 @@ export default function LoginPage({ initialMode = "login" }) {
       }
     }
   }, []);
-
-  // Listen for the ID token sent from the Google Account Chooser popup
-  useEffect(() => {
-    const handleMessage = async (event) => {
-      if (event.origin !== window.location.origin) return;
-      if (event.data?.type === "GOOGLE_ID_TOKEN" && event.data.idToken) {
-        await verifyGoogleTokenWithBackend(event.data.idToken);
-      }
-    };
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  });
 
   const handleLoginChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
@@ -148,16 +124,11 @@ export default function LoginPage({ initialMode = "login" }) {
     try {
       setLoading(true);
       const endpoint = isResend ? "resend-otp" : "send-otp";
-      const res = await fetch(`${API_BASE}/${endpoint}`, {
+      const data = await apiRequest(`/api/auth/${endpoint}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: { email },
+        auth: false,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(extractError(data, "Failed to send OTP"));
-      }
 
       setShowOtpModal(true);
       setInfoMsg(data.message || "OTP sent to your college email!");
@@ -175,19 +146,14 @@ export default function LoginPage({ initialMode = "login" }) {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/verify-otp`, {
+      const data = await apiRequest("/api/auth/verify-otp", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           email: signupData.email.trim().toLowerCase(),
           otp: otp.trim(),
-        }),
+        },
+        auth: false,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(extractError(data, "Invalid OTP"));
-      }
 
       setIsEmailVerified(true);
       setEmailVerificationToken(data.verificationToken);
@@ -235,22 +201,16 @@ export default function LoginPage({ initialMode = "login" }) {
       setLoading(true);
 
       if (pendingGoogleToken) {
-        const res = await fetch(`${API_BASE}/google`, {
+        const data = await apiRequest("/api/auth/google", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
+          body: {
             idToken: pendingGoogleToken,
             role: modalRole,
             studentNumber: signupData.studentNumber.trim(),
             domain: signupData.domain.trim(),
-          }),
+          },
+          auth: false,
         });
-
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(extractError(data, "Google registration failed"));
-        }
 
         if (data.requiresStudentNumber) {
           setErrorMsg(
@@ -271,16 +231,14 @@ export default function LoginPage({ initialMode = "login" }) {
           domain: "",
           studentNumber: "",
         });
-        if (redirectStudentToDashboard(data.user?.role || modalRole)) return;
+        if (redirectUserToDashboard(data.user?.role || modalRole)) return;
         alert(`Welcome ${data.user?.fullName || ""}! Logged in via Google.`);
         return;
       }
 
-      const res = await fetch(`${API_BASE}/signup`, {
+      const data = await apiRequest("/api/auth/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
+        body: {
           fullName: signupData.fullName.trim(),
           studentNumber: signupData.studentNumber.trim(),
           email: signupData.email.trim().toLowerCase(),
@@ -289,16 +247,12 @@ export default function LoginPage({ initialMode = "login" }) {
           password: signupData.password,
           confirmPassword: signupData.confirmPassword,
           role: signupRole,
-        }),
+        },
+        auth: false,
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(extractError(data, "Registration failed"));
-      }
-
       saveAuthSession(data);
-      if (redirectStudentToDashboard(data.user?.role || signupRole)) return;
+      if (data.accessToken && redirectUserToDashboard(data.user?.role || signupRole)) return;
 
       setShowProfileForm(false);
       alert("Account created successfully! Please sign in.");
@@ -328,26 +282,20 @@ export default function LoginPage({ initialMode = "login" }) {
 
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/login`, {
+      const data = await apiRequest("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
+        body: {
           email: loginData.email.trim().toLowerCase(),
           password: loginData.password,
           role: loginRole,
-        }),
+        },
+        auth: false,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(extractError(data, "Login failed"));
-      }
 
       saveAuthSession(data);
 
       setLoginData({ email: "", password: "" });
-      if (redirectStudentToDashboard(data.user?.role || loginRole)) return;
+      if (redirectUserToDashboard(data.user?.role || loginRole)) return;
       alert(`Welcome back, ${data.user.fullName} (${data.user.role})!`);
     } catch (err) {
       setErrorMsg(err.message);
@@ -357,25 +305,19 @@ export default function LoginPage({ initialMode = "login" }) {
   };
 
   // Send the Google ID token to backend /api/auth/google
-  const verifyGoogleTokenWithBackend = async (idToken) => {
+  const verifyGoogleTokenWithBackend = useCallback(async (idToken) => {
     const selectedRole = isSignup ? signupRole : loginRole;
     try {
       setLoading(true);
       setErrorMsg("");
-      const res = await fetch(`${API_BASE}/google`, {
+      const data = await apiRequest("/api/auth/google", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
+        body: {
           idToken,
           role: selectedRole,
-        }),
+        },
+        auth: false,
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(extractError(data, "Google authentication failed"));
-      }
 
       if (data.requiresStudentNumber) {
         setPendingGoogleToken(idToken);
@@ -386,14 +328,26 @@ export default function LoginPage({ initialMode = "login" }) {
       }
 
       saveAuthSession(data);
-      if (redirectStudentToDashboard(data.user?.role || selectedRole)) return;
+      if (redirectUserToDashboard(data.user?.role || selectedRole)) return;
       alert(`Logged in with Google as ${data.user.fullName}!`);
     } catch (err) {
       setErrorMsg(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [isSignup, loginRole, signupRole]);
+
+  // Listen for the ID token sent from the Google Account Chooser popup.
+  useEffect(() => {
+    const handleMessage = async (event) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === "GOOGLE_ID_TOKEN" && event.data.idToken) {
+        await verifyGoogleTokenWithBackend(event.data.idToken);
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [verifyGoogleTokenWithBackend]);
 
   // OPEN FULL GOOGLE ACCOUNT CHOOSER PAGE IN POPUP
   const handleGoogleAuth = () => {
@@ -513,7 +467,7 @@ export default function LoginPage({ initialMode = "login" }) {
               <option value="STUDENT">Student</option>
               <option value="MENTOR">Mentor</option>
             </select>
-            <a href="#forgot" className="forgot-link">
+            <a href="/forgot" className="forgot-link">
               Forgot your password?
             </a>
             <button className="auth-button" type="submit" disabled={loading}>
@@ -807,7 +761,7 @@ export default function LoginPage({ initialMode = "login" }) {
                   </select>
                 </>
               )}
-              
+
               <label htmlFor="profile-domain">Domain</label>
               <input
                 id="profile-domain"

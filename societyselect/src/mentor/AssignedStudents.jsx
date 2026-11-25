@@ -1,60 +1,71 @@
-import { useMemo, useState } from "react";
-import { Users, Search, Eye, MessageCircle, SlidersHorizontal } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { MessageCircle, Search, SlidersHorizontal, Users } from "lucide-react";
 import MentorSidebar from "../Components/MentorSidebar";
+import LoadingPage from "../Components/LoadingPage.jsx";
+import { apiRequest } from "../utils/api.js";
+import { navigateTo } from "../utils/navigation";
 import "./AssignedStudents.css";
 
-const studentData = [
-  {
-    id: 1,
-    name: "Gargi Yadav",
-    society: "A Society",
-    email: "gargi@example.com",
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Priya Tiwari",
-    society: "A Society",
-    email: "priya@example.com",
-    status: "Active",
-  },
-  {
-    id: 3,
-    name: "Aastha",
-    society: "A Society",
-    email: "aastha@example.com",
-    status: "Pending",
-  },
-];
-
 function AssignedStudents() {
-  const [students] = useState(studentData);
+  const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    apiRequest("/api/mentor/students")
+      .then((data) => {
+        if (active) setStudents(data.students || []);
+      })
+      .catch((requestError) => {
+        if (active) setError(requestError.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
-      const matchesSearch =
-        student.name.toLowerCase().includes(search.toLowerCase()) ||
-        student.society.toLowerCase().includes(search.toLowerCase()) ||
-        student.email.toLowerCase().includes(search.toLowerCase());
+      const searchTerm = search.toLowerCase();
+      const matchesSearch = [
+        student.fullName,
+        student.societyName,
+        student.email,
+        student.branch,
+        student.studentNumber,
+      ]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(searchTerm));
 
-      const matchesStatus = statusFilter === "All" || student.status === statusFilter;
+      const matchesStatus =
+        statusFilter === "All" || student.probationStatus === statusFilter;
+
       return matchesSearch && matchesStatus;
     });
   }, [students, search, statusFilter]);
 
   const handleViewProfile = (student) => {
-    alert(`Viewing profile of ${student.name}`);
+    navigateTo(`/mentor/students/${student._id}`);
   };
 
-  const handleMessage = (student) => {
-    alert(`Opening conversation with ${student.name}`);
+  const handleMessage = (e, student) => {
+    e.stopPropagation();
+    alert(`No messaging service is connected for ${student.fullName}.`);
   };
+
+  if (loading) return <LoadingPage />;
 
   return (
     <div className="assigned-page">
       <MentorSidebar />
+
       <main className="assigned-main">
         <section className="assigned-content">
           <div className="assigned-heading">
@@ -65,25 +76,16 @@ function AssignedStudents() {
                 and guide them towards success.
               </p>
             </div>
+
             <div className="assigned-heading-icon">
               <Users size={30} />
             </div>
           </div>
 
           <section className="assigned-student-section">
-            <div className="assigned-section-heading">
-              <div>
-                <h2>Your Students</h2>
-                <p>
-                  You currently have {students.length} students assigned
-                  to you.
-                </p>
-              </div>
-            </div>
             <div className="assigned-toolbar">
               <div className="assigned-search">
                 <Search size={19} />
-
                 <input
                   type="text"
                   placeholder="Search by student name..."
@@ -94,43 +96,53 @@ function AssignedStudents() {
 
               <div className="assigned-filter">
                 <SlidersHorizontal size={17} />
-
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
                   <option value="All">All Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Completed">Completed</option>
+                  <option value="APPLICANT">Applicant</option>
+                  <option value="ON_PROBATION">On probation</option>
+                  <option value="SELECTED">Selected</option>
+                  <option value="REJECTED">Rejected</option>
                 </select>
               </div>
             </div>
 
-            <div className="assigned-student-grid">
+            {error ? <p role="alert">{error}</p> : null}
+            {!error ? (
+              <div className="assigned-student-grid">
               {filteredStudents.length > 0 ? (
                 filteredStudents.map((student) => (
                   <article
                     className="assigned-student-card"
-                    key={student.id}
+                    key={student._id}
+                    onClick={() => handleViewProfile(student)}
+                    style={{ cursor: "pointer" }}
                   >
+
                     <div className="assigned-student-info">
-                      <h3>{student.name}</h3>
+                      <h3>{student.fullName}</h3>
+                      <p>{student.email}</p>
                     </div>
 
                     <div className="assigned-card-actions">
                       <button
+                        type="button"
                         className="assigned-view-btn"
-                        onClick={() => handleViewProfile(student)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewProfile(student);
+                        }}
                       >
-                        <Eye size={16} />
-                        View Profile
+                        View Details
                       </button>
 
                       <button
+                        type="button"
                         className="assigned-message-btn"
-                        onClick={() => handleMessage(student)}
-                        aria-label={`Message ${student.name}`}
+                        onClick={(e) => handleMessage(e, student)}
+                        aria-label={`Message ${student.fullName}`}
                       >
                         <MessageCircle size={17} />
                       </button>
@@ -141,9 +153,11 @@ function AssignedStudents() {
                 <div className="assigned-empty-state">
                   <Users size={34} />
                   <h3>No students found</h3>
+                  <p>Try adjusting your search or status filter.</p>
                 </div>
               )}
-            </div>
+              </div>
+            ) : null}
           </section>
         </section>
       </main>

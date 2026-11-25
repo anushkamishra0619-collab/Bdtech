@@ -7,121 +7,19 @@ import {
   Reveal,
   ShinyText,
   SpotlightCard,
-} from "../../components/ui/DashboardEffects";
+} from "../../Components/ui/DashboardEffects.jsx";
+import LoadingPage from "../../Components/LoadingPage.jsx";
+import { apiRequest } from "../../utils/api.js";
 import "./StudentDashboard.css";
-
-const dashboardData = {
-  student: {
-    name: "Ashutosh",
-    role: "Probationer & Member",
-    performance: 86,
-    cohortRank: "Top 15%",
-    milestone: "Full Time",
-    deadline: "30th Dec",
-  },
-  overview: {
-    applicationStatus: "In Review",
-    statusDescription:
-      "Your profile is under evaluation. You will be notified soon about the next steps in your journey.",
-    examinationScore: 82,
-    tasksCompleted: 8,
-    totalTasks: 12,
-    previousPerformance: 82,
-    performanceChange: "+4%",
-    performanceSummary: "Steady, upward momentum",
-    bestQuarter: "Your best quarter yet.",
-    performanceDescription: "Consistent growth across all sections this year.",
-    projectCompletion: 84,
-    productivityScore: "+24",
-  },
-  journey: [
-    { number: "1", name: "Application", detail: "Your application was successfully received", state: "complete" },
-    { number: "2", name: "Online Examination", detail: "Complete with 82% score", state: "complete" },
-    { number: "3", name: "Interview", detail: "Scheduled for next month", state: "complete" },
-    { number: "4", name: "Probation", detail: "4 months to build your skills", state: "current" },
-    { number: "5", name: "Final Selection", detail: "Your dedication pays off", state: "upcoming" },
-  ],
-  monthlyTrend: [
-    { month: "Jan", value: 64 },
-    { month: "Feb", value: 69 },
-    { month: "Mar", value: 74 },
-    { month: "Apr", value: 79 },
-    { month: "May", value: 83 },
-    { month: "Jun", value: 86 },
-  ],
-  tasks: [
-    {
-      id: "readme",
-      title: "Upload project README",
-      description: "Add a detailed README file to your repository.",
-      date: "16 Nov",
-      priority: "High",
-    },
-    {
-      id: "interview",
-      title: "Prepare for your review",
-      description: "Review your recent work and practice sharing your impact.",
-      date: "20 Nov",
-      priority: "Medium",
-    },
-    {
-      id: "collaboration",
-      title: "Peer collaboration review",
-      description: "Share feedback on your teammates' recent contributions.",
-      date: "24 Nov",
-      priority: "Medium",
-    },
-    {
-      id: "communication",
-      title: "Complete communication quiz",
-      description: "Test your communication and teamwork skills.",
-      date: "28 Nov",
-      priority: "Low",
-    },
-  ],
-  activity: [
-    { title: "Interview completed", detail: "Today, 10:30 AM" },
-    { title: "Evaluation updated", detail: "Yesterday, 4:12 PM" },
-    { title: "Project milestone submitted", detail: "9 Nov, 2:05 PM" },
-    { title: "Peer review received", detail: "7 Nov, 11:24 AM" },
-    { title: "Probation started", detail: "1 Nov, 9:00 AM" },
-  ],
-  skills: [
-    { name: "React.js", score: 87, type: "percent" },
-    { name: "JavaScript", score: 81, type: "percent" },
-    { name: "Problem solving", score: 88, type: "percent" },
-    { name: "Communication", score: 77, type: "percent" },
-    { name: "Teamwork", score: 87, type: "percent" },
-    { name: "GitHub contributions", score: 89, type: "points" },
-  ],
-  recommendations: [
-    { taskId: "interview", text: "Practice mock interviews to feel ready for your review." },
-    { taskId: "readme", text: "Add a clear README to showcase your project." },
-    { taskId: "collaboration", text: "Keep building your collaboration skills through peer feedback." },
-  ],
-  insight: {
-    heading: "Your next step towards growth",
-    quote:
-      "Your technical performance is improving. Focus on completing pending tasks and strengthening your project contributions.",
-  },
-};
 
 const StudentDashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeNav, setActiveNav] = useState("Dashboard");
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const [overviewData, setOverviewData] = useState(null);
+  const [overviewLoadedAt, setOverviewLoadedAt] = useState(null);
+  const [overviewError, setOverviewError] = useState("");
   const navbarLinksRef = useRef(null);
-  const { student, overview } = dashboardData;
-  const chartCoordinates = dashboardData.monthlyTrend.map((point, index) => ({
-    ...point,
-    x: 30 + (index / Math.max(dashboardData.monthlyTrend.length - 1, 1)) * 368,
-    y: 102 - (point.value - 60) * 2.8,
-  }));
-  const chartPoints = chartCoordinates
-    .map((point) => `${point.x},${point.y}`)
-    .join(" ");
-  const chartArea = `M${chartCoordinates[0].x},102 L${chartPoints} L${chartCoordinates.at(-1).x},102 Z`;
-
   const closeMenu = () => setIsMenuOpen(false);
   const moveNavIndicator = useCallback((link) => {
     const nav = navbarLinksRef.current;
@@ -139,6 +37,24 @@ const StudentDashboard = () => {
   };
 
   useEffect(() => {
+    let active = true;
+    apiRequest("/api/student/overview")
+      .then((data) => {
+        if (active) {
+          setOverviewData(data);
+          setOverviewLoadedAt(Date.now());
+        }
+      })
+      .catch((error) => {
+        if (active) setOverviewError(error.message);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
     const activeLink = navbarLinksRef.current?.querySelector(`[data-nav="${activeNav}"]`);
     if (activeLink) moveNavIndicator(activeLink);
     const handleResize = () => {
@@ -147,7 +63,111 @@ const StudentDashboard = () => {
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [activeNav, isMenuOpen, moveNavIndicator]);
+  }, [activeNav, isMenuOpen, moveNavIndicator, overviewData]);
+
+  if (overviewError) {
+    return (
+      <main className="student-dashboard">
+        <section className="dashboard-section" role="alert">
+          <h1>Unable to load your dashboard</h1>
+          <p>{overviewError}</p>
+          <a href="/login">Sign in</a>
+        </section>
+      </main>
+    );
+  }
+
+  if (!overviewData) {
+    return <LoadingPage />;
+  }
+
+  const apiStudent = overviewData.student;
+  const kpis = overviewData.kpis;
+  const applicationStage = kpis.applicationStage || "NOT_APPLIED";
+  const stageLabel = applicationStage.replaceAll("_", " ");
+  const taskScore = kpis.averageTaskScore;
+  const score = taskScore ?? kpis.interviewScore ?? 0;
+  const completionRate = kpis.totalTasks
+    ? Math.round((kpis.completedTasks / kpis.totalTasks) * 100)
+    : 0;
+  const submittedActivity = (overviewData.recentSubmissions || []).map((submission) => ({
+    title: submission.taskTitle,
+    detail: `${submission.status.replaceAll("_", " ")} · ${new Date(submission.submittedAt).toLocaleDateString()}`,
+  }));
+  const upcomingTasks = (overviewData.upcomingTasks || []).map((task) => {
+    const daysRemaining = Math.ceil((new Date(task.deadline) - overviewLoadedAt) / 86400000);
+    return {
+      id: String(task.taskId),
+      title: task.title,
+      description: task.description,
+      date: new Date(task.deadline).toLocaleDateString(),
+      priority: daysRemaining <= 3 ? "High" : daysRemaining <= 7 ? "Medium" : "Low",
+    };
+  });
+  const gradedTasks = (overviewData.recentSubmissions || [])
+    .filter((submission) => submission.marksObtained !== null && submission.marksObtained !== undefined)
+    .slice(0, 6)
+    .reverse()
+    .map((submission, index) => ({
+      month: `Task ${index + 1}`,
+      value: Math.round((submission.marksObtained / Math.max(submission.maxMarks || 100, 1)) * 100),
+    }));
+  const dashboardData = {
+    student: {
+      name: apiStudent.fullName,
+      role: (kpis.probationStatus || "APPLICANT").replaceAll("_", " "),
+      performance: score,
+      cohortRank: apiStudent.domain || "Domain not set",
+      milestone: stageLabel,
+      deadline: upcomingTasks[0]?.date || "No pending tasks",
+    },
+    overview: {
+      applicationStatus: stageLabel,
+      statusDescription: overviewData.application
+        ? `Your application for ${overviewData.application.societyName} is at the ${stageLabel.toLowerCase()} stage.`
+        : "Submit your society application to begin tracking your recruitment journey.",
+      examinationScore: kpis.interviewScore,
+      tasksCompleted: kpis.completedTasks,
+      totalTasks: kpis.totalTasks,
+      performanceSummary: taskScore === null ? "No graded tasks yet" : `${taskScore}% average task score`,
+      projectCompletion: completionRate,
+      productivityScore: kpis.completedTasks,
+      performanceAvailable: taskScore !== null || kpis.interviewScore !== null,
+    },
+    journey: [
+      { number: "1", name: "Application", detail: stageLabel, state: applicationStage === "NOT_APPLIED" ? "current" : "complete" },
+      { number: "2", name: "Assessment", detail: "Assessment stage", state: applicationStage === "ASSESSMENT" ? "current" : "upcoming" },
+      { number: "3", name: "Interview", detail: overviewData.application?.interview?.scheduledAt ? new Date(overviewData.application.interview.scheduledAt).toLocaleString() : "Not scheduled", state: overviewData.application?.interview?.scheduledAt ? "complete" : "upcoming" },
+      { number: "4", name: "Probation", detail: (kpis.probationStatus || "APPLICANT").replaceAll("_", " "), state: kpis.probationStatus === "ON_PROBATION" ? "current" : "upcoming" },
+      { number: "5", name: "Final Selection", detail: "Awaiting final decision", state: kpis.probationStatus === "SELECTED" ? "complete" : "upcoming" },
+    ],
+    monthlyTrend: gradedTasks,
+    tasks: upcomingTasks,
+    activity: submittedActivity,
+    skills: (apiStudent.skills || []).map((name) => ({ name })),
+    recommendations: upcomingTasks.slice(0, 3).map((task) => ({
+      taskId: task.id,
+      text: `Complete ${task.title} by ${task.date}.`,
+    })),
+    insight: {
+      heading: "Your next step towards growth",
+      quote: upcomingTasks[0]
+        ? `Focus on completing "${upcomingTasks[0].title}" before its deadline.`
+        : "Check your task list regularly for new work from your mentor.",
+    },
+  };
+  const { student, overview } = dashboardData;
+  const chartCoordinates = dashboardData.monthlyTrend.map((point, index) => ({
+    ...point,
+    x: 30 + (index / Math.max(dashboardData.monthlyTrend.length - 1, 1)) * 368,
+    y: 102 - (point.value / 100) * 80,
+  }));
+  const chartPoints = chartCoordinates
+    .map((point) => `${point.x},${point.y}`)
+    .join(" ");
+  const chartArea = chartCoordinates.length
+    ? `M${chartCoordinates[0].x},102 L${chartPoints} L${chartCoordinates.at(-1).x},102 Z`
+    : "";
 
   return (
     <main className="student-dashboard">
@@ -196,13 +216,13 @@ const StudentDashboard = () => {
             <span>GitHub Analytics</span>
           </a>
           <a
-            href="/student/performance"
-            className={`nav-link${activeNav === "Performance" ? " active" : ""}`}
-            data-nav="Performance"
+            href="/student/tasks"
+            className={`nav-link${activeNav === "Tasks" ? " active" : ""}`}
+            data-nav="Tasks"
             onMouseEnter={(event) => moveNavIndicator(event.currentTarget)}
-            onClick={() => handleNavClick("Performance")}
+            onClick={() => handleNavClick("Tasks")}
           >
-            Performance
+            Tasks
           </a>
           <a
             href="/student/settings"
@@ -266,7 +286,7 @@ const StudentDashboard = () => {
           towards joining your dream society.
         </p>
         <div className="hero-actions">
-          <Magnet className="hero-button" href="#upcoming-tasks">Continue Your Journey</Magnet>
+          <Magnet className="hero-button" href="/student/tasks">View My Tasks</Magnet>
           <Magnet className="hero-button" href="/student/profile">View My Profile</Magnet>
         </div>
       </section>
@@ -281,15 +301,15 @@ const StudentDashboard = () => {
             </div>
           </div>
           <div className="profile-performance">
-            <div className="profile-score" aria-label={`Overall performance ${student.performance} percent`}>
+            <div className="profile-score" aria-label={`Current score ${student.performance} percent`}>
               <svg className="profile-score-ring" viewBox="0 0 110 110" aria-hidden="true">
                 <circle cx="55" cy="55" r="50" />
               </svg>
               <span><CountUp value={student.performance} /></span>
             </div>
             <div className="profile-rank">
-              <span className="card-label">Overall performance</span>
-              <strong><CountUp value={student.cohortRank} /> in your cohort</strong>
+              <span className="card-label">Domain</span>
+              <strong><CountUp value={student.cohortRank} /></strong>
             </div>
           </div>
           <p className="profile-milestone">
@@ -314,26 +334,32 @@ const StudentDashboard = () => {
                   : overview.applicationStatus}
               </h3>
               <p>{overview.statusDescription}</p>
+              <a className="insight-link" href={overview.applicationStatus === "NOT APPLIED" ? "/student/apply" : "/student/application-tracking"}>
+                {overview.applicationStatus === "NOT APPLIED" ? "Start application →" : "Track application →"}
+              </a>
             </div>
             <div className="glance-metrics">
               <SpotlightCard as="article" className="glance-metric">
-                <p className="section-eyebrow">Examination score</p>
-                <strong><CountUp value={`${overview.examinationScore}/100`} /></strong>
-                <span><CountUp value="Top 20%" /> of candidates</span>
+                <p className="section-eyebrow">Interview score</p>
+                <strong>{overview.examinationScore === null ? "—" : <CountUp value={`${overview.examinationScore}/100`} />}</strong>
+                <span>{overview.examinationScore === null ? "Not published" : "Published result"}</span>
               </SpotlightCard>
               <article className="glance-metric tasks-glance">
                 <p className="section-eyebrow">Tasks completed</p>
                 <strong><CountUp value={`${overview.tasksCompleted} of ${overview.totalTasks}`} /></strong>
-                <span><CountUp value={overview.totalTasks - overview.tasksCompleted} /> remaining this month</span>
+                <span><CountUp value={overview.totalTasks - overview.tasksCompleted} /> remaining</span>
               </article>
             </div>
           </div>
           <div className="momentum">
-            <div className="momentum-ring"><CountUp value={student.performance} /><small>%</small></div>
+            <div className="momentum-ring">
+              {overview.performanceAvailable ? <CountUp value={student.performance} /> : "—"}
+              <small>{overview.performanceAvailable ? "%" : ""}</small>
+            </div>
             <div>
-              <p className="section-eyebrow">Overall performance</p>
+              <p className="section-eyebrow">Task performance</p>
               <h3>{overview.performanceSummary}</h3>
-              <p><CountUp value={`${student.cohortRank} • ${overview.performanceChange} • Previous: ${overview.previousPerformance}`} /></p>
+              <p>{student.cohortRank} · {overview.tasksCompleted} of {overview.totalTasks} tasks submitted</p>
             </div>
           </div>
         </Reveal>
@@ -361,52 +387,52 @@ const StudentDashboard = () => {
           </div>
           <div className="performance-grid">
             <div className="performance-highlight">
-              <strong><CountUp value={student.performance} /><small>%</small></strong>
-              <h3>{overview.bestQuarter}</h3>
-              <p>{overview.performanceDescription}</p>
+              <strong>{overview.performanceAvailable ? <><CountUp value={student.performance} /><small>%</small></> : "—"}</strong>
+              <h3>Current score</h3>
+              <p>Calculated from your available graded tasks or published interview score.</p>
             </div>
             <div className="trend-chart">
-              <p className="section-eyebrow">Monthly trend</p>
-              <svg
-                viewBox="0 0 420 125"
-                role="img"
-                aria-label={`Performance rising from ${dashboardData.monthlyTrend[0].value} in ${dashboardData.monthlyTrend[0].month} to ${dashboardData.monthlyTrend.at(-1).value} in ${dashboardData.monthlyTrend.at(-1).month}`}
-              >
-                <defs>
-                  <linearGradient id="performance-area-gradient" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stopColor="#6d9fb1" stopOpacity="0.28" />
-                    <stop offset="100%" stopColor="#6d9fb1" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <line x1="30" y1="102" x2="398" y2="102" />
-                <line x1="30" y1="62" x2="398" y2="62" />
-                <line x1="30" y1="22" x2="398" y2="22" />
-                <path className="performance-area" d={chartArea} />
-                <path className="performance-trend-line" pathLength="1" d={`M${chartPoints.replaceAll(" ", " L")}`} />
-                {chartCoordinates.map((point) => (
-                  <circle
-                    className="performance-dot"
-                    key={point.month}
-                    cx={point.x}
-                    cy={point.y}
-                    r="3.5"
-                    tabIndex="0"
-                    aria-label={`${point.month}: ${point.value}`}
-                  >
-                    <title>{`${point.month}: ${point.value}`}</title>
-                  </circle>
-                ))}
-              </svg>
-              <div className="chart-months">
-                {dashboardData.monthlyTrend.map((point) => <span key={point.month}>{point.month}</span>)}
-              </div>
+              <p className="section-eyebrow">Recent graded tasks</p>
+              {dashboardData.monthlyTrend.length ? (
+                <>
+                  <svg viewBox="0 0 420 125" role="img" aria-label="Recent task scores">
+                    <defs>
+                      <linearGradient id="performance-area-gradient" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stopColor="#6d9fb1" stopOpacity="0.28" />
+                        <stop offset="100%" stopColor="#6d9fb1" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <line x1="30" y1="102" x2="398" y2="102" />
+                    <line x1="30" y1="62" x2="398" y2="62" />
+                    <line x1="30" y1="22" x2="398" y2="22" />
+                    <path className="performance-area" d={chartArea} />
+                    <path className="performance-trend-line" pathLength="1" d={`M${chartPoints.replaceAll(" ", " L")}`} />
+                    {chartCoordinates.map((point) => (
+                      <circle
+                        className="performance-dot"
+                        key={point.month}
+                        cx={point.x}
+                        cy={point.y}
+                        r="3.5"
+                        tabIndex="0"
+                        aria-label={`${point.month}: ${point.value}%`}
+                      >
+                        <title>{`${point.month}: ${point.value}%`}</title>
+                      </circle>
+                    ))}
+                  </svg>
+                  <div className="chart-months">
+                    {dashboardData.monthlyTrend.map((point) => <span key={point.month}>{point.month}</span>)}
+                  </div>
+                </>
+              ) : <p>No graded tasks yet.</p>}
             </div>
             <div className="performance-stat">
-              <p className="section-eyebrow">Current score</p>
-              <strong><CountUp value={`${overview.examinationScore} / 100`} /></strong>
+              <p className="section-eyebrow">Interview score</p>
+              <strong>{overview.examinationScore === null ? "—" : <CountUp value={`${overview.examinationScore} / 100`} />}</strong>
             </div>
             <div className="performance-stat">
-              <p className="section-eyebrow">Project completion</p>
+              <p className="section-eyebrow">Task completion</p>
               <strong><CountUp value={`${overview.projectCompletion} / 100`} /></strong>
             </div>
           </div>
@@ -414,7 +440,7 @@ const StudentDashboard = () => {
 
         <Reveal as="section" index={3} className="tasks-section dashboard-section" id="upcoming-tasks" aria-labelledby="tasks-title">
           <div className="section-heading">
-            <p className="section-eyebrow">Upcoming tasks</p>
+            <p className="section-eyebrow">Pending tasks</p>
             <h2 id="tasks-title">What needs your <em>attention</em></h2>
           </div>
           <ul className="task-list">
@@ -431,6 +457,7 @@ const StudentDashboard = () => {
               </li>
             ))}
           </ul>
+          {!dashboardData.tasks.length ? <p>No pending tasks right now.</p> : null}
         </Reveal>
 
         <Reveal as="section" index={4} className="activity-section dashboard-section" aria-labelledby="activity-title">
@@ -449,6 +476,7 @@ const StudentDashboard = () => {
               </li>
             ))}
           </ol>
+          {!dashboardData.activity.length ? <p>No submissions yet.</p> : null}
         </Reveal>
 
         <Reveal as="section" index={5} className="skills-section dashboard-section" aria-labelledby="skills-title">
@@ -461,13 +489,14 @@ const StudentDashboard = () => {
             {dashboardData.skills.map((skill, index) => (
               <li className="skill-item" key={skill.name}>
                 <span>{skill.name}</span>
-                <strong><CountUp value={`${skill.score}${skill.type === "points" ? " / 100" : "%"}`} /></strong>
+                <strong>In profile</strong>
                 <span className="skill-bar" aria-hidden="true">
-                  <span style={{ "--skill-score": `${skill.score}%`, "--skill-index": index }} />
+                  <span style={{ "--skill-score": "100%", "--skill-index": index }} />
                 </span>
               </li>
             ))}
           </ul>
+          {!dashboardData.skills.length ? <p>Add skills to your profile to see them here.</p> : null}
         </Reveal>
 
         <Reveal as="section" index={6} className="recommendations-section dashboard-section" aria-labelledby="recommendations-title">
