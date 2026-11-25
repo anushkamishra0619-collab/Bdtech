@@ -14,6 +14,25 @@ export const examinationSemester = {
   term: "Aug – Dec 2026",
 };
 
+/** UI state hook for a future portal API. The mock dataset is ready instantly. */
+export const examinationDataState = {
+  isLoading: false,
+};
+
+/** Presentation metadata for the three examination families students see. */
+export const examinationSubjectCategories = {
+  dsa: { id: "dsa", label: "DSA Round", tone: "dsa" },
+  domain: { id: "domain", label: "Domain Exams", tone: "domain" },
+  aptitude: { id: "aptitude", label: "Aptitude Test", tone: "aptitude" },
+};
+
+/** Deadline states are supplied by the portal; no client-side countdowns. */
+export const deadlineStates = {
+  approaching: { label: "Approaching", tone: "urgent" },
+  upcoming: { label: "Upcoming", tone: "upcoming" },
+  expired: { label: "Window closed", tone: "expired" },
+};
+
 export const examinationStatistics = [
   {
     id: "assigned",
@@ -22,6 +41,7 @@ export const examinationStatistics = [
     note: "this semester",
     tone: "ink",
     icon: "clipboard",
+    progress: 100,
   },
   {
     id: "pending",
@@ -30,6 +50,7 @@ export const examinationStatistics = [
     note: "closes tomorrow",
     tone: "amber",
     icon: "clock",
+    progress: 40,
   },
   {
     id: "attempted",
@@ -38,6 +59,7 @@ export const examinationStatistics = [
     note: "taken on Unstop",
     tone: "blue",
     icon: "monitor",
+    progress: 60,
   },
   {
     id: "passed",
@@ -46,6 +68,7 @@ export const examinationStatistics = [
     note: "of 2 results imported",
     tone: "green",
     icon: "check",
+    progress: 100,
   },
 ];
 
@@ -101,6 +124,9 @@ export const featuredExamination = {
   id: "exam-001",
   name: "Probation Examination — Round 1",
   subject: "Data Structures",
+  category: "dsa",
+  deadlineState: "approaching",
+  deadlineLabel: "Closes tomorrow · 25 Nov 2026",
   description:
     "The first probation assessment covers data structures, complexity analysis and applied problem solving. Complete it on Unstop before the deadline.",
   mentor: "Rahul Sharma",
@@ -130,6 +156,9 @@ export const examinationAssignments = [
     id: "exam-002",
     name: "Probation Examination — Round 2",
     subject: "Algorithms",
+    category: "dsa",
+    deadlineState: "upcoming",
+    deadlineLabel: "Opens 1 Dec 2026",
     description:
       "The second probation assessment focuses on algorithm design, analysis and optimisation techniques.",
     mentor: "Rahul Sharma",
@@ -157,6 +186,9 @@ export const examinationAssignments = [
     id: "exam-003",
     name: "Database Management Systems",
     subject: "Core CS",
+    category: "domain",
+    deadlineState: "expired",
+    deadlineLabel: "Window closed 18 Nov 2026",
     description:
       "An assessment of relational modelling, SQL queries, normalization and transaction management.",
     mentor: "Priya Nair",
@@ -184,6 +216,9 @@ export const examinationAssignments = [
     id: "exam-004",
     name: "Aptitude & Logical Reasoning",
     subject: "Aptitude",
+    category: "aptitude",
+    deadlineState: "expired",
+    deadlineLabel: "Window closed 15 Nov 2026",
     description:
       "An aptitude assessment covering quantitative reasoning, logical puzzles and verbal ability.",
     mentor: "Priya Nair",
@@ -213,6 +248,9 @@ export const examinationAssignments = [
     id: "exam-005",
     name: "Python Programming Fundamentals",
     subject: "Programming",
+    category: "domain",
+    deadlineState: "expired",
+    deadlineLabel: "Window closed 7 Nov 2026",
     description:
       "An assessment of Python fundamentals, data structures, functions and problem solving.",
     mentor: "Rahul Sharma",
@@ -320,6 +358,9 @@ export const resultTones = {
 
 export default {
   examinationSemester,
+  examinationDataState,
+  examinationSubjectCategories,
+  deadlineStates,
   examinationStatistics,
   examinationLifecycle,
   examinationCategories,
