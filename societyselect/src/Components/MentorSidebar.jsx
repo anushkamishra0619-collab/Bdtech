@@ -15,6 +15,11 @@ const menuItems = [
     href: "/mentor/students",
   },
   {
+    label: "Society Management",
+    icon: Building2,
+    href: "/mentor/societies",
+  },
+  {
     label: "Task Reviews",
     icon: ClipboardCheck,
     href: "/mentor/projects",

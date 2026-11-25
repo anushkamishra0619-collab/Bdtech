@@ -1,66 +1,117 @@
 import { useEffect, useState } from "react";
-import LoadingPage from "../../Components/LoadingPage.jsx";
-import { apiRequest } from "../../utils/api.js";
-import "./StudentApiPages.css";
+import { getApplications } from "../../data/applicationService";
+import { studentData } from "../../data/studentProfileData";
+import "../../styles/SocietyApplication.css";
+
+const formatSubmissionDate = (date) => {
+  const parsedDate = new Date(date);
+  return Number.isNaN(parsedDate.getTime())
+    ? "Date unavailable"
+    : parsedDate.toLocaleString();
+};
 
 const ApplicationTracking = () => {
-  const [status, setStatus] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [applications, setApplications] = useState(null);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
-    let active = true;
-    apiRequest("/api/application/my-status")
-      .then((data) => {
-        if (active) setStatus(data);
-      })
-      .catch((requestError) => {
-        if (active) setError(requestError.message);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
+    try {
+      setApplications(
+        getApplications().filter(
+          (application) =>
+            application.student.studentNumber === studentData.studentId,
+        ),
+      );
+    } catch (error) {
+      setLoadError(
+        error instanceof Error ? error.message : "Applications could not be loaded.",
+      );
+    }
   }, []);
 
-  if (loading) return <LoadingPage />;
-
   return (
-    <main className="backend-page">
-      <div className="backend-page-content">
-        <header className="backend-page-header">
-          <div>
-            <h1>Application Tracking</h1>
-            <p>Check your latest recruitment application status.</p>
-          </div>
-          <a className="backend-page-link" href="/student/dashboard">Dashboard</a>
+    <main className="society-listing-page society-tracking-page">
+      <header className="society-navbar">
+        <a
+          className="society-navbar-brand"
+          href="/student/dashboard"
+          aria-label="SocietySelect AI home"
+        >
+          <span>SocietySelect</span>
+          <small>AI</small>
+        </a>
+        <a className="society-tracking-back-link" href="/student/application">
+          Society Applications
+        </a>
+      </header>
+
+      <div className="society-listing-content society-tracking-content">
+        <nav className="society-breadcrumbs" aria-label="Breadcrumb">
+          <a href="/student/dashboard">Dashboard</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">Application Tracking</span>
+        </nav>
+
+        <header className="society-tracking-heading">
+          <p className="society-eyebrow">Your submissions</p>
+          <h1>Application Tracking</h1>
+          <p>Review the society applications saved for this browser.</p>
         </header>
 
-        {error ? <p className="backend-page-error" role="alert">{error}</p> : null}
-        {!error && status ? (
-          <section className="backend-page-card">
-            {status.hasApplied ? (
-              <>
-                <h2>{status.application?.societyName || "Society application"}</h2>
-                <dl className="backend-page-meta">
-                  <div><dt>Stage</dt><dd>{status.stage.replaceAll("_", " ")}</dd></div>
-                  <div><dt>Domain</dt><dd>{status.application?.domain || "Not specified"}</dd></div>
-                  <div><dt>Submitted</dt><dd>{status.application?.createdAt ? new Date(status.application.createdAt).toLocaleDateString() : "—"}</dd></div>
-                </dl>
-                <p><a className="backend-page-link" href="/student/interview">Interview details</a></p>
-              </>
-            ) : (
-              <>
-                <h2>No application submitted yet</h2>
-                <p>Start your application to see its progress here.</p>
-                <a className="backend-page-link" href="/student/apply">Apply now</a>
-              </>
-            )}
+        {loadError && (
+          <p className="society-application-submit-error" role="alert">
+            {loadError}
+          </p>
+        )}
+
+        {applications === null ? (
+          <p className="society-tracking-empty">
+            {loadError ? "Applications could not be loaded." : "Loading applications..."}
+          </p>
+        ) : applications.length === 0 ? (
+          <section className="society-tracking-empty">
+            <h2>No submitted applications yet</h2>
+            <p>Applications you submit will appear here.</p>
+            <a className="society-primary-button" href="/student/application">
+              Browse Societies
+            </a>
           </section>
-        ) : null}
+        ) : (
+          <section className="society-tracking-list" aria-label="Submitted applications">
+            {applications.map((application) => (
+              <article
+                className="society-tracking-card"
+                key={application.applicationId}
+              >
+                <div className="society-tracking-card-heading">
+                  <div>
+                    <span className="society-category-label">
+                      {application.status ?? "Submitted"}
+                    </span>
+                    <h2>{application.societyName ?? "Society name unavailable"}</h2>
+                  </div>
+                  <span className="society-tracking-position">
+                    {application.position ?? "Position unavailable"}
+                  </span>
+                </div>
+                <dl>
+                  <div>
+                    <dt>Application ID</dt>
+                    <dd>{application.applicationId}</dd>
+                  </div>
+                  <div>
+                    <dt>Submitted</dt>
+                    <dd>{formatSubmissionDate(application.submittedAt)}</dd>
+                  </div>
+                  <div>
+                    <dt>Applicant</dt>
+                    <dd>{application.student?.fullName ?? "Name unavailable"}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))}
+          </section>
+        )}
       </div>
     </main>
   );

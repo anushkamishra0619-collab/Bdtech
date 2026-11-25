@@ -173,6 +173,15 @@ function App() {
       return "serverError";
     }
 
+  useEffect(() => {
+    const handleLocationChange = () => setRoute(getRoute());
+    window.addEventListener("hashchange", handleLocationChange);
+    window.addEventListener("popstate", handleLocationChange);
+    return () => {
+      window.removeEventListener("hashchange", handleLocationChange);
+      window.removeEventListener("popstate", handleLocationChange);
+    };
+  }, []);
     if (path === "/" && !rawHash) return "landing";
     if (rawHash === "" && path !== "/") return "error";
 
@@ -183,11 +192,7 @@ function App() {
   const route = getRoute();
 
   if (route === "login") return <Welcome />;
-
-  if (route === "register") {
-    return <Welcome initialMode="signup" />;
-  }
-
+  if (route === "register") return <Welcome initialMode="signup" />;
   if (route === "forgot") return <ForgotPassword />;
   if (route === "interviewpage") return <Interviewpage />;
   if (route === "assigned-students") return <AssignedStudents />;
@@ -224,6 +229,56 @@ function App() {
   if (route === "examinationManagement") return <ExaminationManagement />;
   if (route === "aiRecommendations") return <AIRecommendation />;
   return <LandingPage />;
+}
+
+function RootRoute() {
+  const { hash } = useLocation();
+
+  if (hash) return <LegacyRoutes />;
+
+  // TODO: TEMPORARY DEVELOPMENT BYPASS — remove when student authentication is ready.
+  return <Navigate to="/student/dashboard" replace />;
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<RootRoute />} />
+        <Route path="/login" element={<LegacyRoutes />} />
+        <Route path="/signup" element={<LegacyRoutes />} />
+        <Route path="/register" element={<LegacyRoutes />} />
+        <Route path="/forgot" element={<LegacyRoutes />} />
+        <Route path="/mentor" element={<LegacyRoutes />} />
+        <Route path="/mentor/students" element={<AssignedStudents />} />
+        <Route path="/mentor/societies" element={<MentorSocietyManagement />} />
+        <Route path="/createproject" element={<LegacyRoutes />} />
+        <Route path="/student" element={<StudentLayout />}>
+          <Route index element={<StudentDashboard />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="profile" element={<StudentProfile />} />
+          <Route path="application" element={<SocietyApplication />} />
+          <Route path="application-tracking" element={<ApplicationTracking />} />
+          <Route path="online-examination" element={<OnlineExamination />} />
+          <Route path="examination" element={<OnlineExamination />} />
+          <Route path="examination-results" element={<ExaminationResults />} />
+          <Route path="interview" element={<InterviewDetails />} />
+          <Route path="probation" element={<ProbationDashboard />} />
+          <Route path="tasks" element={<MyTasks />} />
+          <Route path="project-submission" element={<ProjectSubmission />} />
+          <Route path="github-analytics" element={<GitHubAnalytics />} />
+          <Route path="performance" element={<MyPerformance />} />
+          <Route path="ai-recommendations" element={<AIRecommendations />} />
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="settings" element={<StudentSettings />} />
+          <Route path="attendance" element={<MyAttendance />} />
+          <Route path="attendance-calendar" element={<AttendanceCalendar />} />
+          <Route path="leave-request" element={<LeaveRequest />} />
+        </Route>
+        <Route path="*" element={<LegacyRoutes />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;

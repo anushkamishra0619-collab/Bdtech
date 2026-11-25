@@ -1,0 +1,1210 @@
+.probation-dashboard {
+  min-height: 100vh;
+  padding: 34px clamp(24px, 3.1vw, 46px) 48px;
+  color: #263746;
+  background: #edf4f6;
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+}
+
+.probation-page-header,
+.probation-status-hero {
+  width: min(100%, 1280px);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.probation-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.probation-breadcrumb [aria-current="page"] {
+  color: #39535d;
+  font-weight: 700;
+}
+
+.probation-page-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-top: 21px;
+  margin-bottom: 24px;
+}
+
+.probation-heading-copy {
+  min-width: 0;
+}
+
+.probation-heading-copy h1 {
+  margin: 0;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 4vw, 46px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.probation-heading-copy p {
+  max-width: 560px;
+  margin: 8px 0 0;
+  color: #6f7478;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.probation-header-badges {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 9px;
+  padding-bottom: 3px;
+}
+
+.probation-semester-badge,
+.probation-active-badge {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 13px;
+  border: 1px solid #dce7ec;
+  border-radius: 999px;
+  background: #fff;
+  color: #39535d;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.probation-semester-badge > span {
+  color: #6d9fb1;
+  font-weight: 700;
+}
+
+.probation-active-badge {
+  border-color: transparent;
+  background: #e2eef2;
+  color: #4d7c96;
+  font-weight: 700;
+}
+
+.probation-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4d7c96;
+}
+
+.probation-status-hero {
+  display: grid;
+  min-height: 388px;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 30px 999px 999px 30px;
+  background: #5b8da4;
+  color: #fff;
+  box-shadow: 0 16px 38px rgb(57 83 93 / 12%);
+}
+
+.probation-status-panel {
+  min-width: 0;
+  padding: 38px 44px 40px;
+  border-right: 1px solid rgb(255 255 255 / 20%);
+}
+
+.probation-status-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(255 255 255 / 82%);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.probation-status-label svg {
+  color: #e5eff3;
+}
+
+.probation-status-value {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.probation-status-dot {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  border-radius: 50%;
+  background: #e5eff3;
+  box-shadow: 0 0 0 7px rgb(255 255 255 / 15%);
+}
+
+.probation-status-value h2 {
+  margin: 0;
+  color: #fff;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(58px, 6vw, 72px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 0.95;
+}
+
+.probation-status-description {
+  margin: 9px 0 0;
+  color: rgb(255 255 255 / 88%);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.probation-status-divider {
+  height: 1px;
+  margin: 27px 0 20px;
+  background: rgb(255 255 255 / 22%);
+}
+
+.probation-status-details {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 0.9fr;
+  gap: 16px;
+  margin: 0;
+}
+
+.probation-status-detail {
+  min-width: 0;
+}
+
+.probation-status-detail dt {
+  margin: 0 0 5px;
+  color: rgb(255 255 255 / 74%);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.probation-status-detail dd {
+  margin: 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.probation-progress-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 38px 44px 40px;
+}
+
+.probation-progress-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(255 255 255 / 82%);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.probation-progress-label svg {
+  color: #e5eff3;
+}
+
+.probation-progress-value {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-top: 12px;
+  color: #fff;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(62px, 6vw, 76px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+}
+
+.probation-progress-percent {
+  font-size: 0.42em;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.probation-progress-description {
+  margin: 3px 0 0;
+  color: rgb(255 255 255 / 84%);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.probation-progress-segments {
+  display: flex;
+  gap: 6px;
+  margin-top: 21px;
+}
+
+.probation-progress-segment {
+  height: 10px;
+  min-width: 0;
+  flex: 1 1 0;
+  border-radius: 3px;
+  background: rgb(220 231 236 / 22%);
+}
+
+.probation-progress-segment.is-completed {
+  background: #b7d6e0;
+}
+
+.probation-progress-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  color: rgb(255 255 255 / 75%);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.probation-progress-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: auto 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid rgb(255 255 255 / 20%);
+}
+
+.probation-progress-metric {
+  display: grid;
+  min-width: 0;
+  grid-template-areas:
+    "value"
+    "label";
+  align-content: start;
+  gap: 1px;
+  padding-right: 12px;
+}
+
+.probation-progress-metric + .probation-progress-metric {
+  padding-left: 14px;
+  border-left: 1px solid rgb(255 255 255 / 18%);
+}
+
+.probation-progress-metric dt {
+  grid-area: label;
+  color: rgb(255 255 255 / 75%);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.probation-progress-metric dd {
+  grid-area: value;
+  margin: 0;
+  color: #fff;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.probation-review-section,
+.probation-feedback-section,
+.probation-history-section {
+  width: min(100%, 1280px);
+  margin: 18px auto 0;
+  border: 1px solid #dce7ec;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(38 55 70 / 4%);
+}
+
+.probation-review-section,
+.probation-feedback-section {
+  overflow: hidden;
+}
+
+.probation-review-timeline {
+  padding: 30px 42px 26px;
+}
+
+.probation-review-section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.probation-review-section-heading > svg {
+  flex: 0 0 auto;
+  margin-top: 5px;
+  color: #4d7c96;
+}
+
+.probation-review-section-heading h2 {
+  margin: 0;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 27px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.probation-review-section-heading p {
+  margin: 4px 0 0;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.probation-timeline {
+  position: relative;
+  min-height: 116px;
+  margin: 37px 14px 0;
+}
+
+.probation-timeline-track {
+  position: absolute;
+  top: 7px;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: #dce7ec;
+}
+
+.probation-timeline-progress {
+  display: block;
+  width: var(--timeline-progress);
+  height: 100%;
+  background: #6d9fb1;
+}
+
+.probation-timeline-milestones {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.probation-timeline-milestone {
+  position: absolute;
+  top: 7px;
+  left: var(--milestone-position);
+  width: 0;
+}
+
+.probation-timeline-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #6d9fb1;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.probation-timeline-milestone.is-start .probation-timeline-marker {
+  background: #4d7c96;
+}
+
+.probation-timeline-milestone.is-current .probation-timeline-marker {
+  width: 20px;
+  height: 20px;
+  border: 4px solid #dcebf0;
+  background: #263746;
+  box-shadow: 0 0 0 1px #263746;
+}
+
+.probation-timeline-milestone.is-review .probation-timeline-marker {
+  width: 16px;
+  height: 16px;
+  border-color: #4d7c96;
+}
+
+.probation-timeline-milestone.is-end .probation-timeline-marker {
+  border-color: #9ab9c5;
+}
+
+.probation-timeline-copy {
+  position: absolute;
+  top: 20px;
+  display: flex;
+  width: min(105px, 7vw);
+  flex-direction: column;
+  gap: 3px;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.probation-timeline-copy time {
+  color: #263746;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.probation-timeline-copy > span {
+  color: #6f7478;
+}
+
+.probation-timeline-milestone.is-start .probation-timeline-copy {
+  left: 0;
+  text-align: left;
+}
+
+.probation-timeline-milestone.is-current .probation-timeline-copy,
+.probation-timeline-milestone.is-end .probation-timeline-copy {
+  right: 0;
+  text-align: right;
+}
+
+.probation-timeline-milestone.is-review .probation-timeline-copy {
+  left: 0;
+  text-align: left;
+}
+
+.probation-review-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.9fr);
+  gap: 26px;
+  margin: 0;
+  padding: 22px 42px 30px;
+  border-top: 1px solid #dce7ec;
+}
+
+.probation-review-date-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 24px;
+  border-right: 1px solid #dce7ec;
+}
+
+.probation-review-outcome {
+  padding-right: 24px;
+  border-right: 1px solid #dce7ec;
+}
+
+.probation-review-details dt {
+  margin: 0 0 6px;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.probation-review-details dd {
+  margin: 0;
+  color: #39535d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.probation-review-details time {
+  color: #263746;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.probation-review-status,
+.probation-review-outcome-badge {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 11px;
+  border-radius: 999px;
+  background: #e2eef2;
+  color: #4d7c96;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.probation-review-status::before,
+.probation-review-outcome-badge::before {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+.probation-review-outcome-badge {
+  background: #f6edda;
+  color: #a87322;
+}
+
+.probation-review-remarks dd {
+  max-width: 560px;
+}
+
+.probation-feedback-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.95fr);
+}
+
+.probation-mentor-remarks,
+.probation-notifications {
+  min-width: 0;
+  padding: 30px 34px 32px;
+}
+
+.probation-mentor-remarks {
+  border-right: 1px solid #dce7ec;
+}
+
+.probation-feedback-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.probation-feedback-heading > svg {
+  flex: 0 0 auto;
+  margin-top: 5px;
+  color: #4d7c96;
+}
+
+.probation-feedback-heading h2 {
+  margin: 0;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 27px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.probation-feedback-heading p {
+  margin: 4px 0 0;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.probation-mentor-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 16px;
+}
+
+.probation-mentor-avatar {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border: 1px solid #dce7ec;
+  border-radius: 50%;
+  background: #edf4f6;
+  color: #4d7c96;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 20px;
+}
+
+.probation-mentor-identity h3 {
+  margin: 0;
+  color: #263746;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.probation-mentor-identity p {
+  margin: 2px 0 0;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.probation-mentor-feedback {
+  margin: 0 0 18px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid #dce7ec;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(21px, 2vw, 25px);
+  line-height: 1.42;
+}
+
+.probation-mentor-notes {
+  margin: 0;
+}
+
+.probation-mentor-note {
+  display: grid;
+  grid-template-columns: minmax(128px, 0.42fr) minmax(0, 1fr);
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid #dce7ec;
+}
+
+.probation-mentor-note:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.probation-mentor-note dt {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #4d7c96;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.probation-mentor-note dt svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.probation-mentor-note dd {
+  margin: 0;
+  color: #39535d;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.probation-notifications-heading {
+  margin-bottom: 12px;
+}
+
+.probation-notification-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.probation-notification {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 13px;
+  padding: 15px 0;
+  border-bottom: 1px solid #dce7ec;
+}
+
+.probation-notification:last-child {
+  border-bottom: 0;
+}
+
+.probation-notification-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: start;
+  color: #6f7478;
+  line-height: 1.2;
+}
+
+.probation-notification-date span:first-child {
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.probation-notification-date span:last-child {
+  font-size: 10px;
+}
+
+.probation-notification-copy {
+  min-width: 0;
+}
+
+.probation-notification-copy h3 {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  color: #39535d;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.probation-notification-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  margin-top: 4px;
+  border: 1px solid #8eafbd;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.probation-notification.is-unread .probation-notification-dot {
+  border-color: #4d7c96;
+  background: #4d7c96;
+}
+
+.probation-notification-copy p {
+  margin: 2px 0 0;
+  color: #6f7478;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.probation-notification-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  color: #4d7c96;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.probation-notification-category svg {
+  flex: 0 0 auto;
+}
+
+.probation-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.probation-history-section {
+  padding: 28px 34px 30px;
+}
+
+.probation-history-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.probation-history-heading > svg {
+  flex: 0 0 auto;
+  margin-top: 5px;
+  color: #4d7c96;
+}
+
+.probation-history-heading h2 {
+  margin: 0;
+  color: #263746;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.probation-history-heading p {
+  margin: 5px 0 0;
+  color: #6f7478;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.probation-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  text-align: left;
+}
+
+.probation-history-table th {
+  padding: 12px 14px;
+  border-bottom: 1px solid #dce7ec;
+  background: #edf4f6;
+  color: #6f7478;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.probation-history-table td {
+  padding: 15px 14px;
+  border-bottom: 1px solid #dce7ec;
+  color: #39535d;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.probation-history-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.probation-history-status {
+  color: #6f7478;
+}
+
+.probation-history-outcome {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid #d1e2e8;
+  border-radius: 999px;
+  background: #edf4f6;
+  color: #4d7c96;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.probation-history-empty-row td {
+  padding: 24px 14px;
+  color: #6f7478;
+  text-align: center;
+}
+
+@media (max-width: 1050px) {
+  .probation-page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .probation-header-badges {
+    padding-bottom: 0;
+  }
+
+  .probation-status-hero {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    border-radius: 24px 48px 48px 24px;
+  }
+
+  .probation-status-panel {
+    padding-right: 30px;
+    padding-left: 30px;
+    border-right: 0;
+    border-bottom: 1px solid rgb(255 255 255 / 20%);
+  }
+
+  .probation-progress-panel {
+    min-height: 320px;
+    padding: 30px;
+  }
+
+  .probation-status-details {
+    gap: 12px;
+  }
+
+  .probation-review-details {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.5fr);
+    gap: 20px;
+    padding-right: 30px;
+    padding-left: 30px;
+  }
+
+  .probation-review-timeline {
+    padding-right: 30px;
+    padding-left: 30px;
+  }
+}
+
+@media (max-width: 1260px) {
+  .probation-timeline {
+    height: 240px;
+    min-height: 0;
+    margin: 30px 0 0;
+  }
+
+  .probation-timeline-track {
+    top: 18px;
+    right: auto;
+    bottom: 18px;
+    left: 7px;
+    width: 2px;
+    height: auto;
+  }
+
+  .probation-timeline-progress {
+    width: 100%;
+    height: var(--timeline-progress);
+  }
+
+  .probation-timeline-milestones {
+    position: relative;
+    inset: auto;
+    display: grid;
+    height: 100%;
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+  }
+
+  .probation-timeline-milestone {
+    position: relative;
+    top: auto;
+    left: auto;
+    display: flex;
+    width: auto;
+    height: auto;
+    align-items: center;
+  }
+
+  .probation-timeline-marker {
+    top: 50%;
+    left: 7px;
+    transform: translate(-50%, -50%);
+  }
+
+  .probation-timeline-milestone.is-current .probation-timeline-marker {
+    top: 50%;
+  }
+
+  .probation-timeline-milestone .probation-timeline-copy {
+    top: 50%;
+    right: 0;
+    left: 26px;
+    width: auto;
+    max-width: none;
+    transform: translateY(-50%);
+    text-align: left;
+  }
+}
+
+@media (max-width: 1000px) {
+  .probation-feedback-section {
+    grid-template-columns: 1fr;
+  }
+
+  .probation-mentor-remarks {
+    border-right: 0;
+    border-bottom: 1px solid #dce7ec;
+  }
+
+  .probation-notifications-heading {
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  .probation-review-details {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 22px 30px 26px;
+  }
+
+  .probation-review-date-group {
+    padding-right: 0;
+    padding-bottom: 16px;
+    border-right: 0;
+    border-bottom: 1px solid #dce7ec;
+  }
+
+  .probation-review-outcome {
+    padding-right: 0;
+    padding-bottom: 16px;
+    border-right: 0;
+    border-bottom: 1px solid #dce7ec;
+  }
+}
+
+@media (max-width: 760px) {
+  .probation-dashboard {
+    padding: 28px 22px 40px;
+  }
+
+  .probation-status-panel {
+    padding: 30px 26px 32px;
+  }
+
+  .probation-progress-panel {
+    min-height: 300px;
+    padding: 28px 26px 30px;
+  }
+
+  .probation-review-timeline {
+    padding: 26px 20px 24px;
+  }
+
+  .probation-timeline {
+    margin: 31px 8px 0;
+  }
+
+  .probation-review-details {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .probation-mentor-remarks,
+  .probation-notifications {
+    padding: 26px 22px;
+  }
+
+  .probation-mentor-note {
+    grid-template-columns: minmax(118px, 0.42fr) minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .probation-history-section {
+    padding: 25px 22px;
+  }
+
+  .probation-history-table th,
+  .probation-history-table td {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .probation-history-table {
+    display: block;
+    table-layout: auto;
+  }
+
+  .probation-history-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+  }
+
+  .probation-history-table tbody {
+    display: block;
+  }
+
+  .probation-history-table tbody tr:not(.probation-history-empty-row) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 7px 0;
+    border-bottom: 1px solid #dce7ec;
+  }
+
+  .probation-history-table
+    tbody
+    tr:not(.probation-history-empty-row):last-child {
+    border-bottom: 0;
+  }
+
+  .probation-history-table
+    tbody
+    tr:not(.probation-history-empty-row)
+    td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 0;
+    text-align: right;
+  }
+
+  .probation-history-table
+    tbody
+    tr:not(.probation-history-empty-row)
+    td::before {
+    color: #6f7478;
+    content: attr(data-label);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .probation-history-table .probation-history-empty-row {
+    display: block;
+  }
+
+  .probation-history-table .probation-history-empty-row td {
+    display: block;
+    padding: 20px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .probation-dashboard {
+    padding: 24px 16px 32px;
+  }
+
+  .probation-page-heading {
+    margin-top: 17px;
+    margin-bottom: 20px;
+  }
+
+  .probation-heading-copy h1 {
+    font-size: 37px;
+  }
+
+  .probation-heading-copy p {
+    font-size: 12px;
+  }
+
+  .probation-header-badges {
+    flex-wrap: wrap;
+  }
+
+  .probation-status-panel {
+    padding: 26px 20px 28px;
+  }
+
+  .probation-status-value h2 {
+    font-size: 58px;
+  }
+
+  .probation-status-details {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .probation-progress-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 14px;
+  }
+
+  .probation-progress-metric:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .probation-review-section-heading h2 {
+    font-size: 24px;
+  }
+
+  .probation-feedback-heading h2 {
+    font-size: 24px;
+  }
+
+  .probation-timeline-copy {
+    width: min(118px, 31vw);
+    font-size: 10px;
+  }
+
+  .probation-mentor-remarks,
+  .probation-notifications {
+    padding: 24px 18px;
+  }
+
+  .probation-mentor-note {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .probation-history-section {
+    padding: 22px 18px;
+  }
+
+  .probation-history-heading h2 {
+    font-size: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .probation-dashboard *,
+  .probation-dashboard *::before,
+  .probation-dashboard *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

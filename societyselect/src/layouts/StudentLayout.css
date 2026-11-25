@@ -1,0 +1,52 @@
+.student-layout {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+  color: #263746;
+}
+
+.student-layout-content {
+  width: calc(100% - 260px);
+  height: 100vh;
+  margin-left: 260px;
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  transition:
+    width 240ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    margin-left 240ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.student-sidebar.is-collapsed ~ .student-layout-content {
+  width: calc(100% - 76px);
+  margin-left: 76px;
+}
+
+@media (max-width: 760px) {
+  .student-layout {
+    display: flex;
+    height: auto;
+    min-height: 100vh;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .student-layout > .student-sidebar,
+  .student-layout > .student-sidebar.is-collapsed {
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid #dce7ec;
+  }
+
+  .student-layout-content {
+    width: 100%;
+    height: auto;
+    margin-left: 0;
+    min-height: 0;
+    overflow: visible;
+    transition: none;
+  }
+}

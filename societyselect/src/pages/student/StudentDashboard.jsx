@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { GitBranch } from "lucide-react";
 import {
   BlurText,
   CountUp,
@@ -23,7 +24,7 @@ const StudentDashboard = () => {
   const moveNavIndicator = useCallback((link) => {
     const nav = navbarLinksRef.current;
     if (!nav || !link) return;
-    const mobile = window.matchMedia("(max-width: 700px)").matches;
+    const mobile = window.matchMedia("(max-width: 900px)").matches;
     setIndicatorStyle({
       left: link.offsetLeft,
       top: link.offsetTop + link.offsetHeight - (mobile ? 9 : 22),
@@ -196,13 +197,23 @@ const StudentDashboard = () => {
             Dashboard
           </a>
           <a
-            href="/student/application-tracking"
-            className={`nav-link${activeNav === "Applications" ? " active" : ""}`}
-            data-nav="Applications"
+            href="/student/application"
+            className={`nav-link${activeNav === "Society Applications" ? " active" : ""}`}
+            data-nav="Society Applications"
             onMouseEnter={(event) => moveNavIndicator(event.currentTarget)}
-            onClick={() => handleNavClick("Applications")}
+            onClick={() => handleNavClick("Society Applications")}
           >
-            Applications
+            Society Applications
+          </a>
+          <a
+            href="/student/github-analytics"
+            className={`nav-link nav-link-github${activeNav === "GitHub Analytics" ? " active" : ""}`}
+            data-nav="GitHub Analytics"
+            onMouseEnter={(event) => moveNavIndicator(event.currentTarget)}
+            onClick={() => handleNavClick("GitHub Analytics")}
+          >
+            <GitBranch size={14} aria-hidden="true" />
+            <span>GitHub Analytics</span>
           </a>
           <a
             href="/student/tasks"
