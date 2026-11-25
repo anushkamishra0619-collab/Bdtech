@@ -238,3 +238,14 @@
     flex-shrink: 0;
   }
 }
+.mentor-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mentor-logo img {
+  width: 180px;
+  height: auto;
+  object-fit: contain;
+}
